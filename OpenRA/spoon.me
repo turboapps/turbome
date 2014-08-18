@@ -1,0 +1,16 @@
+#
+# OpenRA Spoon.me file
+#
+# https://github.com/spoonium/spoonme/openra
+#
+
+# Pull prerequisite images
+FROM oleg@spoon.net/net:4.0.3,oleg@spoon.net/net:3.5,spoonbrew/git
+
+# Download source code
+CMD git clone git://github.com/OpenRA/OpenRA.git "%USERPROFILE%\OpenRA"
+
+# Build project
+WORKDIR "%USERPROFILE%\OpenRA\"
+CMD make.cmd dependencies
+CMD make.cmd all
