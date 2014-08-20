@@ -86,4 +86,5 @@ ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
 ENV spn_mysql_path c:\mysql
 
 # Startup File
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
 STARTUPFILE C:\apache2\spn_start.cmd
