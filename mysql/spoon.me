@@ -1,0 +1,23 @@
+#
+# MySQL Spoon.me file
+#
+# https://github.com/spoonium/spoonme/mysql
+#
+
+
+# Pull dependency images
+FROM wget,7zip
+
+#
+CMD mkdir c:\mysql
+WORKDIR C:\mysql
+CMD %spn_wget% http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.20-win32.zip
+CMD %spn_7z% x mysql-5.6.20-win32.zip
+
+# Clean up
+WORKDIR C:\
+CMD del c:\7zip /S /Q
+CMD del c:\wget /S /Q
+CMD rmdir C:\7zip /S /Q
+CMD rmdir C:\wget /S /Q
+CMD del C:\mysql\mysql-5.6.20-win32.zip

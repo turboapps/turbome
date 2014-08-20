@@ -1,0 +1,31 @@
+#
+# PHP Spoon.me file
+#
+# https://github.com/spoonium/spoonme/php
+#
+
+
+# Pull dependency images
+FROM wget,7zip
+
+# Prepare environmnet
+CMD mkdir c:\php
+WORKDIR C:\php
+
+# Download installation media
+CMD %spn_wget% http://windows.php.net/downloads/releases/archives/php-5.3.5-Win32-VC6-x86.zip
+
+# Install
+CMD %spn_7z% x php-5.3.5-Win32-VC6-x86.zip
+
+# Clean up
+WORKDIR C:\
+CMD del c:\7zip /S /Q
+CMD del c:\wget /S /Q
+CMD rmdir C:\7zip /S /Q
+CMD rmdir C:\wget /S /Q
+CMD del c:\php\php-5.3.5-Win32-VC6-x86.zip /Q
+
+# Environmental Variables
+ENV %spn_php c:\php\php.exe
+ENV %spn_php_path c:\php
