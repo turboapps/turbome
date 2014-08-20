@@ -1,0 +1,75 @@
+#
+# Wordpress Spoon.me file
+#
+# https://github.com/spoonium/spoonme/wordpress
+#
+
+
+# Pull dependency images
+FROM wget,fart,7zip,apache,php,mysql
+
+###################################
+#### Configure these variables ####
+###################################
+
+ENV spn_config_Port 8080
+ENV spn_config_ServerAdmin me@domain.com
+ENV spn_config_DomainName domain.com
+ENV spn_config_mySQL_User wordpressuser
+ENV spn_config_mySQL_Password wordpresspassword
+
+###################################
+
+# Initialize Apache
+WORKDIR c:\apache2
+CMD mkdir c:\apache2\logs
+CMD copy c:\apache2\conf\magic.default c:\apache2\conf\magic
+CMD copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
+
+CMD copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
+
+  # Append & ver > nul because the find and replace tool sets ERRORLEVEL to the replace count
+CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
+CMD %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
+CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
+CMD %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
+
+  # Add PHP to Apache
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initApache.cmd --no-check-certificate -O initApache.cmd
+CMD initApache.cmd
+CMD del initApache.cmd
+
+# Initialize PHP
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initPHP.cmd --no-check-certificate -O initPHP.cmd
+CMD initPHP.cmd
+CMD del initPHP.cmd
+
+# Initialize MySQL
+WORKDIR c:\mysql\mysql-5.6.20-win32\bin
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
+CMD initMySQL.cmd
+CMD del initMySQL.cmd
+
+# Initialize WordPress
+WORKDIR c:\apache2\htdocs
+CMD del c:\apache2\htdocs\* /S /Q
+CMD %spn_wget% http://wordpress.org/latest.zip
+CMD %spn_7z% x latest.zip
+
+
+#STARTUP C:\Apache2\bin\Apache.exe
+
+# Clean up
+WORKDIR c:\
+CMD del c:\apache2\htdocs\latest.zip
+CMD del c:\fart /S /Q
+CMD rmdir C:\fart /S /Q
+CMD del c:\7zip /S /Q
+CMD rmdir C:\7zip /S /Q
+CMD del c:\wget /S /Q
+CMD rmdir C:\wget /S /Q
+
+
+# Environmental Variables
+ENV spn_apache C:\apache2\bin\Apache.exe
+ENV spn_apache_path c:\apache2
