@@ -65,9 +65,9 @@ CMD del c:\apache2\htdocs\spn_wordpress-temp /S /Q
 CMD rmdir c:\apache2\htdocs\spn_wordpress-temp /S /Q
 CMD copy c:\apache2\htdocs\wp-config-sample.php c:\apache2\htdocs\wp-config.php
 
-CMD %spn_fart% wp-config.php "define('DB_NAME', 'database_name_here');" "define('DB_NAME', 'wordpress');"
-CMD %spn_fart% wp-config.php "define('DB_USER', 'username_here');" "define('DB_USER', 'root');"
-CMD %spn_fart% wp-config.php "define('DB_PASSWORD', 'password_here');" "define('DB_PASSWORD', '');"
+CMD %spn_fart% wp-config.php "define('DB_NAME', 'database_name_here');" "define('DB_NAME', 'wordpress');" & ver > nul
+CMD %spn_fart% wp-config.php "define('DB_USER', 'username_here');" "define('DB_USER', 'root');"  & ver > nul
+CMD %spn_fart% wp-config.php "define('DB_PASSWORD', 'password_here');" "define('DB_PASSWORD', '');"  & ver > nul
 
 # Clean up
 WORKDIR c:\
