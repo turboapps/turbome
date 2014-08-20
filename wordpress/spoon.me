@@ -69,7 +69,20 @@ CMD %spn_fart% wp-config.php "define('DB_NAME', 'database_name_here');" "define(
 CMD %spn_fart% wp-config.php "define('DB_USER', 'username_here');" "define('DB_USER', 'root');"  & ver > nul
 CMD %spn_fart% wp-config.php "define('DB_PASSWORD', 'password_here');" "define('DB_PASSWORD', '');"  & ver > nul
 
+# Startup File
+###################
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
+STARTUPFILE C:\apache2\spn_start.cmd
+
+# Environmental Variables
+###################
+ENV spn_apache c:\apache2\bin\Apache.exe
+ENV spn_apache_path c:\apache2
+ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
+ENV spn_mysql_path c:\mysql
+
 # Clean up
+###################
 WORKDIR c:\
 CMD del c:\fart /S /Q
 CMD rmdir C:\fart /S /Q
@@ -77,14 +90,3 @@ CMD del c:\7zip /S /Q
 CMD rmdir C:\7zip /S /Q
 CMD del c:\wget /S /Q
 CMD rmdir C:\wget /S /Q
-
-
-# Environmental Variables
-ENV spn_apache c:\apache2\bin\Apache.exe
-ENV spn_apache_path c:\apache2
-ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
-ENV spn_mysql_path c:\mysql
-
-# Startup File
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
-STARTUPFILE C:\apache2\spn_start.cmd
