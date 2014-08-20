@@ -6,18 +6,27 @@
 
 
 # Pull dependency images
-FROM wget,7zip
+FROM spoonbrew/wget,spoonbrew/7zip
 
 #
 CMD mkdir c:\mysql
 WORKDIR C:\mysql
 CMD %spn_wget% http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.20-win32.zip
-CMD %spn_7z% x mysql-5.6.20-win32.zip
+CMD %spn_7z% x -xr!*.pdb mysql-5.6.20-win32.zip
 
 # Clean up
 WORKDIR C:\
+CMD del C:\mysql\mysql-5.6.20-win32.zip
+CMD del c:\mysql\mysql-5.6.20-win32\mysql-test\*.* /S /Q
+CMD rmdir c:\mysql\mysql-5.6.20-win32\mysql-test\ /S /Q
+CMD del c:\mysql\mysql-5.6.20-win32\sql-bench\*.* /S /Q
+CMD rmdir c:\mysql\mysql-5.6.20-win32\sql-bench\ /S /Q
+
 CMD del c:\7zip /S /Q
 CMD del c:\wget /S /Q
 CMD rmdir C:\7zip /S /Q
 CMD rmdir C:\wget /S /Q
-CMD del C:\mysql\mysql-5.6.20-win32.zip
+
+# Environmental Variables
+ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
+ENV spn_mysql_path c:\mysql\mysql-5.6.20-win32
