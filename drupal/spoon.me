@@ -65,7 +65,7 @@ CMD del c:\apache2\htdocs\spn_drupal-temp /S /Q
 CMD rmdir c:\apache2\htdocs\spn_drupal-temp /S /Q
 
 CMD copy c:\apache2\htdocs\sites\default\default.settings.php c:\apache2\htdocs\sites\default\settings.php
-CMD %spn_fart% c:\apache2\htdocs\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);"
+CMD %spn_fart% c:\apache2\htdocs\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
 
 # Startup File
 ###################
