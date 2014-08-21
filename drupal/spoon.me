@@ -36,20 +36,20 @@ CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmi
 CMD %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
 
 # Add PHP to Apache
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initApache.cmd --no-check-certificate -O initApache.cmd
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initApache.cmd --no-check-certificate -O initApache.cmd
 CMD initApache.cmd
 CMD del initApache.cmd
 
 # Initialize PHP
 ###################
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initPHP.cmd --no-check-certificate -O initPHP.cmd
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initPHP.cmd --no-check-certificate -O initPHP.cmd
 CMD initPHP.cmd
 CMD del initPHP.cmd
 
 # Initialize MySQL
 ###################
 WORKDIR c:\mysql\mysql-5.6.20-win32\bin
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
 CMD initMySQL.cmd
 CMD del initMySQL.cmd
 
@@ -69,7 +69,7 @@ CMD %spn_fart% c:\apache2\htdocs\sites\default\settings.php "$databases = array(
 
 # Startup File
 ###################
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
 BOOT FILE C:\apache2\spn_start.cmd
 
 # Environmental Variables
