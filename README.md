@@ -3,7 +3,7 @@
 The official repository for trusted Spoon.me builds of popular open source projects. 
 
 ## License
-
+|                      |                                          |
 |:---------------------|:-----------------------------------------|
 | **Author:**          | Oleg Somphane (<oleg@spoon.net>)
 | **Copyright:**       | Copyright (c) 2014 Code Systems, Inc.
