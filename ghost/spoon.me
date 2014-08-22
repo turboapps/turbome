@@ -1,40 +1,57 @@
 #
 # Ghost Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/ghost
 #
-# https://github.com/spoonium/spoonme/ghost
-#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
 
+###################################
 # Pull dependency images
+###################################
 FROM spoonbrew/wget,spoonbrew/7zip,spoonbrew/node
 
-# Prepare environmnet
-CMD mkdir c:\ghost
 
-# Download installation media
+###################################
+# Download and install
+###################################
+
+# Create app directory
+CMD mkdir c:\ghost
 WORKDIR C:\ghost
+
+# Download and unzip
 CMD %spn_wget% https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
 CMD %spn_7z% x ghost-0.5.0.zip
 CMD del ghost-0.5.0.zip /Q
 
-# Download sqlite3 dependency
+# Download and unzip sqlite3 dependency
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/sqlite3-2.2.3.zip --no-check-certificate -O sqlite3.zip
 CMD %spn_7z% x sqlite3.zip
 CMD del sqlite3.zip /Q
 
-# Install
+# NPM install app
 CMD npm install --production
 
+
+###################################
 # Startup File
+###################################
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
 BOOT FILE C:\ghost\spn_start.cmd
 
+
+###################################
+# Environmental Variables
+###################################
+ENV spn_ghost_path C:\ghost
+
+
+###################################
 # Clean up
+###################################
 WORKDIR C:\
 CMD del c:\7zip /S /Q
 CMD del c:\wget /S /Q
 CMD rmdir C:\7zip /S /Q
 CMD rmdir C:\wget /S /Q
-
-# Environmental Variables
-ENV spn_ghost_path C:\ghost

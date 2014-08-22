@@ -1,11 +1,14 @@
 #
 # Apache Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/apache
 #
-# https://github.com/spoonium/spoonme/apache
-#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
 
+###################################
 # Pull dependency images
+###################################
 FROM spoonbrew/apache,spoonbrew/fart
 
 ###################################
@@ -34,11 +37,15 @@ CMD %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%
 
 #STARTUP C:\Apache2\bin\Apache.exe
 
+###################################
 # Clean up
+###################################
 WORKDIR c:\
 CMD del c:\fart /S /Q
 CMD rmdir C:\fart /S /Q
 
+###################################
 # Environmental Variables
+###################################
 ENV spn_apache C:\apache2\bin\Apache.exe
 ENV spn_apache_path c:\apache2

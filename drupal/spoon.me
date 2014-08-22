@@ -1,15 +1,19 @@
 #
 # Drupal Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/drupal
 #
-# https://github.com/spoonium/spoonme/drupal
-#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
-
-# Pull dependency images
-FROM spoonbrew/wget,spoonbrew/fart,spoonbrew/7zip,spoonbrew/apache,spoonbrew/php,spoonbrew/mysql
 
 ###################################
-#### Configure these variables ####
+# Pull dependency images
+###################################
+FROM spoonbrew/wget,spoonbrew/fart,spoonbrew/7zip,spoonbrew/apache,spoonbrew/php,spoonbrew/mysql
+
+
+###################################
+# Configure these variables
 ###################################
 
 ENV spn_config_Port 8081
@@ -18,45 +22,56 @@ ENV spn_config_DomainName domain.com
 # To be implemented ENV spn_config_mySQL_User drupaluser
 # To be implemented ENV spn_config_mySQL_Password drupalpassword
 
+
+###################################
+# Initialize Apache
 ###################################
 
-# Initialize Apache
-###################
+# Copy config files files from templates
 WORKDIR c:\apache2
 CMD mkdir c:\apache2\logs
 CMD copy c:\apache2\conf\magic.default c:\apache2\conf\magic
 CMD copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
-
 CMD copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
 
-# Append & ver > nul because the find and replace tool sets ERRORLEVEL to the replace count
+# Configure httpd using variables from previous section; must append &ver>nul because the find and replace tool sets ERRORLEVEL to the replace count
 CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
 CMD %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
 CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
 CMD %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
 
-# Add PHP to Apache
+# Configure Apache to use PHP
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initApache.cmd --no-check-certificate -O initApache.cmd
 CMD initApache.cmd
 CMD del initApache.cmd
 
+
+###################################
 # Initialize PHP
-###################
+###################################
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initPHP.cmd --no-check-certificate -O initPHP.cmd
 CMD initPHP.cmd
 CMD del initPHP.cmd
 
+
+###################################
 # Initialize MySQL
-###################
+###################################
 WORKDIR c:\mysql\mysql-5.6.20-win32\bin
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
 CMD initMySQL.cmd
 CMD del initMySQL.cmd
 
+
+###################################
 # Initialize Drupal
-###################
+###################################
+
+# Remove template html files
 WORKDIR c:\apache2\htdocs
 CMD del c:\apache2\htdocs\* /S /Q
+
+# Download and unzip install media
 CMD %spn_wget% http://ftp.drupal.org/files/projects/drupal-7.31.zip
 CMD %spn_7z% x drupal-7.31.zip -oc:\apache2\htdocs\spn_drupal-temp
 CMD del c:\apache2\htdocs\drupal-7.31.zip
@@ -64,22 +79,30 @@ CMD xcopy /s/e c:\apache2\htdocs\spn_drupal-temp\drupal-7.31\*.* .
 CMD del c:\apache2\htdocs\spn_drupal-temp /S /Q
 CMD rmdir c:\apache2\htdocs\spn_drupal-temp /S /Q
 
+# Configure database settings
 CMD copy c:\apache2\htdocs\sites\default\default.settings.php c:\apache2\htdocs\sites\default\settings.php
 CMD %spn_fart% c:\apache2\htdocs\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
 
+
+###################################
 # Startup File
-###################
+###################################
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
 BOOT FILE C:\apache2\spn_start.cmd
 
+
+###################################
 # Environmental Variables
-###################
+###################################
 ENV spn_apache c:\apache2\bin\Apache.exe
 ENV spn_apache_path c:\apache2
 ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
 ENV spn_mysql_path c:\mysql
+
+
+###################################
 # Clean up
-###################
+###################################
 WORKDIR c:\
 CMD del c:\fart /S /Q
 CMD rmdir C:\fart /S /Q

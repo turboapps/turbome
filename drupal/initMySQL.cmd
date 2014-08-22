@@ -9,7 +9,9 @@ set spn_temp_count=0
 
 
 
-REM create database
+REM ### LOOP #######################################
+REM Attempt to create the database 5 times, quit if all fail
+REM On slow machines, mysqld may not start fast enough to succed on the first try
 :createDB
 
 REM increment count
@@ -29,6 +31,8 @@ IF %ERRORLEVEL% EQU 0 GOTO succeed
 
 REM retry
 goto createDB
+
+REM ################################################
 
 REM issue exit code on failure
 :fail

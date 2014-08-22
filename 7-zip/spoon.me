@@ -1,32 +1,45 @@
 #
 # 7-Zip Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/tree/master/7-zip
 #
-# https://github.com/spoonium/spoonme/7-zip
-#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
 
+###################################
 # Pull dependency images
+###################################
 FROM spoonbrew/wget
 
-# Prepare environmnet
+###################################
+# Download and install
+###################################
+
+# Create temp and app directory
 CMD mkdir c:\7zip_temp
 CMD mkdir c:\7zip
 
-# Download installation media
+# Download and unzip
 WORKDIR C:\7zip_temp
 CMD %spn_wget% http://downloads.sourceforge.net/sevenzip/7z920.exe
 
 # Install
 CMD 7z920.exe /S /D=C:\7zip
 
+
+###################################
+# Environmental Variables
+###################################
+ENV spn_7z C:\7zip\7z.exe
+ENV spn_7zFM C:\7zip\7zFM.exe
+ENV spn_7zip_path C:\7zip
+
+
+###################################
 # Clean up
+###################################
 WORKDIR C:\
 CMD del c:\7zip_temp /S /Q
 CMD del c:\wget /S /Q
 CMD rmdir C:\7zip_temp /S /Q
 CMD rmdir C:\wget /S /Q
-
-# Environmental Variables
-ENV spn_7z C:\7zip\7z.exe
-ENV spn_7zFM C:\7zip\7zFM.exe
-ENV spn_7zip_path C:\7zip
