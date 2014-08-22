@@ -26,6 +26,7 @@ CMD del sqlite3.zip /Q
 CMD npm install --production
 
 # Startup File
+CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
 BOOT FILE C:\ghost\spn_start.cmd
 
 # Clean up
