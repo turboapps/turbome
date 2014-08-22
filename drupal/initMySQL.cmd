@@ -11,7 +11,7 @@ set spn_temp_count=0
 
 REM ### LOOP #######################################
 REM Attempt to create the database 5 times, quit if all fail
-REM On slow machines, mysqld may not start fast enough to succed on the first try
+REM On slow machines, mysqld may not start fast enough to succeed on the first try
 :createDB
 
 REM increment count
@@ -20,7 +20,7 @@ set /A spn_temp_count=%spn_temp_count%+1
 REM sleep for 5 seconds
 ping -n 6 127.0.0.1 > nul
 
-REM pass database instruction file to toecho %ERR mysql
+REM pass database instruction file to mysql.exe
 mysql -u root < spn_cmd.txt
 
 REM if this fails more than 5 times, then fail the setup

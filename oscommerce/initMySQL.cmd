@@ -2,7 +2,7 @@ REM start mysql daemon/service
 start "mysql" mysqld.exe
 
 REM create database instruction file
-echo CREATE DATABASE wordpress;> spn_cmd.txt
+echo CREATE DATABASE oscommerce;> spn_cmd.txt
 
 REM create count variable for retries
 set spn_temp_count=0
