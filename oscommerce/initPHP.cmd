@@ -6,3 +6,6 @@ REM Uncomment extension directory and give full path. Cannot use relative path u
 
 REM uncomment requirement extension
 %spn_fart% c:\php\php.ini ";extension=php_mysql.dll" "extension=php_mysql.dll"  & ver > nul
+%spn_fart% c:\php\php.ini ";extension=php_gd2.dll" "extension=php_gd2.dll"  & ver > nul
+%spn_fart% c:\php\php.ini ";extension=php_curl.dll" "extension=php_curl.dll"  & ver > nul
+%spn_fart% c:\php\php.ini ";extension=php_openssl.dll" "extension=php_openssl.dll"  & ver > nul

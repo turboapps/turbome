@@ -76,10 +76,14 @@ CMD %spn_wget% http://www.oscommerce.com/files/oscommerce-2.3.4.zip -O oscommerc
 CMD %spn_7z% x oscommerce.zip -oc:\apache2\htdocs\spn_oscommerce-temp
 CMD del c:\apache2\htdocs\oscommerce.zip
 CMD xcopy /s/e c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\catalog\*.*
-CMD xcopy /s/e c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\docs\*.* C:\oscommerce\docs
-CMD copy c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\README.MD C:\oscommerce\docs\
+CMD xcopy /s/e c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\docs\*.* C:\oscommerce_docs\
+CMD copy c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\README.MD C:\oscommerce_docs\README.MD
 CMD del c:\apache2\htdocs\spn_oscommerce-temp /S /Q
 CMD rmdir c:\apache2\htdocs\spn_oscommerce-temp /S /Q
+
+# Pre-configure database
+CMD %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', null, 'class=" "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', 'root', 'class="
+CMD %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', null, 'class=" "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', 'oscommerce', 'class="
 
 
 ###################################
