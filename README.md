@@ -5,7 +5,7 @@ The official repository for trusted Spoon.me builds of popular open source proje
 ## License
 |                      |                                          |
 |:---------------------|:-----------------------------------------|
-| **Author:**          | Oleg Somphane (<oleg@spoon.net>)
+| **Author:**          | The Spoonium Team (<support@spoonium.net>)
 | **Copyright:**       | Copyright (c) 2014 Code Systems, Inc.
 | **License:**         | Apache License, Version 2.0
 
