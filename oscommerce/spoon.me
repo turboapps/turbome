@@ -82,8 +82,8 @@ CMD del c:\apache2\htdocs\spn_oscommerce-temp /S /Q
 CMD rmdir c:\apache2\htdocs\spn_oscommerce-temp /S /Q
 
 # Pre-configure database
-CMD %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', null, 'class=" "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', 'root', 'class="
-CMD %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', null, 'class=" "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', 'oscommerce', 'class="
+CMD %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', null, 'class=" "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', 'root', 'class=" & ver > nul
+CMD %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', null, 'class=" "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', 'oscommerce', 'class=" & ver > nul
 
 
 ###################################
