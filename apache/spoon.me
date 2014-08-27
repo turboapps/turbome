@@ -15,9 +15,9 @@ FROM spoonbrew/apache,spoonbrew/fart
 #### Configure these variables ####
 ###################################
 
-ENV spn_config_Port 8080
-ENV spn_config_ServerAdmin me@domain.com
-ENV spn_config_DomainName domain.com
+ENV spn_config_Port=8080
+ENV spn_config_ServerAdmin=me@domain.com
+ENV spn_config_DomainName=domain.com
 
 ###################################
 
@@ -47,5 +47,5 @@ CMD rmdir C:\fart /S /Q
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_apache C:\apache2\bin\Apache.exe
-ENV spn_apache_path c:\apache2
+ENV spn_apache=C:\apache2\bin\Apache.exe
+ENV spn_apache_path=c:\apache2

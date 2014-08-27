@@ -16,11 +16,11 @@ FROM spoonbrew/wget,spoonbrew/fart,spoonbrew/7zip,spoonbrew/apache,spoonbrew/php
 # Configure these variables
 ###################################
 
-ENV spn_config_Port 8080
-ENV spn_config_ServerAdmin me@domain.com
-ENV spn_config_DomainName domain.com
-# To be implemented ENV spn_config_mySQL_User wordpressuser
-# To be implemented ENV spn_config_mySQL_Password wordpresspassword
+ENV spn_config_Port=8080
+ENV spn_config_ServerAdmin=me@domain.com
+ENV spn_config_DomainName=domain.com
+# To be implemented ENV spn_config_mySQL_User=wordpressuser
+# To be implemented ENV spn_config_mySQL_Password=wordpresspassword
 
 
 ###################################
@@ -96,10 +96,10 @@ STARTUP FILE C:\apache2\spn_start.cmd
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_apache c:\apache2\bin\Apache.exe
-ENV spn_apache_path c:\apache2
-ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
-ENV spn_mysql_path c:\mysql
+ENV spn_apache=c:\apache2\bin\Apache.exe
+ENV spn_apache_path=c:\apache2
+ENV spn_mysqld=c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
+ENV spn_mysql_path=c:\mysql
 
 
 ###################################

@@ -24,15 +24,15 @@ WORKDIR C:\7zip_temp
 CMD %spn_wget% http://downloads.sourceforge.net/sevenzip/7z920.exe
 
 # Install
-CMD 7z920.exe /S /D=C:\7zip
+CMD 7z920.exe /S /D="C:\7zip"
 
 
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_7z C:\7zip\7z.exe
-ENV spn_7zFM C:\7zip\7zFM.exe
-ENV spn_7zip_path C:\7zip
+ENV spn_7z=C:\7zip\7z.exe
+ENV spn_7zFM=C:\7zip\7zFM.exe
+ENV spn_7zip_path=C:\7zip
 
 
 ###################################
