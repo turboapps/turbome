@@ -26,10 +26,52 @@ CMD %spn_7z% x -xr!*.pdb mysql-5.6.20-win32.zip
 
 
 ###################################
+# Remove unnecessary files
+###################################
+CMD del c:\mysql\mysql-5.6.20-win32\mysql-test\*.* /S /Q
+CMD rmdir c:\mysql\mysql-5.6.20-win32\mysql-test\ /S /Q
+CMD del c:\mysql\mysql-5.6.20-win32\sql-bench\*.* /S /Q
+CMD rmdir c:\mysql\mysql-5.6.20-win32\sql-bench\ /S /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\debug\*.* /S /Q
+CMD rmdir c:\mysql\mysql-5.6.20-win32\lib\debug\ /S /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\debug\*.* /S /Q
+CMD rmdir c:\mysql\mysql-5.6.20-win32\lib\plugin\debug\ /S /Q
+
+CMD del c:\mysql\mysql-5.6.20-win32\bin\echo.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\bin\mysql_client_test.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\bin\mysql_client_test_embedded.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\bin\mysqld-debug.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\bin\mysqltest.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\bin\mysqltest_embedded.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\bin\replace.exe /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\daemon_example.ini /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\adt_null.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\auth.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\auth_test_plugin.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\libdaemon_example.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\mypluglib.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\qa_auth_client.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\qa_auth_interface.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\qa_auth_server.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\semisync_master.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\semisync_slave.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\plugin\validate_password.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\libmysql.dll /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\libmysqld.dll /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\libmysql.lib /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\libmysqld.lib /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\mysqlclient.lib /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\mysqlserver.lib /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\mysqlservices.lib /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\libmysql.pdb /Q
+CMD del c:\mysql\mysql-5.6.20-win32\lib\libmysqld.pdb /Q
+
+
+###################################
 # Environmental Variables
 ###################################
-ENV spn_mysqld c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
-ENV spn_mysql_path c:\mysql\mysql-5.6.20-win32
+ENV spn_mysqld=c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
+ENV spn_mysql_path=c:\mysql\mysql-5.6.20-win32
 
 
 ###################################
@@ -37,10 +79,6 @@ ENV spn_mysql_path c:\mysql\mysql-5.6.20-win32
 ###################################
 WORKDIR C:\
 CMD del C:\mysql\mysql-5.6.20-win32.zip
-CMD del c:\mysql\mysql-5.6.20-win32\mysql-test\*.* /S /Q
-CMD rmdir c:\mysql\mysql-5.6.20-win32\mysql-test\ /S /Q
-CMD del c:\mysql\mysql-5.6.20-win32\sql-bench\*.* /S /Q
-CMD rmdir c:\mysql\mysql-5.6.20-win32\sql-bench\ /S /Q
 
 CMD del c:\7zip /S /Q
 CMD del c:\wget /S /Q

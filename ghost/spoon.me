@@ -25,11 +25,6 @@ CMD %spn_wget% https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
 CMD %spn_7z% x ghost-0.5.0.zip
 CMD del ghost-0.5.0.zip /Q
 
-# Download and unzip sqlite3 dependency
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/sqlite3-2.2.3.zip --no-check-certificate -O sqlite3.zip
-CMD %spn_7z% x sqlite3.zip
-CMD del sqlite3.zip /Q
-
 # NPM install app
 CMD npm install --production
 
@@ -38,13 +33,13 @@ CMD npm install --production
 # Startup File
 ###################################
 CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
-BOOT FILE C:\ghost\spn_start.cmd
+STARTUP FILE C:\ghost\spn_start.cmd
 
 
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_ghost_path C:\ghost
+ENV spn_ghost_path=C:\ghost
 
 
 ###################################
