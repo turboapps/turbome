@@ -1,0 +1,18 @@
+FROM spoonbrew/wget,spoonbrew/7zip
+
+CMD mkdir c:\boxstarter
+WORKDIR C:\boxstarter
+ 
+CMD %spn_wget% http://boxstarter.org/downloads/Boxstarter.2.4.88.zip
+CMD %spn_7z% x Boxstarter.2.4.88.zip
+CMD setup.bat -Force
+
+CMD XCOPY /E /Y %AppData%\Boxstarter c:\boxstarter
+CMD powershell -command "(Get-Content c:\ProgramData\chocolatey\bin\BoxstarterShell.bat) | % { $_.Replace('%AppData%\Boxstarter', 'c:\Boxstarter') } | Set-Content c:\ProgramData\chocolatey\bin\BoxstarterShell.bat"
+
+ENV ChocolateyInstall=c:\ProgramData\chocolatey
+ENV path=c:\ProgramData\chocolatey\bin
+
+ENABLE IndicateElevated
+
+Startup File c:\ProgramData\chocolatey\bin\BoxstarterShell.bat
