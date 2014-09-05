@@ -11,6 +11,7 @@ Version: 2.4.88
 .net 4 or higher on the host or base container. This is preinstalled on Windows 8 and Server 2012.
 
 To build: 
+Builds and `spoon run` must be performed from an admin command console or the Boxstarter console will fail to load.
 
 ```
         spoon build -n=boxstarter /path/to/spoon.me
