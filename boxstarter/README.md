@@ -1,4 +1,4 @@
-# Apache
+# Boxstarter
 
 Project website: http://boxstarter.org/
 
