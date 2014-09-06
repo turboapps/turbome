@@ -9,43 +9,49 @@
 ###################################
 # Pull dependency images
 ###################################
-FROM spoonbrew/apache,spoonbrew/fart
+
+from spoonbrew/apache
+using spoonbrew/fart
+
 
 ###################################
 #### Configure these variables ####
 ###################################
 
-ENV spn_config_Port=8080
-ENV spn_config_ServerAdmin=me@domain.com
-ENV spn_config_DomainName=domain.com
+env spn_config_Port=8080
+env spn_config_ServerAdmin=me@domain.com
+env spn_config_DomainName=domain.com
 
 ###################################
 
 # Initialize Apache
-WORKDIR c:\apache2
-CMD mkdir c:\apache2\logs
-CMD copy c:\apache2\conf\magic.default c:\apache2\conf\magic
-CMD copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
+workdir c:\apache2
+cmd mkdir c:\apache2\logs
+cmd copy c:\apache2\conf\magic.default c:\apache2\conf\magic
+cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
 
-CMD copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
+cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
 
 # Append & ver > nul because the find and replace tool sets ERRORLEVEL to the replace count
-CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-CMD %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-CMD %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-CMD %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
+cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
+cmd %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
+cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
+cmd %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
 
 #STARTUP C:\Apache2\bin\Apache.exe
+
 
 ###################################
 # Clean up
 ###################################
-WORKDIR c:\
-CMD del c:\fart /S /Q
-CMD rmdir C:\fart /S /Q
+
+workdir c:\
+cmd del c:\fart /S /Q
+cmd rmdir C:\fart /S /Q
 
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_apache=C:\apache2\bin\Apache.exe
-ENV spn_apache_path=c:\apache2
+
+env spn_apache=C:\apache2\bin\Apache.exe
+env spn_apache_path=c:\apache2

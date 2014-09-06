@@ -10,36 +10,37 @@
 # Pull dependency images
 ###################################
 
-FROM spoonbrew/scratch
-USING spoonbrew/wget
+from spoonbrew/scratch
+using spoonbrew/wget
+
 
 ###################################
 # Download and install
 ###################################
 
 # Create temp and app directory
-CMD mkdir c:\anaconda_temp
+cmd mkdir c:\anaconda_temp
 
 # Download and unzip
-WORKDIR c:\anaconda_temp
-CMD %spn_wget% http://repo.continuum.io/anaconda3/Anaconda3-2.0.1-Windows-x86.exe -O Anaconda3-2.0.1-Windows-x86.exe
+workdir c:\anaconda_temp
+cmd %spn_wget% http://repo.continuum.io/anaconda3/Anaconda3-2.0.1-Windows-x86.exe -O Anaconda3-2.0.1-Windows-x86.exe
 
 # Install
-CMD Anaconda3-2.0.1-Windows-x86.exe /S "/D=C:\anaconda"
+cmd Anaconda3-2.0.1-Windows-x86.exe /S "/D=C:\anaconda"
 
 
 ###################################
 # Environmental Variables
 ###################################
 
-ENV path=C:\anaconda
-ENV path=C:\anaconda\scripts
+env path=C:\anaconda
+env path=C:\anaconda\scripts
 
 
 ###################################
 # Clean up
 ###################################
 
-WORKDIR C:\
-CMD del c:\anaconda_temp /S /Q
-CMD rmdir C:\anaconda_temp /S /Q
+workdir C:\
+cmd del c:\anaconda_temp /S /Q
+cmd rmdir C:\anaconda_temp /S /Q

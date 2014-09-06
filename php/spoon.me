@@ -9,7 +9,9 @@
 ###################################
 # Pull dependency images
 ###################################
-FROM spoonbrew/wget,spoonbrew/7zip
+
+from spoonbrew/scratch
+using spoonbrew/wget,spoonbrew/7zip
 
 
 ###################################
@@ -17,27 +19,29 @@ FROM spoonbrew/wget,spoonbrew/7zip
 ###################################
 
 # Create app directory
-CMD mkdir c:\php
-WORKDIR C:\php
+cmd mkdir c:\php
+workdir C:\php
 
 # Download and unzip installation media
-CMD %spn_wget% http://windows.php.net/downloads/releases/archives/php-5.3.5-Win32-VC6-x86.zip
-CMD %spn_7z% x php-5.3.5-Win32-VC6-x86.zip
+cmd %spn_wget% http://windows.php.net/downloads/releases/archives/php-5.3.5-Win32-VC6-x86.zip
+cmd %spn_7z% x php-5.3.5-Win32-VC6-x86.zip
 
 
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_php=c:\php\php.exe
-ENV spn_php_path=c:\php
+
+env spn_php=c:\php\php.exe
+env spn_php_path=c:\php
 
 
 ###################################
 # Clean up
 ###################################
-WORKDIR C:\
-CMD del c:\7zip /S /Q
-CMD del c:\wget /S /Q
-CMD rmdir C:\7zip /S /Q
-CMD rmdir C:\wget /S /Q
-CMD del c:\php\php-5.3.5-Win32-VC6-x86.zip /Q
+
+workdir C:\
+cmd del c:\7zip /S /Q
+cmd del c:\wget /S /Q
+cmd rmdir C:\7zip /S /Q
+cmd rmdir C:\wget /S /Q
+cmd del c:\php\php-5.3.5-Win32-VC6-x86.zip /Q

@@ -9,7 +9,9 @@
 ###################################
 # Pull dependency images
 ###################################
-FROM spoonbrew/wget,spoonbrew/7zip,spoonbrew/node
+
+from spoonbrew/node
+using spoonbrew/wget,spoonbrew/7zip
 
 
 ###################################
@@ -17,36 +19,39 @@ FROM spoonbrew/wget,spoonbrew/7zip,spoonbrew/node
 ###################################
 
 # Create app directory
-CMD mkdir c:\ghost
-WORKDIR C:\ghost
+cmd mkdir c:\ghost
+workdir C:\ghost
 
 # Download and unzip
-CMD %spn_wget% https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
-CMD %spn_7z% x ghost-0.5.0.zip
-CMD del ghost-0.5.0.zip /Q
+cmd %spn_wget% https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
+cmd %spn_7z% x ghost-0.5.0.zip
+cmd del ghost-0.5.0.zip /Q
 
 # NPM install app
-CMD npm install --production
+cmd npm install --production
 
 
 ###################################
 # Startup File
 ###################################
-CMD %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
-STARTUP FILE C:\ghost\spn_start.cmd
+
+cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
+startup file C:\ghost\spn_start.cmd
 
 
 ###################################
 # Environmental Variables
 ###################################
-ENV spn_ghost_path=C:\ghost
+
+env spn_ghost_path=C:\ghost
 
 
 ###################################
 # Clean up
 ###################################
-WORKDIR C:\
-CMD del c:\7zip /S /Q
-CMD del c:\wget /S /Q
-CMD rmdir C:\7zip /S /Q
-CMD rmdir C:\wget /S /Q
+
+workdir C:\
+cmd del c:\7zip /S /Q
+cmd del c:\wget /S /Q
+cmd rmdir C:\7zip /S /Q
+cmd rmdir C:\wget /S /Q
