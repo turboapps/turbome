@@ -74,7 +74,7 @@ workdir c:\apache2\htdocs
 cmd del c:\apache2\htdocs\* /S /Q
 
 # Download and unzip install media
-cmd %spn_wget% http://wordpress.org/latest.zip
+cmd %spn_wget% http://wordpress.org/latest.zip --no-check-certificate -O latest.zip
 cmd %spn_7z% x latest.zip -oc:\apache2\htdocs\spn_wordpress-temp
 cmd del c:\apache2\htdocs\latest.zip
 cmd xcopy /s/e c:\apache2\htdocs\spn_wordpress-temp\wordpress\*.* .
