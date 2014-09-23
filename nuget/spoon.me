@@ -1,0 +1,10 @@
+from spoonbrew/dotnet:4.0.3
+using wget 7zip
+cmd echo Version is %VERSION%
+cmd mkdir C:\NuGet
+cmd %spn_wget% http://nuget.org/nuget.exe -O nuget.exe
+cmd copy .\nuget.exe C:\NuGet\nuget.exe
+cmd del nuget.exe
+
+
+env PATH=%PATH%;C:\NuGet
