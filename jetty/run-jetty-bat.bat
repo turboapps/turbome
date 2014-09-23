@@ -2,9 +2,9 @@ echo "Starting Jetty"
 echo "Jetty home: %JETTY_HOME%"
 echo "Web apps are in: %WEB_APPS%"
 
-IF "%WAR_FILE%"=="" GOTO start-jetty
-echo "Coping %WAR_FILE% to %WEB_APPS%"
-xcopy %WAR_FILE% %WEB_APPS%
+IF "%1"=="" GOTO start-jetty
+echo "Coping %1 to %WEB_APPS%"
+xcopy %1 %WEB_APPS%
 
 
 
