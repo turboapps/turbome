@@ -1,0 +1,10 @@
+from spoonbrew/jdk:7.65
+cmd echo Version is %VERSION%
+cmd mkdir C:\Maven\
+cmd xcopy /E C:\Maven\* .\dist\*
+
+env JAVA_HOME="C:\Program Files (x86)\Java\jdk1.7.0_65"
+env JAVACMD="C:\Program Files (x86)\Java\jdk1.7.0_65\bin\java"
+env MAVEN_HOME=C:\Maven\
+
+env PATH=%PATH%;C:\Maven\bin
