@@ -1,0 +1,15 @@
+from jre:7.51
+using wget 7zip
+cmd %spn_wget% http://ftp.kaist.ac.kr/eclipse/jetty/stable-9/dist/jetty-distribution-9.2.3.v20140905.zip -O jetty.zip
+cmd %spn_7z% x jetty.zip -oC:\Jetty
+cmd del jetty.zip
+cmd xcopy /E C:\Jetty\jetty-distribution-9.2.3.v20140905\* C:\Jetty\*
+cmd rd /S /Q C:\Jetty\jetty-distribution-9.2.3.v20140905\
+
+env JAVA_HOME="C:\Program Files (x86)\Java\jre7"
+env JETTY_HOME=C:\Jetty\
+env WEB_APPS=C:\Jetty\webapps
+
+cmd copy .\run-jetty-bat.bat C:\Jetty\run-jetty-bat.bat
+
+startup file ("C:\Jetty\run-jetty-bat.bat")

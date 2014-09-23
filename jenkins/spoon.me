@@ -1,0 +1,14 @@
+from spoonbrew/jdk:8.0,spoonbrew/jdk:7.65,maven:head,roman-dev-user/jetty:9.2.3.v20140905
+using wget 7zip
+cmd %spn_wget% http://mirrors.jenkins-ci.org/war/latest/jenkins.war -O jenkins.war
+
+# Let's configure Jenkins a bit
+env JAVA_HOME="C:\Program Files (x86)\Java\jdk1.8.0"
+env JENKINS_HOME=C:\JenkinsHome
+cmd mkdir C:\JenkinsHome
+cmd copy .\config.xml C:\JenkinsHome\config.xml 
+cmd copy .\hudson.tasks.Maven.xml C:\JenkinsHome\hudson.tasks.Maven.xml
+
+cmd copy /Y .\jenkins.war %WEB_APPS%\jenkins.war
+cmd copy /Y .\jenkins.xml %WEB_APPS%\jenkins.xml
+

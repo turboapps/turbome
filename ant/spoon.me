@@ -1,0 +1,14 @@
+from spoonbrew/jdk:7.65
+using wget 7zip
+cmd echo Version is %VERSION%
+cmd %spn_wget% http://apache.tt.co.kr/ant/binaries/apache-ant-%VERSION%-bin.zip -O ant.zip
+cmd %spn_7z% x ant.zip -oC:\Ant\
+cmd xcopy /E C:\Ant\apache-ant-%VERSION%\* C:\Ant\*
+cmd del ant.zip
+cmd rd /S /Q C:\Ant\apache-ant-%VERSION%\
+
+env JAVA_HOME="C:\Program Files (x86)\Java\jdk1.7.0_65"
+env JAVACMD="C:\Program Files (x86)\Java\jdk1.7.0_65\bin\java"
+env ANT_HOME=C:\Ant\
+
+env PATH=%PATH%;C:\Ant\bin
