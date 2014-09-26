@@ -6,14 +6,34 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 
-# Pull prerequisite images
 ###################################
-FROM oleg@spoon.net/net:4.0.3,oleg@spoon.net/net:3.5,spoonbrew/git
+# Pull dependency images
+###################################
 
+from spoonbrew/dotnet:4.0.3
+using spoonbrew/dotnet:3.5.1,spoonbrew/git
+
+
+###################################
 # Download source code
-CMD git clone git://github.com/OpenRA/OpenRA.git "%USERPROFILE%\OpenRA"
+###################################
 
-# Build project
-WORKDIR "%USERPROFILE%\OpenRA\"
-CMD make.cmd dependencies
-CMD make.cmd all
+cmd git clone git://github.com/OpenRA/OpenRA.git "C:\OpenRA"
+
+
+###################################
+# Compile source code
+###################################
+
+workdir "C:\OpenRA\"
+cmd make.cmd dependencies
+cmd make.cmd all
+
+
+###################################
+# Startup File
+###################################
+
+cmd echo cd C:\OpenRA > C:\OpenRA\spn_start.cmd
+cmd echo OpenRA.Game.exe >> C:\OpenRA\spn_start.cmd
+startup file ("C:\OpenRA\spn_start.cmd")
