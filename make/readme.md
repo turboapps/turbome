@@ -1,6 +1,6 @@
-Make for Windows Spoon Container
+Make for Windows 
 ================
-Make build tool, see http://gnuwin32.sourceforge.net/packages/make.htm
+Make build tool, see http://www.mingw.org/
 
 ```
 spoon build -n=make make/spoon.me

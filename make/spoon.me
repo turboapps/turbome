@@ -1,48 +1,15 @@
 #
-# Make Spoon.me file
-# http://gnuwin32.sourceforge.net/packages/make.htm
+# Make spoon.me file
+# http://www.mingw.org/
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
 
-###################################
-# Pull dependency images
-###################################
+from mingw
+ 
+cmd mingw-get install mingw32-make
+cmd copy C:\MinGW\bin\mingw32-make.exe C:\MinGW\bin\make.exe
+ 
+env path=C:\MinGW\bin
 
-from scratch
-using wget,7zip
-
-
-###################################
-# Download and install
-###################################
-
-# Create app directory
-cmd mkdir c:\make
-workdir C:\make
-
-# Download and unzip
-cmd %spn_wget% http://sunet.dl.sourceforge.net/project/gnuwin32/make/3.81/make-3.81-bin.zip --no-check-certificate
-cmd %spn_7z% x make-3.81-bin.zip
-cmd del make-3.81-bin.zip /Q
-
-cmd %spn_wget% http://freefr.dl.sourceforge.net/project/gnuwin32/make/3.81/make-3.81-dep.zip --no-check-certificate
-cmd %spn_7z% x make-3.81-dep.zip
-cmd del make-3.81-dep.zip /Q
-
-# Add to path
-cmd copy C:\make\bin\*.* C:\Windows\System32
-
-
-###################################
-# Clean up
-###################################
-
-workdir C:\
-cmd del c:\make /S /Q
-cmd del c:\7zip /S /Q
-cmd del c:\wget /S /Q
-cmd rmdir C:\make /S /Q
-cmd rmdir C:\7zip /S /Q
-cmd rmdir C:\wget /S /Q
