@@ -4,7 +4,7 @@ The official repository for trusted build scripts for popular open source projec
 
 *Have a script to contribute?* Send a pull request and we'll send you an awesome Spoon T-shirt!
 
-*If you are the owner of a project*, please contact *support@spoonium.net* and we can set you up
+*If you are the owner of a project*, please contact *support@spoon.net* and we can set you up
 with an official project account.
 
 ## What is a `spoon.me` file?
@@ -12,8 +12,8 @@ with an official project account.
 `spoon.me` files are SpoonScripts that contain instructions to automatically package applications. By
 convention, packaging scripts are named `spoon.me` and placed in the root of a repository.
 
-Spoon containers can be shared on the [Spoonium.net](http://spoonium.net) online hub and deployed
-to end users on the [Spoon.net](http://spoon.net) application hosting service.
+Spoon containers can be shared on the [Spoon.net](http://spoon.net) online hub and deployed
+to end users on the [Turbo.net](http://turbo.net) desktop hosting service.
 
 ## License
 |                      |                                          |
