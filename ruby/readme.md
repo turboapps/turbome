@@ -1,6 +1,6 @@
 Ruby for Windows 
 ================
-Ruby lang, see http://www.ruby-lang.org/
+Ruby Windows Installer, see http://www.rubyinstaller.org/
 
 It installs to `C:\ruby213`
 
