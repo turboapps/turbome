@@ -1,0 +1,24 @@
+#
+# Ruby for Windows spoon.me file
+# http://www.rubyinstaller.org/
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+from scratch
+using wget
+
+workdir C:\
+cmd mkdir C:\ruby213
+
+# Download and install
+cmd %spn_wget% http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.1.3.exe?direct --no-check-certificate
+cmd move rubyinstaller-2.1.3.exe@direct rubyinstaller-2.1.3.exe
+
+cmd ("rubyinstaller-2.1.3.exe", "/verysilent", "/dir=C:\ruby213")
+
+# Cleanup
+cmd del rubyinstaller-2.1.3.exe /Q
+
+# Add binaries to path
+env path=C:\ruby213\bin
