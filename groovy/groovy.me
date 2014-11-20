@@ -1,0 +1,8 @@
+from oracle/jre:7.51
+using wget 7zip
+cmd %spn_wget% http://dl.bintray.com/groovy/maven/groovy-binary-2.3.6.zip -O groovy-binary-2.3.6.zip
+cmd %spn_7z% x groovy-binary-2.3.6.zip -oc:\Groovy
+
+env GROOVY_HOME=c:/Groovy/groovy-2.3.6
+env spn_groovy=c:/Groovy/groovy-2.3.6/bin/groovy
+env PATH=%PATH%;C:/Groovy/groovy-2.3.6/bin/
