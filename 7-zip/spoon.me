@@ -10,41 +10,33 @@
 # Pull dependency images
 ###################################
 
-from spoonbrew/scratch
-using spoonbrew/wget
+from clean
+using gnu/wget
 
 
 ###################################
 # Download and install
 ###################################
 
-# Create temp and app directory
-cmd mkdir c:\7zip_temp
-cmd mkdir c:\7zip
+# Set workdir
+workdir C:\
 
-# Download and unzip
-workdir C:\7zip_temp
-cmd %spn_wget% http://downloads.sourceforge.net/sevenzip/7z920.exe
+# Download
+cmd wget.exe http://downloads.sourceforge.net/sevenzip/7z920.exe
 
 # Install
-cmd 7z920.exe /S "/D=C:\7zip"
+cmd 7z920.exe /S 
 
 
 ###################################
 # Environmental Variables
 ###################################
 
-env spn_7z=C:\7zip\7z.exe
-env spn_7zFM=C:\7zip\7zFM.exe
-env spn_7zip_path=C:\7zip
+env path=@PROGRAMFILESX86@\7-zip
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir C:\
-cmd del c:\7zip_temp /S /Q
-cmd del c:\wget /S /Q
-cmd rmdir C:\7zip_temp /S /Q
-cmd rmdir C:\wget /S /Q
+cmd del c:\7z920.exe /Q
