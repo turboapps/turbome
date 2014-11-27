@@ -10,37 +10,43 @@
 # Pull dependency images
 ###################################
 
-from spoonbrew/scratch
-using spoonbrew/wget
+from clean
+using gnu/wget
 
 
 ###################################
 # Download and install
 ###################################
 
-# Create temp and app directory
-cmd mkdir c:\anaconda_temp
+# Set workdir
+workdir C:\
 
-# Download and unzip
-workdir c:\anaconda_temp
-cmd %spn_wget% http://repo.continuum.io/anaconda3/Anaconda3-2.0.1-Windows-x86.exe -O Anaconda3-2.0.1-Windows-x86.exe
+# Download
+cmd wget.exe http://repo.continuum.io/anaconda3/Anaconda3-2.1.0-Windows-x86.exe -O Anaconda3-2.1.0-Windows-x86.exe
 
 # Install
-cmd Anaconda3-2.0.1-Windows-x86.exe /S "/D=C:\anaconda"
+cmd Anaconda3-2.1.0-Windows-x86.exe /S "/D=C:\Anaconda3"
 
 
 ###################################
 # Environmental Variables
 ###################################
 
-env path=C:\anaconda
-env path=C:\anaconda\scripts
+# No variables needed
+
+
+###################################
+# Startup File
+###################################
+
+# You may change the startup file by uncommenting one of the following lines:
+startup file ("@PROGRAMS@\Anaconda (32-bit)\Anaconda Command Prompt.lnk")
+# startup file ("@PROGRAMS@\Anaconda (32-bit)\Launcher.lnk")
+# startup file ("@PROGRAMS@\Anaconda (32-bit)\Spyder.lnk")
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir C:\
-cmd del c:\anaconda_temp /S /Q
-cmd rmdir C:\anaconda_temp /S /Q
+cmd del C:\Anaconda3-2.1.0-Windows-x86.exe /Q
