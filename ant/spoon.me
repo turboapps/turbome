@@ -1,5 +1,5 @@
-from spoonbrew/jdk:7.65
-using wget 7zip
+from jdk:7.65
+using wget 7-zip
 cmd echo Version is %VERSION%
 cmd %spn_wget% http://apache.tt.co.kr/ant/binaries/apache-ant-%VERSION%-bin.zip -O ant.zip
 cmd %spn_7z% x ant.zip -oC:\Ant\

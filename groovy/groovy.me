@@ -1,5 +1,5 @@
-from oracle/jre:7.51
-using wget 7zip
+from jre:7.51
+using wget 7-zip
 cmd %spn_wget% http://dl.bintray.com/groovy/maven/groovy-binary-2.3.6.zip -O groovy-binary-2.3.6.zip
 cmd %spn_7z% x groovy-binary-2.3.6.zip -oc:\Groovy
 

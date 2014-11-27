@@ -1,5 +1,5 @@
-from oracle/jdk:8.0
-using wget 7zip
+from jdk:8.0
+using wget 7-zip
 cmd %spn_wget% http://repo.spring.io/release/org/springframework/boot/spring-boot-cli/1.1.9.RELEASE/spring-boot-cli-1.1.9.RELEASE-bin.zip -O spring-boot.zip
 cmd %spn_7z% x spring-boot.zip -oc:\spring-boot
 
