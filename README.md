@@ -18,7 +18,7 @@ to end users on the [Turbo.net](http://turbo.net) desktop hosting service.
 ## License
 |                      |                                          |
 |:---------------------|:-----------------------------------------|
-| **Author:**          | The Spoonium Team at Spoon (<support@spoonium.net>)
+| **Author:**          | Spoon (<support@spoon.net>)
 | **Copyright:**       | Copyright (c) 2014 Spoon
 | **License:**         | Apache License, Version 2.0
 
