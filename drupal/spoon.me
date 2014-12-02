@@ -10,8 +10,8 @@
 # Pull dependency images
 ###################################
 
-from spoonbrew/apache,spoonbrew/php,spoonbrew/mysql
-using spoonbrew/wget,spoonbrew/fart,spoonbrew/7zip
+from apache,php,mysql
+using wget,fart,7-zip
 
 
 ###################################
@@ -77,7 +77,7 @@ cmd del c:\apache2\htdocs\* /S /Q
 
 # Download and unzip install media
 cmd %spn_wget% http://ftp.drupal.org/files/projects/drupal-7.31.zip
-cmd %spn_7z% x drupal-7.31.zip -oc:\apache2\htdocs\spn_drupal-temp
+cmd 7z x drupal-7.31.zip -oc:\apache2\htdocs\spn_drupal-temp
 cmd del c:\apache2\htdocs\drupal-7.31.zip
 cmd xcopy /s/e c:\apache2\htdocs\spn_drupal-temp\drupal-7.31\*.* .
 cmd del c:\apache2\htdocs\spn_drupal-temp /S /Q
