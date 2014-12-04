@@ -12,7 +12,7 @@ workdir C:\
 cmd mkdir C:\ruby213
 
 # Download and install
-cmd %spn_wget% http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.1.3.exe?direct --no-check-certificate
+cmd wget http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.1.3.exe?direct --no-check-certificate
 cmd move rubyinstaller-2.1.3.exe@direct rubyinstaller-2.1.3.exe
 
 cmd ("rubyinstaller-2.1.3.exe", "/verysilent", "/dir=C:\ruby213")

@@ -3,8 +3,8 @@ FROM wget,7-zip
 CMD mkdir c:\boxstarter
 WORKDIR C:\boxstarter
  
-CMD %spn_wget% http://boxstarter.org/downloads/Boxstarter.2.4.88.zip
-CMD %spn_7z% x Boxstarter.2.4.88.zip
+CMD wget http://boxstarter.org/downloads/Boxstarter.2.4.88.zip
+CMD 7z x Boxstarter.2.4.88.zip
 CMD setup.bat -Force
 
 CMD XCOPY /E /Y %AppData%\Boxstarter c:\boxstarter

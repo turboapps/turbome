@@ -23,8 +23,8 @@ cmd mkdir c:\mysql
 workdir C:\mysql
 
 # Download and unzip
-cmd %spn_wget% http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.20-win32.zip
-cmd %spn_7z% x -xr!*.pdb mysql-5.6.20-win32.zip
+cmd wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.20-win32.zip
+cmd 7z x -xr!*.pdb mysql-5.6.20-win32.zip
 
 
 ###################################
