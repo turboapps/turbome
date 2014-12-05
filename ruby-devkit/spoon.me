@@ -13,8 +13,8 @@ cmd mkdir C:\rubydevkit472
 workdir C:\rubydevkit472
 
 # Download DevKit installer and upzip it
-cmd %spn_wget% http://cdn.rubyinstaller.org/archives/devkits/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe --no-check-certificate
-cmd %spn_7z% x DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe
+cmd wget http://cdn.rubyinstaller.org/archives/devkits/DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe --no-check-certificate
+cmd 7z x DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe
 
 # Cleanup
 cmd del DevKit-mingw64-32-4.7.2-20130224-1151-sfx.exe /Q

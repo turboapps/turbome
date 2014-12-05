@@ -23,8 +23,8 @@ cmd mkdir c:\ghost
 workdir C:\ghost
 
 # Download and unzip
-cmd %spn_wget% https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
-cmd %spn_7z% x ghost-0.5.0.zip
+cmd wget https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
+cmd 7z x ghost-0.5.0.zip
 cmd del ghost-0.5.0.zip /Q
 
 # NPM install app
@@ -35,7 +35,7 @@ cmd npm install --production
 # Startup File
 ###################################
 
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
 startup file C:\ghost\spn_start.cmd
 
 

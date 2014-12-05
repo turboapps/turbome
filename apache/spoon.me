@@ -33,10 +33,10 @@ cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
 cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
 
 # Append & ver > nul because the find and replace tool sets ERRORLEVEL to the replace count
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
 
 #STARTUP C:\Apache2\bin\Apache.exe
 

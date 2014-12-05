@@ -37,13 +37,13 @@ cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
 cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
 
 # Configure httpd using variables from previous section; must append &ver>nul because the find and replace tool sets ERRORLEVEL to the replace count
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
 
 # Configure Apache to use PHP
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initApache.cmd --no-check-certificate -O initApache.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initApache.cmd --no-check-certificate -O initApache.cmd
 cmd initApache.cmd
 cmd del initApache.cmd
 
@@ -52,7 +52,7 @@ cmd del initApache.cmd
 # Initialize PHP
 ###################################
 
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initPHP.cmd --no-check-certificate -O initPHP.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initPHP.cmd --no-check-certificate -O initPHP.cmd
 cmd initPHP.cmd
 cmd del initPHP.cmd
 
@@ -62,7 +62,7 @@ cmd del initPHP.cmd
 ###################################
 
 workdir c:\mysql\mysql-5.6.20-win32\bin
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
 cmd initMySQL.cmd
 cmd del initMySQL.cmd
 
@@ -76,7 +76,7 @@ workdir c:\apache2\htdocs
 cmd del c:\apache2\htdocs\* /S /Q
 
 # Download and unzip install media
-cmd %spn_wget% http://ftp.drupal.org/files/projects/drupal-7.31.zip
+cmd wget http://ftp.drupal.org/files/projects/drupal-7.31.zip
 cmd 7z x drupal-7.31.zip -oc:\apache2\htdocs\spn_drupal-temp
 cmd del c:\apache2\htdocs\drupal-7.31.zip
 cmd xcopy /s/e c:\apache2\htdocs\spn_drupal-temp\drupal-7.31\*.* .
@@ -85,14 +85,14 @@ cmd rmdir c:\apache2\htdocs\spn_drupal-temp /S /Q
 
 # Configure database settings
 cmd copy c:\apache2\htdocs\sites\default\default.settings.php c:\apache2\htdocs\sites\default\settings.php
-cmd %spn_fart% c:\apache2\htdocs\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
+cmd fart c:\apache2\htdocs\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
 
 
 ###################################
 # Startup File
 ###################################
 
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
 startup file C:\apache2\spn_start.cmd
 
 
