@@ -1,8 +1,8 @@
 from jdk:7.65
 using wget 7-zip
 cmd echo Version is %VERSION%
-cmd %spn_wget% http://mirror.apache-kr.org/maven/maven-3/%VERSION%/binaries/apache-maven-%VERSION%-bin.zip -O maven.zip
-cmd %spn_7z% x maven.zip -oC:\Maven\
+cmd wget http://mirror.apache-kr.org/maven/maven-3/%VERSION%/binaries/apache-maven-%VERSION%-bin.zip -O maven.zip
+cmd 7z x maven.zip -oC:\Maven\
 cmd xcopy /E C:\Maven\apache-maven-%VERSION%\* C:\Maven\*
 cmd del maven.zip
 cmd rd /S /Q C:\Maven\apache-maven-%VERSION%\

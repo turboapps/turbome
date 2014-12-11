@@ -1,6 +1,6 @@
 from jdk:8.0,jdk:7.65,maven:head,roman-dev-user/jetty:9.2.3.v20140905
 using wget 7zip
-cmd %spn_wget% http://mirrors.jenkins-ci.org/war/latest/jenkins.war -O jenkins.war
+cmd wget http://mirrors.jenkins-ci.org/war/latest/jenkins.war -O jenkins.war
 
 # Let's configure Jenkins a bit
 env JAVA_HOME="C:\Program Files (x86)\Java\jdk1.8.0"

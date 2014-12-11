@@ -49,7 +49,7 @@ batch cmd
   echo PHPIniDir "C:/php">> httpd.conf
   fart.exe --ignore-case httpd.conf "DirectoryIndex index.html index.html.var" "DirectoryIndex index.php index.html index.html.var"
   
-  REM Set document root to WordPress
+  REM Set document root to WordPress directory
   fart.exe --ignore-case httpd.conf "C:/apache/apache2/htdocs" "C:/wordpress"
   
   REM Enable mod rewrite for pretty links

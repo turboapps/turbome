@@ -37,13 +37,13 @@ cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
 cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
 
 # Configure httpd using variables from previous section; must append &ver>nul because the find and replace tool sets ERRORLEVEL to the replace count
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
+cmd fart C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
 
 # Configure Apache to use PHP
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/initApache.cmd --no-check-certificate -O initApache.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/initApache.cmd --no-check-certificate -O initApache.cmd
 cmd initApache.cmd
 cmd del initApache.cmd
 
@@ -51,7 +51,7 @@ cmd del initApache.cmd
 ###################################
 # Initialize PHP
 ###################################
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/initPHP.cmd --no-check-certificate -O initPHP.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/initPHP.cmd --no-check-certificate -O initPHP.cmd
 cmd initPHP.cmd
 cmd del initPHP.cmd
 
@@ -60,7 +60,7 @@ cmd del initPHP.cmd
 # Initialize MySQL
 ###################################
 workdir c:\mysql\mysql-5.6.20-win32\bin
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
 cmd initMySQL.cmd
 cmd del initMySQL.cmd
 
@@ -74,8 +74,8 @@ workdir c:\apache2\htdocs
 cmd del c:\apache2\htdocs\* /S /Q
 
 # Download and unzip install media
-cmd %spn_wget% http://www.oscommerce.com/files/oscommerce-2.3.4.zip -O oscommerce.zip
-cmd %spn_7z% x oscommerce.zip -oc:\apache2\htdocs\spn_oscommerce-temp
+cmd wget http://www.oscommerce.com/files/oscommerce-2.3.4.zip -O oscommerce.zip
+cmd 7z x oscommerce.zip -oc:\apache2\htdocs\spn_oscommerce-temp
 cmd del c:\apache2\htdocs\oscommerce.zip
 cmd xcopy /s/e c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\catalog\*.*
 cmd xcopy /s/e c:\apache2\htdocs\spn_oscommerce-temp\oscommerce-2.3.4\docs\*.* C:\oscommerce_docs\
@@ -84,14 +84,14 @@ cmd del c:\apache2\htdocs\spn_oscommerce-temp /S /Q
 cmd rmdir c:\apache2\htdocs\spn_oscommerce-temp /S /Q
 
 # Pre-configure database
-cmd %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', null, 'class=" "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', 'root', 'class=" & ver > nul
-cmd %spn_fart% c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', null, 'class=" "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', 'oscommerce', 'class=" & ver > nul
+cmd fart c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', null, 'class=" "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', 'root', 'class=" & ver > nul
+cmd fart c:\apache2\htdocs\install\templates\pages\install.php "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', null, 'class=" "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', 'oscommerce', 'class=" & ver > nul
 
 
 ###################################
 # Startup File
 ###################################
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
+cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/oscommerce/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
 startup file C:\apache2\spn_start.cmd
 
 
