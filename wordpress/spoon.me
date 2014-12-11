@@ -10,107 +10,132 @@
 # Pull dependency images
 ###################################
 
-from apache,php,mysql
-using wget,fart,7-zip
-
-
-###################################
-# Configure these variables
-###################################
-
-env spn_config_Port=8080
-env spn_config_ServerAdmin=me@domain.com
-env spn_config_DomainName=domain.com
-# To be implemented env spn_config_mySQL_User=wordpressuser
-# To be implemented env spn_config_mySQL_Password=wordpresspassword
-
-
-###################################
-# Initialize Apache
-###################################
-
-# Copy config files files from templates
-workdir c:\apache2
-cmd mkdir c:\apache2\logs
-cmd copy c:\apache2\conf\magic.default c:\apache2\conf\magic
-cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
-cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
-
-# Configure httpd using variables from previous section; must append &ver>nul because the find and replace tool sets ERRORLEVEL to the replace count
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
-
-# Configure Apache to use PHP
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initApache.cmd --no-check-certificate -O initApache.cmd
-cmd initApache.cmd
-cmd del initApache.cmd
-
-
-###################################
-# Initialize PHP
-###################################
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initPHP.cmd --no-check-certificate -O initPHP.cmd
-cmd initPHP.cmd
-cmd del initPHP.cmd
-
-
-###################################
-# Initialize MySQL
-###################################
-workdir c:\mysql\mysql-5.6.20-win32\bin
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
-cmd initMySQL.cmd
-cmd del initMySQL.cmd
+from apache/apache,php/php,mysql/mysql
+using gnu/wget,fart/fart,7-zip/7-zip
 
 
 ###################################
 # Initialize WordPress
 ###################################
 
-# Remove template html files
-workdir c:\apache2\htdocs
-cmd del c:\apache2\htdocs\* /S /Q
+# Download and extract WordPress
+workdir C:\
+cmd wget.exe http://wordpress.org/latest.zip --no-check-certificate -O latest.zip
+cmd 7z.exe x latest.zip -oC:\
+cmd del latest.zip
 
-# Download and unzip install media
-cmd %spn_wget% http://wordpress.org/latest.zip --no-check-certificate -O latest.zip
-cmd %spn_7z% x latest.zip -oc:\apache2\htdocs\spn_wordpress-temp
-cmd del c:\apache2\htdocs\latest.zip
-cmd xcopy /s/e c:\apache2\htdocs\spn_wordpress-temp\wordpress\*.* .
-cmd del c:\apache2\htdocs\spn_wordpress-temp /S /Q
-cmd rmdir c:\apache2\htdocs\spn_wordpress-temp /S /Q
-cmd copy c:\apache2\htdocs\wp-config-sample.php c:\apache2\htdocs\wp-config.php
+# Configure WordPress
+cmd copy C:\wordpress\wp-config-sample.php C:\wordpress\wp-config.php
+workdir C:\wordpress
+batch cmd
+  fart.exe --ignore-case C:\wordpress\wp-config.php "define('DB_NAME', 'database_name_here');" "define('DB_NAME', 'wordpress');"
+  fart.exe --ignore-case C:\wordpress\wp-config.php "define('DB_USER', 'username_here');" "define('DB_USER', 'root');"
+  fart.exe --ignore-case C:\wordpress\wp-config.php "define('DB_PASSWORD', 'password_here');" "define('DB_PASSWORD', '');"
+  ver > nul
 
-# Configure database settings
-cmd %spn_fart% wp-config.php "define('DB_NAME', 'database_name_here');" "define('DB_NAME', 'wordpress');" & ver > nul
-cmd %spn_fart% wp-config.php "define('DB_USER', 'username_here');" "define('DB_USER', 'root');"  & ver > nul
-cmd %spn_fart% wp-config.php "define('DB_PASSWORD', 'password_here');" "define('DB_PASSWORD', '');"  & ver > nul
+
+###################################
+# Initialize Apache
+###################################
+
+# Configure Apache
+workdir C:\apache\apache2\conf
+batch cmd
+  echo. >> httpd.conf
+  
+  REM Enable PHP
+  echo LoadModule php5_module "C:/php/php5apache2.dll">> httpd.conf
+  echo AddHandler application/x-httpd-php .php>> httpd.conf
+  echo PHPIniDir "C:/php">> httpd.conf
+  fart.exe --ignore-case httpd.conf "DirectoryIndex index.html index.html.var" "DirectoryIndex index.php index.html index.html.var"
+  
+  REM Set document root to WordPress
+  fart.exe --ignore-case httpd.conf "C:/apache/apache2/htdocs" "C:/wordpress"
+  
+  REM Enable mod rewrite for pretty links
+  fart.exe --ignore-case httpd.conf "#LoadModule rewrite_module modules/mod_rewrite.so" "LoadModule rewrite_module modules/mod_rewrite.so"
+  fart.exe --ignore-case httpd.conf "    Options Indexes FollowSymLinks" "    Options All"
+  fart.exe --ignore-case httpd.conf "    AllowOverride None" "    AllowOverride All"
+  ver > nul
+
+
+###################################
+# Initialize PHP
+###################################
+
+# Configure PHP
+workdir C:\php
+batch cmd
+  REM Uncomment required extension
+  fart --ignore-case php.ini ";extension=php_mysql.dll" "extension=php_mysql.dll"  & ver > nul
+
+
+###################################
+# Initialize MySQL
+###################################
+
+workdir C:\mysql\bin
+batch cmd
+  REM create database instruction file
+  echo CREATE DATABASE wordpress;> spn_cmd.txt
+
+  echo Creating database instruction file
+  echo CREATE DATABASE wordpress;> spn_cmd.txt
+
+  REM ### LOOP #######################################
+  REM Attempt to create the database 5 times, quit if all fail
+  REM On slow machines, mysqld may not start fast enough to succeed on the first try
+  :createDB
+
+  REM increment count
+  set /A spn_temp_count=%spn_temp_count%+1
+  echo Using database instruction file to configure mysql, attempt #%spn_temp_count%
+
+  REM sleep for 5 seconds
+  ping -n 6 127.0.0.1 > nul
+
+  REM pass database instruction file to mysql.exe
+  mysql -u root < spn_cmd.txt
+
+  REM if this fails more than 5 times, then fail the setup
+  IF %spn_temp_count% GEQ 6 GOTO fail
+
+  REM if this succeeds, no need to retry
+  IF %ERRORLEVEL% EQU 0 GOTO succeed
+
+  REM retry
+  goto createDB
+  REM ################################################
+
+  REM issue exit code on failure
+  :fail
+  echo MySQL setup failed.
+  exit /b 1
+
+  REM clean up and shutdown on success
+  :succeed
+  echo MySQL setup succeeded.
+  del spn_cmd.txt
+  REM mysqladmin.exe -u root shutdown
 
 
 ###################################
 # Startup File
 ###################################
-cmd %spn_wget% https://raw.githubusercontent.com/spoonium/spoonme/master/wordpress/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
-startup file C:\apache2\spn_start.cmd
+
+setworkdir C:\wordpress
+startup file ("cmd","/k echo Visit http://localhost:%spn_config_Apache-Port% to configure WordPress, if you haven't already.")
 
 
 ###################################
-# Environmental Variables
+# Environment Variables
 ###################################
-env spn_apache=c:\apache2\bin\Apache.exe
-env spn_apache_path=c:\apache2
-env spn_mysqld=c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
-env spn_mysql_path=c:\mysql
+
+# No variables needed
 
 
 ###################################
 # Clean up
 ###################################
-workdir c:\
-cmd del c:\fart /S /Q
-cmd rmdir C:\fart /S /Q
-cmd del c:\7zip /S /Q
-cmd rmdir C:\7zip /S /Q
-cmd del c:\wget /S /Q
-cmd rmdir C:\wget /S /Q
+
+# No clean up needed

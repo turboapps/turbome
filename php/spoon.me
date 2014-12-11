@@ -10,38 +10,54 @@
 # Pull dependency images
 ###################################
 
-<<<<<<< HEAD
 from clean
-using gnu/wget,7-zip/7-zip
-=======
-from scratch
-using wget,7-zip
->>>>>>> origin/master
+using gnu/wget,7-zip/7-zip,fart/fart
 
 
 ###################################
 # Download and install
 ###################################
 
+# Set working directory
+workdir C:\
+
 # Create app directory
-cmd mkdir c:\php
+cmd mkdir C:\php
 workdir C:\php
 
-# Download and unzip installation media
+# Download
 cmd wget.exe http://windows.php.net/downloads/releases/archives/php-5.3.5-Win32-VC6-x86.zip
+
+# Install
 cmd 7z.exe x php-5.3.5-Win32-VC6-x86.zip
 
+# Create php.ini file from template
+cmd copy php.ini-production php.ini
+
+# Add extension directory
+batch cmd
+  fart.exe --ignore-case -C php.ini "; extension_dir = \"ext\"" "extension_dir = \"c:/php/ext\""
+  ver > nul
+
+
 
 ###################################
-# Environmental Variables
+# Environment Variables
 ###################################
 
-env path=c:\php
+env path=C:\php
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\php
+# No startup files needed
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir C:\
-cmd del c:\php\php-5.3.5-Win32-VC6-x86.zip /Q
+cmd del C:\php\php-5.3.5-Win32-VC6-x86.zip /Q

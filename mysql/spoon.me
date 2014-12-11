@@ -11,71 +11,40 @@
 ###################################
 
 from clean
-using wget,7-zip
+using gnu/wget
 
 
 ###################################
 # Download and install
 ###################################
 
-# Create app directory
-cmd mkdir c:\mysql
-workdir C:\mysql
+# Set working directory
+workdir C:\
 
-# Download and unzip
-cmd %spn_wget% http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.20-win32.zip
-cmd %spn_7z% x -xr!*.pdb mysql-5.6.20-win32.zip
+# Download
+cmd ("wget.exe","http://downloads.sourceforge.net/project/mysql.mirror/MySQL%205.6.20/mysql-5.6.20-win32.msi?r=&ts=1417734102&use_mirror=iweb")
 
-
-###################################
-# Remove unnecessary files
-###################################
-
-cmd del c:\mysql\mysql-5.6.20-win32\mysql-test\*.* /S /Q
-cmd rmdir c:\mysql\mysql-5.6.20-win32\mysql-test\ /S /Q
-cmd del c:\mysql\mysql-5.6.20-win32\sql-bench\*.* /S /Q
-cmd rmdir c:\mysql\mysql-5.6.20-win32\sql-bench\ /S /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\debug\*.* /S /Q
-cmd rmdir c:\mysql\mysql-5.6.20-win32\lib\debug\ /S /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\debug\*.* /S /Q
-cmd rmdir c:\mysql\mysql-5.6.20-win32\lib\plugin\debug\ /S /Q
-
-cmd del c:\mysql\mysql-5.6.20-win32\bin\echo.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\bin\mysql_client_test.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\bin\mysql_client_test_embedded.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\bin\mysqld-debug.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\bin\mysqltest.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\bin\mysqltest_embedded.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\bin\replace.exe /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\daemon_example.ini /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\adt_null.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\auth.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\auth_test_plugin.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\libdaemon_example.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\mypluglib.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\qa_auth_client.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\qa_auth_interface.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\qa_auth_server.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\semisync_master.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\semisync_slave.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\plugin\validate_password.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\libmysql.dll /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\libmysqld.dll /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\libmysql.lib /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\libmysqld.lib /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\mysqlclient.lib /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\mysqlserver.lib /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\mysqlservices.lib /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\libmysql.pdb /Q
-cmd del c:\mysql\mysql-5.6.20-win32\lib\libmysqld.pdb /Q
+# Install
+batch cmd
+  msiexec /i mysql-5.6.20-win32.msi /qn INSTALLDIR="C:\mysql"
+  
+workdir C:\mysql\bin
+cmd mysqld.exe --install
 
 
 ###################################
-# Environmental Variables
+# Environment Variables
 ###################################
 
-env spn_mysqld=c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
-env spn_mysql_path=c:\mysql\mysql-5.6.20-win32
+env path="C:\mysql\bin"
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\mysql
+# No startup files needed
 
 
 ###################################
@@ -83,9 +52,4 @@ env spn_mysql_path=c:\mysql\mysql-5.6.20-win32
 ###################################
 
 workdir C:\
-cmd del C:\mysql\mysql-5.6.20-win32.zip
-
-cmd del c:\7zip /S /Q
-cmd del c:\wget /S /Q
-cmd rmdir C:\7zip /S /Q
-cmd rmdir C:\wget /S /Q
+cmd del mysql-5.6.20-win32.msi

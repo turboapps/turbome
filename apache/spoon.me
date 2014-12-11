@@ -10,48 +10,53 @@
 # Pull dependency images
 ###################################
 
-from apache
-using fart
+from clean
+using gnu/wget
 
 
 ###################################
-#### Configure these variables ####
+# Image settings
 ###################################
 
-env spn_config_Port=8080
-env spn_config_ServerAdmin=me@domain.com
-env spn_config_DomainName=domain.com
+env spn_config_Apache-Port=8080
+env spn_config_Apache-Admin=admin@localhost
+env spn_config_Apache-Name=localhost
+env spn_config_Apache-Domain=localhost
+
 
 ###################################
+# Download and install
+###################################
 
-# Initialize Apache
-workdir c:\apache2
-cmd mkdir c:\apache2\logs
-cmd copy c:\apache2\conf\magic.default c:\apache2\conf\magic
-cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
+# Set working directory
+workdir C:\
 
-cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
+# Download
+cmd wget.exe https://archive.apache.org/dist/httpd/binaries/win32/httpd-2.0.65-win32-x86-openssl-0.9.8y.msi --no-check-certificate
 
-# Append & ver > nul because the find and replace tool sets ERRORLEVEL to the replace count
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-cmd %spn_fart% C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
+# Install
+batch cmd
+  msiexec.exe /i httpd-2.0.65-win32-x86-openssl-0.9.8y.msi /qn /passive INSTALLDIR="C:\apache" ALLUSERS=1 SERVERADMIN=%spn_config_Apache-Admin% SERVERNAME=%spn_config_Apache-Name% SERVERDOMAIN=%spn_config_Apache-Domain% SERVERPORT=%spn_config_Apache-Port%
 
-#STARTUP C:\Apache2\bin\Apache.exe
+
+###################################
+# Environment Variables
+###################################
+
+env path="C:\apache\apache2\bin"
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\apache\apache2
+# No startup files needed
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir c:\
-cmd del c:\fart /S /Q
-cmd rmdir C:\fart /S /Q
-
-###################################
-# Environmental Variables
-###################################
-
-env spn_apache=C:\apache2\bin\Apache.exe
-env spn_apache_path=c:\apache2
+workdir C:\
+cmd del httpd-2.0.65-win32-x86-openssl-0.9.8y.msi /Q

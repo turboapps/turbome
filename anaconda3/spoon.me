@@ -11,7 +11,7 @@
 ###################################
 
 from clean
-using wget
+using gnu/wget,fart/fart
 
 
 ###################################
@@ -27,9 +27,15 @@ cmd wget.exe http://repo.continuum.io/anaconda3/Anaconda3-2.1.0-Windows-x86.exe 
 # Install
 cmd Anaconda3-2.1.0-Windows-x86.exe /S "/D=C:\Anaconda3"
 
+# Fix for Environment variable bug in anaconda3
+batch cmd
+  C:\fart\fart.exe C:\Anaconda3\Scripts\anaconda.bat ANACONDA_OLD_PATH=\"%%PATH%%\" \"ANACONDA_OLD_PATH=%%PATH%%\"
+  C:\fart\fart.exe C:\Anaconda3\Scripts\anaconda.bat PATH=\"%%ANACONDA%%;%%ANACONDA_SCRIPTS%%;%%PATH%%\" \"PATH=%%ANACONDA%%;%%ANACONDA_SCRIPTS%%;%%PATH%%\"
+  ver > nul
+
 
 ###################################
-# Environmental Variables
+# Environment Variables
 ###################################
 
 # No variables needed
