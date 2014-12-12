@@ -44,10 +44,10 @@ batch cmd
   echo. >> httpd.conf
   
   REM Enable PHP
-  echo LoadModule php5_module "C:/php/php5apache2.dll">> httpd.conf
+  echo LoadModule php5_module "C:/php/php5apache2_2.dll">> httpd.conf
   echo AddHandler application/x-httpd-php .php>> httpd.conf
   echo PHPIniDir "C:/php">> httpd.conf
-  fart.exe --ignore-case httpd.conf "DirectoryIndex index.html index.html.var" "DirectoryIndex index.php index.html index.html.var"
+  fart.exe --ignore-case httpd.conf "DirectoryIndex " "DirectoryIndex index.php "
   
   REM Set document root to WordPress directory
   fart.exe --ignore-case httpd.conf "C:/apache/apache2/htdocs" "C:/wordpress"
