@@ -10,110 +10,130 @@
 # Pull dependency images
 ###################################
 
-from apache,php,mysql
-using wget,fart,7-zip
-
-
-###################################
-# Configure these variables
-###################################
-
-env spn_config_Port=8081
-env spn_config_ServerAdmin=me@domain.com
-env spn_config_DomainName=domain.com
-# To be implemented env spn_config_mySQL_User=drupaluser
-# To be implemented env spn_config_mySQL_Password=drupalpassword
-
-
-###################################
-# Initialize Apache
-###################################
-
-# Copy config files files from templates
-workdir c:\apache2
-cmd mkdir c:\apache2\logs
-cmd copy c:\apache2\conf\magic.default c:\apache2\conf\magic
-cmd copy c:\apache2\conf\mime.types.default c:\apache2\conf\mime.types
-cmd copy c:\apache2\conf\httpd-win.conf c:\apache2\conf\httpd.conf
-
-# Configure httpd using variables from previous section; must append &ver>nul because the find and replace tool sets ERRORLEVEL to the replace count
-cmd fart C:\apache2\conf\httpd.conf @@ServerRoot@@ C:\Apache2 & ver > nul
-cmd fart C:\apache2\conf\httpd.conf @@Port@@ %spn_config_Port%  & ver > nul
-cmd fart C:\apache2\conf\httpd.conf @@ServerAdmin@@ %spn_config_ServerAdmin%  & ver > nul
-cmd fart C:\apache2\conf\httpd.conf @@DomainName@@ %spn_config_DomainName%  & ver > nul
-
-# Configure Apache to use PHP
-cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initApache.cmd --no-check-certificate -O initApache.cmd
-cmd initApache.cmd
-cmd del initApache.cmd
-
-
-###################################
-# Initialize PHP
-###################################
-
-cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initPHP.cmd --no-check-certificate -O initPHP.cmd
-cmd initPHP.cmd
-cmd del initPHP.cmd
-
-
-###################################
-# Initialize MySQL
-###################################
-
-workdir c:\mysql\mysql-5.6.20-win32\bin
-cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/initMySQL.cmd --no-check-certificate -O initMySQL.cmd
-cmd initMySQL.cmd
-cmd del initMySQL.cmd
+from apache/apache,php/php,mysql/mysql
+using gnu/wget,fart/fart,7-zip/7-zip
 
 
 ###################################
 # Initialize Drupal
 ###################################
 
-# Remove template html files
-workdir c:\apache2\htdocs
-cmd del c:\apache2\htdocs\* /S /Q
-
-# Download and unzip install media
-cmd wget http://ftp.drupal.org/files/projects/drupal-7.31.zip
-cmd 7z x drupal-7.31.zip -oc:\apache2\htdocs\spn_drupal-temp
-cmd del c:\apache2\htdocs\drupal-7.31.zip
-cmd xcopy /s/e c:\apache2\htdocs\spn_drupal-temp\drupal-7.31\*.* .
-cmd del c:\apache2\htdocs\spn_drupal-temp /S /Q
-cmd rmdir c:\apache2\htdocs\spn_drupal-temp /S /Q
+# Download and extract Drupal
+workdir C:\
+cmd wget http://ftp.drupal.org/files/projects/drupal-7.34.zip --no-check-certificate
+cmd 7z x drupal-7.34.zip -oc:\drupal-temp
+cmd del C:\drupal-7.34.zip
+cmd mkdir c:\drupal
+cmd xcopy /s/e c:\drupal-temp\drupal-7.34\*.* c:\drupal
+cmd del c:\drupal-temp /S /Q
+cmd rmdir c:\drupal-temp /S /Q
 
 # Configure database settings
-cmd copy c:\apache2\htdocs\sites\default\default.settings.php c:\apache2\htdocs\sites\default\settings.php
-cmd fart c:\apache2\htdocs\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
+cmd copy c:\drupal\sites\default\default.settings.php c:\drupal\sites\default\settings.php
+cmd fart.exe c:\drupal\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
+
+
+###################################
+# Initialize Apache
+###################################
+
+# Configure Apache
+workdir C:\apache\apache2\conf
+batch cmd
+  echo. >> httpd.conf
+  
+  REM Enable PHP
+  echo LoadModule php5_module "C:/php/php5apache2_2.dll">> httpd.conf
+  echo AddHandler application/x-httpd-php .php>> httpd.conf
+  echo PHPIniDir "C:/php">> httpd.conf
+  fart.exe --ignore-case httpd.conf "DirectoryIndex " "DirectoryIndex index.php "
+  
+  REM Set document root to Drupal directory
+  fart.exe --ignore-case httpd.conf "C:/apache/apache2/htdocs" "C:/drupal"
+  
+  REM Enable mod rewrite for pretty links
+  fart.exe --ignore-case httpd.conf "#LoadModule rewrite_module modules/mod_rewrite.so" "LoadModule rewrite_module modules/mod_rewrite.so"
+  fart.exe --ignore-case httpd.conf "    Options Indexes FollowSymLinks" "    Options All"
+  fart.exe --ignore-case httpd.conf "    AllowOverride None" "    AllowOverride All"
+  ver > nul
+
+
+###################################
+# Initialize PHP
+###################################
+
+# Configure PHP
+workdir C:\php
+batch cmd
+  REM Uncomment required extension
+  fart.exe --ignore-case php.ini ";extension=php_mysql.dll" "extension=php_mysql.dll"  & ver > nul
+  fart.exe --ignore-case php.ini ";extension=php_gd2.dll" "extension=php_gd2.dll"  & ver > nul
+  fart.exe --ignore-case php.ini ";extension=php_pdo_mysql.dll" "extension=php_pdo_mysql.dll"  & ver > nul
+
+
+###################################
+# Initialize MySQL
+###################################
+
+workdir C:\mysql\bin
+batch cmd
+  echo Creating database instruction file
+  echo CREATE DATABASE drupal;> spn_cmd.txt
+
+  REM ### LOOP #######################################
+  REM Attempt to create the database 5 times, quit if all fail
+  REM On slow machines, mysqld may not start fast enough to succeed on the first try
+  :createDB
+
+  REM increment count
+  set /A spn_temp_count=%spn_temp_count%+1
+  echo Using database instruction file to configure mysql, attempt #%spn_temp_count%
+
+  REM sleep for 5 seconds
+  ping -n 6 127.0.0.1 > nul
+
+  REM pass database instruction file to mysql.exe
+  mysql -u root < spn_cmd.txt
+
+  REM if this fails more than 5 times, then fail the setup
+  IF %spn_temp_count% GEQ 6 GOTO fail
+
+  REM if this succeeds, no need to retry
+  IF %ERRORLEVEL% EQU 0 GOTO succeed
+
+  REM retry
+  goto createDB
+  REM ################################################
+
+  REM issue exit code on failure
+  :fail
+  echo MySQL setup failed.
+  exit /b 1
+
+  REM clean up and shutdown on success
+  :succeed
+  echo MySQL setup succeeded.
+  del spn_cmd.txt
+  REM mysqladmin.exe -u root shutdown
 
 
 ###################################
 # Startup File
 ###################################
 
-cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/drupal/spn_start.cmd --no-check-certificate -O c:\apache2\spn_start.cmd
-startup file C:\apache2\spn_start.cmd
+setworkdir C:\drupal
+startup file ("cmd","/k echo Visit http://localhost:%spn_config_Apache-Port% to configure Drupal, if you haven't already.")
 
 
 ###################################
 # Environment Variables
 ###################################
 
-env spn_apache=c:\apache2\bin\Apache.exe
-env spn_apache_path=c:\apache2
-env spn_mysqld=c:\mysql\mysql-5.6.20-win32\bin\mysqld.exe
-env spn_mysql_path=c:\mysql
+# No variables needed
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir c:\
-cmd del c:\fart /S /Q
-cmd rmdir C:\fart /S /Q
-cmd del c:\7zip /S /Q
-cmd rmdir C:\7zip /S /Q
-cmd del c:\wget /S /Q
-cmd rmdir C:\wget /S /Q
+# No clean up needed
