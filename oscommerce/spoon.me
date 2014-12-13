@@ -22,7 +22,7 @@ using gnu/wget,fart/fart,7-zip/7-zip
 workdir C:\
 cmd wget http://www.oscommerce.com/files/oscommerce-2.3.4.zip -O oscommerce.zip
 cmd 7z x oscommerce.zip -oc:\oscommerce-temp
-cmd del c:\apache2\htdocs\oscommerce.zip
+cmd del oscommerce.zip
 cmd mkdir oscommerce
 cmd mkdir oscommerce_docs
 cmd xcopy /s/e c:\oscommerce-temp\oscommerce-2.3.4\catalog\*.* C:\oscommerce

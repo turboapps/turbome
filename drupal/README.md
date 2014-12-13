@@ -2,7 +2,7 @@
 
 Project website: http://drupal.org/
 
-Version: 7.31
+Version: 7.34
 
 To build: 
 
