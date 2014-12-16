@@ -1,0 +1,53 @@
+#
+# Node Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/node
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+from clean
+using wget
+
+
+###################################
+# Download and install
+###################################
+
+# Create app directory
+workdir C:\
+
+# Download and unzip
+cmd wget http://nodejs.org/dist/v0.10.33/node-v0.10.33-x86.msi --no-check-certificate
+cmd msiexec /i node-v0.10.33-x86.msi /qn
+cmd del node-v0.10.33-x86.msi /Q
+
+# Manually create npm folder, because node installer fails to do so
+cmd mkdir "%APPDATA%\npm"
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir @PROGRAMFILESX86@\nodejs
+
+# No startup file needed
+
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+
+###################################
+# Clean up
+###################################
+
+# No clean up needed
