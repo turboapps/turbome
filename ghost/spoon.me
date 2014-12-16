@@ -23,9 +23,9 @@ cmd mkdir c:\ghost
 workdir C:\ghost
 
 # Download and unzip
-cmd wget https://ghost.org/zip/ghost-0.5.0.zip --no-check-certificate
-cmd 7z x ghost-0.5.0.zip
-cmd del ghost-0.5.0.zip /Q
+cmd wget https://ghost.org/zip/ghost-0.5.7.zip --no-check-certificate
+cmd 7z x ghost-0.5.7.zip
+cmd del ghost-0.5.7.zip /Q
 
 # NPM install app
 cmd npm install --production
@@ -35,23 +35,30 @@ cmd npm install --production
 # Startup File
 ###################################
 
-cmd wget https://raw.githubusercontent.com/spoonium/spoonme/master/ghost/spn_start.cmd --no-check-certificate -O spn_start.cmd
-startup file C:\ghost\spn_start.cmd
+setworkdir C:\ghost
+
+# Create startup file
+batch cmd
+  echo @ECHO OFF > spn_start.cmd
+  echo ECHO Starting node.js... >> spn_start.cmd
+  echo C: >> spn_start.cmd
+  echo CD c:\ghost >> spn_start.cmd
+  echo start "nodejs" npm start --production >> spn_start.cmd
+  echo ECHO Edit config.js to configure Ghost, if you haven't already.  >> spn_start.cmd
+  echo ECHO ON  >> spn_start.cmd
+  
+startup file ("cmd","/k C:\ghost\spn_start.cmd")
 
 
 ###################################
 # Environment Variables
 ###################################
 
-env spn_ghost_path=C:\ghost
+# No variables needed
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir C:\
-cmd del c:\7zip /S /Q
-cmd del c:\wget /S /Q
-cmd rmdir C:\7zip /S /Q
-cmd rmdir C:\wget /S /Q
+# No clean up needed
