@@ -1,0 +1,23 @@
+# Includes clean base image, most SpoonScript files will start with this.
+from clean
+
+# Using does not add the dependency to the final image but allows you to use the library during build time.
+# Typically wget will be only used to download installers during build time.
+using wget
+
+# Sets working directory inside of container.
+# If not specified, commands will be executed from the same working directory as the native command prompt.
+workdir C:\
+
+# Download using wget.
+cmd wget https://www.python.org/ftp/python/3.4.2/python-3.4.2.msi --no-check-certificate
+
+# Run the msi installer. We use /qn to run without ui options which allows this to run unattended.
+cmd msiexec /i python-3.4.2.msi /qn
+
+# Set environment variable to the Python libraries manually. The installer does not do it by default.
+# The `set` command will only last for the lifetime of the command prompt, so we must use the `env` command.
+env path=c:\python34;c:\python34\scripts
+
+# Delete the installer to reduce clutter in the final image.
+cmd del python-3.4.2.msi /Q
