@@ -1,0 +1,44 @@
+#
+# Erlang Spoon.me file
+# https://github.com/...
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+from clean
+using wget
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+# Download Erlang and RabbitMQ
+cmd wget http://www.erlang.org/download/otp_win64_17.4.exe --no-check-certificate
+
+# Install Erlang
+cmd ("otp_win64_17.4.exe", "/S", "/NCRC", "/D=C:\erlang-6.3")
+
+
+###################################
+# Environment Variables
+###################################
+
+env ERLANG_HOME=C:\erlang-6.3
+env PATH=%PATH%;C:\erlang-6.3\bin
+
+
+###################################
+# Clean up
+###################################
+
+workdir C:\
+cmd del otp_win64_17.4.exe /Q
