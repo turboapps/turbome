@@ -10,7 +10,7 @@
 # Pull dependency images
 ###################################
 from clean
-using wget,7zip
+using wget,7-zip
 
 ###################################
 # Download and install
@@ -26,7 +26,7 @@ cmd wget.exe http://mirror.cs.umn.edu/blender.org/release/Blender2.73/blender-2.
 workdir @PROGRAMFILES@
 
 # extract to working folder
-cmd c:\7zip\7z x c:\blender-2.73-windows32.zip 
+cmd 7z x c:\blender-2.73-windows32.zip 
 
 ###################################
 # Startup File
