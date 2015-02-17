@@ -1,0 +1,45 @@
+#
+# Ghost Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/ghost
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+from clean
+using wget,7-zip
+
+###################################
+# Download and install
+###################################
+
+# set working directory
+workdir c:\
+
+# Download zip
+cmd wget.exe http://mirror.cs.umn.edu/blender.org/release/Blender2.73/blender-2.73-windows32.zip
+
+# set working directory
+workdir @PROGRAMFILES@
+
+# extract to working folder
+cmd 7z x c:\blender-2.73-windows32.zip 
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILES@\Blender-2.73-windows32\blender-app.exe")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+cmd del C:\blender-2.73-windows32.zip /Q
