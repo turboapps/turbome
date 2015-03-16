@@ -1,0 +1,45 @@
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+workdir c:\
+cmd mkdir c:\Workspace & cd c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://java.com/en/download/manual.jsp') >> getRelease.py
+ echo version = list(re.findall('Recommended Version (\d*) Update (\d*)', r.text)[0]) >> getRelease.py
+ echo url = [re.findall('for Windows Offline^" href=^"(.*)^"', r.text)[0]] >> getRelease.py
+ echo print(version + url) >> getRelease.py
+
+cmd python getRelease.py
+
+var data = $out
+
+cmd "python -c ""print(" + $data + "[0])"""
+var version = $out
+
+cmd "python -c ""print(" + $data + "[1])"""
+var update = $out
+
+cmd "python -c ""print(" + $data + "[2])"""
+var url = $out
+
+var tag = $version + "u" + $update
+
+cmd wget -O setup.exe --no-check-certificate $url
+
+cmd "setup.exe /s"
+
+cmd cd c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+
+meta title="jre"
+meta namespace=oracle
+meta name=jre
+meta tag=$tag
