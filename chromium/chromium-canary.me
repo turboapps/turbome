@@ -6,7 +6,7 @@ workdir c:\
 
 batch cmd
 	mkdir c:\Workspace & cd c:\Workspace
-	wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/pmateusz/browser-automation/master/source/Python/GetChromiumUrl.py
+	wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/spoonapps/spoonme/master/tools/python/GetChromiumUrl.py
 	pip install requests --quiet
 	python GetChromiumUrl.py > download_url.txt
 	set /p DOWNLOAD_URL=<download_url.txt

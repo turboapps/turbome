@@ -9,7 +9,7 @@ batch cmd
  echo InstallDirectoryPath=c:\Firefox\ >> install.ini
  echo MaintenanceService=false >> install.ini
 
-cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/pmateusz/browser-automation/master/source/Python/GetLatestUrl.py
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/spoonapps/spoonme/master/tools/python/GetLatestUrl.py
 cmd python GetLatestUrl.py --url ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest/win32/en-US/ --regex Firefox\sSetup\s\d.*.exe
 
 var url = $out
@@ -25,11 +25,11 @@ cmd "firefox.exe /INI=c:\Workspace\install.ini"
 
 batch
  cd c:\Firefox
- wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/mozilla.cfg
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/spoonapps/spoonme/master/firefox/config/mozilla.cfg
  cd browser
- wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/override.ini
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/spoonapps/spoonme/master/firefox/config/browser/override.ini
  mkdir defaults\preferences & cd defaults\preferences
- wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/defaults/preferences/local-settings.js
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/spoonapps/spoonme/master/firefox/config/browser/defaults/preferences/local-settings.js
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
