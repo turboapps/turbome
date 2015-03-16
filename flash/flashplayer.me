@@ -1,0 +1,36 @@
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+workdir c:\
+cmd mkdir c:\Workspace & cd c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('https://www.adobe.com/support/flashplayer/downloads.html') >> getRelease.py
+ echo print(re.findall('(\d*\.\d*.\d*\.\d*) \(Win and Mac\)', r.text)[0]) >> getRelease.py
+
+cmd python getRelease.py
+
+var tag = $out
+
+cmd "python -c ""print('" + $tag + "'.split('.')[0])"""
+var version = $out
+
+
+cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_" + $version + "_plugin.msi"
+
+cmd "setup.msi /qn"
+
+cmd cd c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+
+meta title="Adobe FlashPlayer"
+meta namespace=adobe
+meta name=flash
+meta tag=$tag
