@@ -1,0 +1,40 @@
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+workdir c:\
+cmd mkdir c:\Workspace & cd c:\Workspace
+
+batch
+ echo import sys > getUrl.py
+ echo import requests >> getUrl.py
+ echo import re >> getUrl.py
+ echo r = requests.get('http://notepad-plus-plus.org/download/') >> getUrl.py
+ echo print(re.findall('a href="(.*[Ii]nstaller\.exe)"', r.text)[0]) >> getUrl.py
+
+cmd python getUrl.py
+
+var url = $out
+
+cmd "echo import re > getTag.py"
+cmd "echo print(re.findall('npp.(.*)\.[Ii]nstaller.exe','" + $url + "')[0]) >> getTag.py"
+
+cmd python getTag.py
+var tag = $out
+
+cmd wget --no-check-certificate --no-verbose $url
+
+cmd "npp." + $tag + ".Installer.exe /S /D=C:\Notepad++"
+
+cmd cd c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Notepad++\updater /s /q 
+
+meta title="Notepad++"
+meta namespace=npp
+meta name=npp
+meta tag=$tag
+
+startup file ("c:\Notepad++\notepad++.exe")
