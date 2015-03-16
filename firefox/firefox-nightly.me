@@ -1,0 +1,24 @@
+# Put Firefox Nightly in a clean container
+using python:3.4.1,wget,7-zip
+workdir c:\
+batch cmd
+ mkdir c:\Workspace & cd c:\Workspace
+ wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/pmateusz/browser-automation/master/source/Python/GetLatestUrl.py
+ python GetLatestUrl.py --url ftp://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-mozilla-central/ --regex firefox.*.win32.zip > download_url.txt
+ set /p DOWNLOAD_URL=<download_url.txt
+ wget -O firefox.win32.zip --no-check-certificate --no-verbose "%DOWNLOAD_URL%"
+ 7z x firefox.win32.zip -y >nul
+ mkdir c:\FirefoxNightly
+ robocopy firefox c:\FirefoxNightly *.* /e /move >nul
+ cd c:\FirefoxNightly
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/mozilla.cfg
+ cd browser
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/override.ini
+ mkdir defaults\preferences & cd defaults\preferences
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/defaults/preferences/local-settings.js
+ rmdir c:\Workspace /s /q
+ rmdir c:\wget /s /q
+meta title="Firefox Nightly"
+meta website="%DOWNLOAD_URL%"
+meta version="%DATE%"
+startup file ("c:\FirefoxNightly\firefox.exe")
