@@ -1,0 +1,36 @@
+#
+# Skype Spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/skype
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+using wget,python:3.4.1
+
+cmd pip install pypiwin32 --quiet
+
+workdir c:\
+cmd mkdir c:\Workspace & cd c:\Workspace
+
+cmd wget --no-check-certificate --no-verbose -O SkypeSetup.msi http://www.skype.com/go/getskype-msi
+cmd "SkypeSetup.msi INSTALLDIR=C:\Skype /qn"
+
+batch
+ echo from win32com.client import Dispatch > getTag.py
+ echo parser = Dispatch("Scripting.FileSystemObject") >> getTag.py
+ echo print(parser.GetFileVersion(r^"c:\Skype\Phone\Skype.exe^")) >> getTag.py
+
+cmd python getTag.py
+var tag = $out
+
+cmd cd c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+meta title="Skype"
+meta namespace=microsoft
+meta name=skype
+meta tag=$tag
+
+startup file ("C:\Skype\Phone\Skype.exe")
