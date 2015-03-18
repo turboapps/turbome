@@ -10,8 +10,8 @@ using wget,python:3.4.1
 
 cmd pip install requests --quiet
 
-workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
 batch
  echo import sys > getRelease.py
@@ -32,10 +32,11 @@ cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get
 
 cmd "setup.msi /qn"
 
-cmd cd c:\
+workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
 
 
 meta title="Adobe FlashPlayer"

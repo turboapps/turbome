@@ -11,7 +11,8 @@ using wget,python:3.4.1,7-zip
 cmd pip install requests --quiet
 
 workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
 batch
  echo import sys > getRelease.py
@@ -30,10 +31,11 @@ cmd 7z x nginx.zip
 
 cmd "move nginx-" + $tag + " c:\nginx"
 
-cmd cd c:\
+workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
 
 env path="C:\nginx"
 setworkdir C:\nginx

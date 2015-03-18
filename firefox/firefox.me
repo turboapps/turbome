@@ -10,9 +10,9 @@ using wget,python:3.4.1
 
 cmd pip install requests --quiet
 
-workdir c:\
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
 batch cmd
- mkdir c:\Workspace & cd c:\Workspace
  echo [Install] > install.ini
  echo InstallDirectoryPath=c:\Firefox\ >> install.ini
  echo MaintenanceService=false >> install.ini
@@ -39,8 +39,11 @@ batch
  mkdir defaults\preferences & cd defaults\preferences
  wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/spoonapps/spoonme/master/firefox/config/browser/defaults/preferences/local-settings.js
 
+workdir c:\
+
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
 
 meta title="Firefox"
 meta namespace=mozilla

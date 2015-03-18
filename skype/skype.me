@@ -10,7 +10,8 @@ using wget,python:3.4.1
 cmd pip install pypiwin32 --quiet
 
 workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
 cmd wget --no-check-certificate --no-verbose -O SkypeSetup.msi http://www.skype.com/go/getskype-msi
 cmd "SkypeSetup.msi INSTALLDIR=C:\Skype /qn"
@@ -23,10 +24,11 @@ batch
 cmd python getTag.py
 var tag = $out
 
-cmd cd c:\
+workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\python34 /s /q
 
 meta title="Skype"
 meta namespace=microsoft

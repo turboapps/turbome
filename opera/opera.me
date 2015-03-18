@@ -10,8 +10,8 @@ using wget,python:3.4.1
 
 cmd pip install requests --quiet
 
-workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
 batch
  echo import sys > getNewestVersion.py
@@ -31,10 +31,11 @@ cmd wget --no-check-certificate --no-verbose $url
 cmd "Opera_" + $version + "_Setup.exe --silent --setdefaultbrowser=1 --import-browser-data=0 --enable-stats=0 --launchopera=0 --installfolder=c:\Opera\"
 cmd del "c:\Opera\" + $version + "\opera_autoupdate.exe"
 
-cmd cd c:\
+workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
 
 meta title="Opera Browser"
 meta namespace=opera

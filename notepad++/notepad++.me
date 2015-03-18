@@ -3,7 +3,8 @@ using wget,python:3.4.1
 cmd pip install requests --quiet
 
 workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
 batch
  echo import sys > getUrl.py
@@ -26,15 +27,16 @@ cmd wget --no-check-certificate --no-verbose $url
 
 cmd "npp." + $tag + ".Installer.exe /S /D=C:\Notepad++"
 
-cmd cd c:\
+workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
 cmd rmdir c:\Notepad++\updater /s /q 
 
 meta title="Notepad++"
 meta namespace=npp
-meta name=npp
+meta name=notepadplusplus
 meta tag=$tag
 
 startup file ("c:\Notepad++\notepad++.exe")
