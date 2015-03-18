@@ -1,24 +1,60 @@
 #
-# Ruby for Windows spoon.me file
-# http://www.rubyinstaller.org/
+# ruby Spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/ruby
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-from clean
-using wget
 
-workdir C:\
-cmd mkdir C:\ruby213
+using wget,python:3.4.1
 
-# Download and install
-cmd wget http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.1.3.exe?direct --no-check-certificate
-cmd move rubyinstaller-2.1.3.exe@direct rubyinstaller-2.1.3.exe
+cmd pip install requests --quiet
 
-cmd ("rubyinstaller-2.1.3.exe", "/verysilent", "/dir=C:\ruby213")
+cmd mkdir c:\Workspace & cd c:\Workspace
+workdir c:\Workspace
 
-# Cleanup
-cmd del rubyinstaller-2.1.3.exe /Q
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://rubyinstaller.org/downloads/') >> getRelease.py
+ echo data = list(re.findall('^<a href="(.*exe.*)"^>Ruby (\d*\.\d*\.\d*)', r.text)[0]) >> getRelease.py
+ echo directory = 'Ruby'+data[1].split('.')[0]+data[1].split('.')[1] >> getRelease.py
+ echo print(data + [directory]) >> getRelease.py
 
-# Add binaries to path
-env path=C:\ruby213\bin
+cmd python getRelease.py
+
+var data = $out
+
+
+
+cmd "python -c ""print(" + $data + "[0])"""
+
+var url = $out
+
+
+cmd "python -c ""print(" + $data + "[1])"""
+
+var tag = $out
+
+
+cmd "python -c ""print(" + $data + "[2])"""
+
+var dir = $out
+
+cmd "wget -O rubyinstaller.exe --no-check-certificate + " $url
+
+cmd "rubyinstaller.exe /verysilent"
+
+env path = "c:\" + $dir + "\bin"
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta title="Ruby"
+meta namespace=ruby 
+meta name=ruby 
+meta tag=$tag
