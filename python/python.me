@@ -1,0 +1,60 @@
+#
+# python Spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/python
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+using wget,python:3.4.1,7-zip
+
+cmd pip install requests --quiet
+
+workdir c:\
+cmd mkdir c:\Workspace & cd c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('https://www.python.org/downloads/windows/') >> getRelease.py
+ echo url = re.findall('a href="(.*)"^>Windows x86 MSI ', r.text)[0] >> getRelease.py
+ echo tag = re.findall('.*python-(.*)\.msi', url)[0] >> getRelease.py
+ echo version = 'Python'+tag.split('.')[0]+tag.split('.')[1] >> getRelease.py
+ echo print([url] + [tag] + [version]) >> getRelease.py
+
+cmd python getRelease.py
+
+var data = $out
+
+
+
+cmd "python -c ""print(" + $data + "[0])"""
+
+var url = $out
+
+
+cmd "python -c ""print(" + $data + "[1])"""
+
+var tag = $out
+
+
+cmd "python -c ""print(" + $data + "[2])"""
+
+var version = $out
+
+cmd "wget -O python.msi --no-check-certificate + " $url
+
+cmd "python.msi /qn"
+
+env path = "c:\" + $version + ";c:\" + $version + "\scripts"
+
+cmd cd c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+meta title="Python"
+meta namespace=python 
+meta name=python 
+meta tag=$tag
