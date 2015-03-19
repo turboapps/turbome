@@ -1,0 +1,16 @@
+using wget
+
+workdir c:\
+cmd mkdir c:\sublime
+workdir c:\sublime
+
+cmd wget --no-check-certificate --no-verbose -Osetup.exe c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.2%20x64%20Setup.exe
+
+cmd setup.exe /VERYSILENT /NORESTART
+
+meta title="Sublime Text"
+meta namespace=Sublime
+meta name=SublimeText
+meta tag="Sublime Text"
+
+startup file ("C:\Program Files\Sublime Text 2\sublime_text.exe")
