@@ -10,13 +10,15 @@
 # Pull dependency images
 ###################################
 
-from clean
-using gnu/wget,7-zip/7-zip,fart/fart
+from microsoft/vcredist:2012
+using gnu/wget,7-zip/7-zip,python/python:3.4.1,fart/fart
 
 
 ###################################
 # Download and install
 ###################################
+
+cmd pip install requests --quiet
 
 # Set working directory
 workdir C:\
@@ -25,14 +27,39 @@ workdir C:\
 cmd mkdir C:\php
 workdir C:\php
 
+batch
+  echo import requests >> getVersion.py
+  echo import re >> getVersion.py
+  echo r = requests.get('http://windows.php.net/download/') >> getVersion.py
+  echo print(list(re.findall(' href=^"(.*php-(\d*\.\d*\.\d*)-Win32-VC11-x86.zip)', r.text )[0])) >> getVersion.py
+
+cmd python getVersion.py
+
+var data = $out
+
+
+
+cmd "python -c ""print(" + $data + "[0])"""
+
+var url = "http://windows.php.net" + $out
+
+
+cmd "python -c ""print(" + $data + "[1])"""
+
+var tag = $out
+
+
+
+
 # Download
-cmd wget.exe http://windows.php.net/downloads/releases/archives/php-5.3.5-Win32-VC6-x86.zip
+cmd wget --no-check-certificate --no-verbose -O php.zip $url
 
 # Install
-cmd 7z.exe x php-5.3.5-Win32-VC6-x86.zip
+cmd 7z.exe x php.zip
 
 # Create php.ini file from template
-cmd copy php.ini-production php.ini
+
+cmd "copy php.ini-production php.ini"
 
 # Add extension directory
 batch cmd
@@ -57,7 +84,20 @@ setworkdir C:\php
 
 
 ###################################
+# Meta tags
+###################################
+
+meta title="PHP"
+meta name=php
+meta namespace=php
+meta tag=$tag 
+
+###################################
 # Clean up
 ###################################
 
-cmd del C:\php\php-5.3.5-Win32-VC6-x86.zip /Q
+cmd del C:\php\php.zip /Q
+cmd del C:\php\getVersion.py /Q
+
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\python34 /s /q

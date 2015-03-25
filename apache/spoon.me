@@ -10,7 +10,7 @@
 # Pull dependency images
 ###################################
 
-from microsoft/vcredist:2008
+from microsoft/vcredist:2012
 using gnu/wget,7-zip/7-zip,python/python:3.4.1,gnu/sed
 
 
@@ -37,7 +37,7 @@ batch
   echo import requests >> getVersion.py
   echo import re >> getVersion.py
   echo r = requests.get('https://www.apachehaus.com/cgi-bin/download.plx') >> getVersion.py
-  echo print(re.findall('httpd-(.*x86.*)\.zip', r.text )[0]) >> getVersion.py
+  echo print(re.findall('httpd-(.*x86-vc11.*)\.zip', r.text )[0]) >> getVersion.py
 
 cmd python getVersion.py
 var version = $out

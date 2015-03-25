@@ -1,8 +1,58 @@
-from jre:7.51
-using wget 7-zip
-cmd wget http://dl.bintray.com/groovy/maven/groovy-binary-2.3.6.zip -O groovy-binary-2.3.6.zip
-cmd 7z x groovy-binary-2.3.6.zip -oc:\Groovy
+#
+# groovy Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/groovy
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
-env GROOVY_HOME=c:/Groovy/groovy-2.3.6
-env spn_groovy=c:/Groovy/groovy-2.3.6/bin/groovy
-env PATH=%PATH%;C:/Groovy/groovy-2.3.6/bin/
+
+###################################
+# Pull dependency images
+###################################
+
+from jre:7.51
+using wget,7-zip,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+ echo import sys > getTag.py
+ echo import requests >> getTag.py
+ echo import re >> getTag.py
+ echo r = requests.get('http://www.groovy-lang.org/download.html') >> getTag.py
+ echo print(re.findall('(\d*\.\d*\.\d*) distributions', r.text )[0]) >> getTag.py
+
+cmd python getTag.py
+var tag = $out
+
+var url = "http://dl.bintray.com/groovy/maven/groovy-binary-" + $tag + ".zip"
+
+cmd "wget --no-check-certificate -O groovy-binary.zip " + $url
+cmd 7z x groovy-binary.zip -oc:\Groovy
+
+
+env GROOVY_HOME="c:/Groovy/groovy-" + $tag
+env spn_groovy="c:/Groovy/groovy-" + $tag  + "/bin/groovy"
+env PATH="%PATH%;C:/Groovy/groovy-" + $tag + "/bin/"
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta title="Groovy"
+meta namespace=pivotal
+meta name=groovy
+meta tag=$tag

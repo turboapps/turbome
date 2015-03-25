@@ -11,21 +11,45 @@
 ###################################
 
 from clean
-using wget
+using wget,python:3.4.1
 
 
 ###################################
 # Download and install
 ###################################
 
-# Create app directory
-workdir C:\
+cmd pip install requests --quiet
 
-# Download and unzip
-cmd wget http://nodejs.org/dist/v0.10.33/node-v0.10.33-x86.msi --no-check-certificate
-cmd msiexec /i node-v0.10.33-x86.msi /qn
-cmd del node-v0.10.33-x86.msi /Q
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('https://nodejs.org/download/') >> getRelease.py
+ echo print(list(re.findall('^"(.*v(\d*\.\d*\.\d*).*x86.msi)^"', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+
+var data = $out
+
+
+
+cmd "python -c ""print(" + $data + "[0])"""
+
+var url = $out
+
+
+cmd "python -c ""print(" + $data + "[1])"""
+
+var tag = $out
+
+
+
+cmd "wget -O node.msi --no-check-certificate + " $url
+
+cmd node.msi /qn
 # Manually create npm folder, because node installer fails to do so
 cmd mkdir "%APPDATA%\npm"
 
@@ -50,4 +74,13 @@ setworkdir @PROGRAMFILESX86@\nodejs
 # Clean up
 ###################################
 
-# No clean up needed
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta title="NodeJS"
+meta namespace=node
+meta name=node
+meta tag=$tag
