@@ -10,40 +10,89 @@
 # Pull dependency images
 ###################################
 
-from clean
-using gnu/wget
+from microsoft/vcredist:2008
+using gnu/wget,7-zip/7-zip,python/python:3.4.1,gnu/sed
 
 
 ###################################
 # Image settings
 ###################################
 
-env spn_config_Apache-Port=8080
-env spn_config_Apache-Admin=admin@localhost
-env spn_config_Apache-Name=localhost
-env spn_config_Apache-Domain=localhost
-
+var port = "8080"
+var email = "admin@localhost"
+var intalldir = "C:\\apache\\apache2"
 
 ###################################
 # Download and install
 ###################################
 
+cmd pip install requests --quiet
+
 # Set working directory
-workdir C:\
+workdir c:\
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+  echo import requests >> getVersion.py
+  echo import re >> getVersion.py
+  echo r = requests.get('https://www.apachehaus.com/cgi-bin/download.plx') >> getVersion.py
+  echo print(re.findall('httpd-(.*x86.*)\.zip', r.text )[0]) >> getVersion.py
+
+cmd python getVersion.py
+var version = $out
+
+var url = "http://www.apachehaus.com/downloads/httpd-" + $version  + ".zip"
+
+cmd "python -c ""print('" + $version + "'.split('-')[0])"""
+
+var tag = $out
+
+
 
 # Download
-cmd wget.exe https://archive.apache.org/dist/httpd/binaries/win32/httpd-2.0.65-win32-x86-openssl-0.9.8y.msi --no-check-certificate
+cmd wget --no-check-certificate --no-verbose -O httpd.zip $url
 
-# Install
-batch cmd
-  msiexec.exe /i httpd-2.0.65-win32-x86-openssl-0.9.8y.msi /qn /passive INSTALLDIR="C:\apache" ALLUSERS=1 SERVERADMIN=%spn_config_Apache-Admin% SERVERNAME=%spn_config_Apache-Name% SERVERDOMAIN=%spn_config_Apache-Domain% SERVERPORT=%spn_config_Apache-Port%
+cmd 7z x httpd.zip
+cmd mkdir c:\apache
+cmd move apache* c:\apache\apache2
+workdir c:\apache\apache2
 
+batch
+  sed -i "s|^Listen 80|Listen 8080|" conf\httpd.conf
+  sed -i "s|\("^ServerAdmin\s" * *\).*|\1admin@localhost|" conf\httpd.conf
+  sed -i "s|\("^ServerName" *\)|#\1|" conf\httpd.conf
+  sed -i "s|/Apache24|C:\\apache\\apache2|" conf\httpd.conf
+
+batch
+  bin\httpd.exe -k install > nul
+  echo 1
 
 ###################################
 # Environment Variables
 ###################################
 
 env path="C:\apache\apache2\bin"
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\python34 /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="apache"
+meta name=apache
+meta namespace=apache
+meta tag=$tag 
 
 
 ###################################
@@ -52,11 +101,3 @@ env path="C:\apache\apache2\bin"
 
 setworkdir C:\apache\apache2
 # No startup files needed
-
-
-###################################
-# Clean up
-###################################
-
-workdir C:\
-cmd del httpd-2.0.65-win32-x86-openssl-0.9.8y.msi /Q
