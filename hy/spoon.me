@@ -1,0 +1,53 @@
+#
+# Hy lang Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/hy
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+from python
+
+###################################
+# Download and install
+###################################
+
+workdir c:\
+
+cmd pip install hy --quiet
+
+cmd hy -v
+
+var data = $out
+
+cmd "python -c ""print('" + $data + "'.split(' ')[1])"""
+
+var tag = $out
+
+
+
+batch
+ echo (print ^"I was going to code in python syntax, but then I got hy.^") > awesome.hy
+
+###################################
+# Startup File
+###################################
+
+
+###################################
+# Environment Variables
+###################################
+
+
+###################################
+# Clean up
+###################################
+
+meta title="Hy lang"
+meta namespace=hylang
+meta name=hy
+meta tag=$tag
