@@ -1,14 +1,46 @@
-from jdk:7.65
-using wget 7-zip
-cmd echo Version is %VERSION%
-cmd wget http://apache.tt.co.kr/ant/binaries/apache-ant-%VERSION%-bin.zip -O ant.zip
-cmd 7z x ant.zip -oC:\Ant\
-cmd xcopy /E C:\Ant\apache-ant-%VERSION%\* C:\Ant\*
-cmd del ant.zip
-cmd rd /S /Q C:\Ant\apache-ant-%VERSION%\
+#
+# Ant Spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/ant
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
-env JAVA_HOME="C:\Program Files (x86)\Java\jdk1.7.0_65"
-env JAVACMD="C:\Program Files (x86)\Java\jdk1.7.0_65\bin\java"
-env ANT_HOME=C:\Ant\
+using wget,python:3.4.1,7-zip
 
-env PATH=%PATH%;C:\Ant\bin
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://ant.apache.org/bindownload.cgi') >> getRelease.py
+ echo print(list(re.findall('(http.*?(\d*\.\d*\.\d*)-bin.zip)', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+var data = $out
+
+cmd "python -c ""print(" + $data + "[0])"""
+var url = $out
+
+cmd "python -c ""print(" + $data + "[1])"""
+var tag = $out
+
+cmd "wget -O ant.zip --no-check-certificate + " $url
+
+cmd "7z x ant.zip -oC:\Ant"
+
+env PATH = "c:\Ant\apache-ant-" + $tag + "\bin" 
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta title="Ant"
+meta namespace=apache 
+meta name=ant
+meta tag=$tag
