@@ -1,14 +1,87 @@
-from jdk:8.0,jdk:7.65,maven:head,roman-dev-user/jetty:9.2.3.v20140905
-using wget 7-zip
-cmd wget http://mirrors.jenkins-ci.org/war/latest/jenkins.war -O jenkins.war
+#
+# Jenkins spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/jenkins
+#
+# Created with Spoon CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
-# Let's configure Jenkins a bit
-env JAVA_HOME="C:\Program Files (x86)\Java\jdk1.8.0"
-env JENKINS_HOME=C:\JenkinsHome
-cmd mkdir C:\JenkinsHome
-cmd copy .\config.xml C:\JenkinsHome\config.xml 
-cmd copy .\hudson.tasks.Maven.xml C:\JenkinsHome\hudson.tasks.Maven.xml
+###################################
+# Pull dependency images
+###################################
 
-cmd copy /Y .\jenkins.war %WEB_APPS%\jenkins.war
-cmd copy /Y .\jenkins.xml %WEB_APPS%\jenkins.xml
+using gnu/wget,python/python:3.4.1,7-zip
 
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+cmd wget --no-check-certificate --no-verbose -O jenkins.zip http://mirrors.jenkins-ci.org/windows/latest
+
+cmd 7z x jenkins.zip
+cmd "dir > output.txt"
+
+batch
+  echo import re >> getVersion.py
+  echo f = open('output.txt', 'r') >> getVersion.py
+  echo print(re.findall('jenkins-(\d*\.\d*\.*\d*)\.msi', f.read() )[0]) >> getVersion.py
+
+cmd python getVersion.py
+var version = $out
+
+cmd "jenkins-" + $version + ".msi /qn"
+
+
+workdir @PROGRAMFILESX86@\jenkins
+
+cmd "mkdir plugins & echo 1"
+
+workdir @PROGRAMFILESX86@\jenkins\plugins
+
+cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/git/2.3.5/git.hpi
+cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/git-client/1.16.1/git-client.hpi
+cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/scm-api/0.2/scm-api.hpi
+cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/matrix-project/1.4/matrix-project.hpi
+cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/credentials/1.22/credentials.hpi
+cmd wget --no-check-certificate https://raw.githubusercontent.com/spoonapps/spoonme/master/jenkins/spoon-trigger.hpi
+
+###################################
+# Environment Variables
+###################################
+
+# Example: 
+env JENKINS_HOME=@PROGRAMFILESX86@\jenkins\
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\wget /s /q
+cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="jenkins"
+meta namespace=jenkins
+meta name=jenkins
+meta tag=$version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd","/k echo Visit http://localhost:8080 to configure Jenkins, if you haven't already.")
