@@ -1,0 +1,93 @@
+#
+# Tomcat7 Spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/tomcat
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Pull dependency images
+###################################
+
+from jdk:8
+using wget,python:3.4.1,7-zip,fart
+
+cmd pip install requests --quiet
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://tomcat.apache.org/download-70.cgi') >> getRelease.py
+ echo print(list(re.findall('(http://.*?v(\d*\.\d*\.\d*).*?exe)', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+var data = $out
+
+cmd "python -c ""print(" + $data + "[0])"""
+var url = $out
+
+cmd "python -c ""print(" + $data + "[1])"""
+var tag = $out
+
+cmd "wget -O tomcat.exe --no-check-certificate + " $url
+
+cmd "tomcat.exe /S"
+
+
+###################################
+# Environment Variables
+###################################
+
+env CATALINA_HOME="@PROGRAMFILESX86@\Apache Software Foundation\Tomcat 7.0"
+
+###################################
+# Additional Configuration
+###################################
+
+batch
+ echo Windows Registry Editor Version 5.00 > service.reg
+ echo [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tomcat7] >> service.reg
+ echo "Start"=dword:00000002 >> service.reg
+ echo [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tomcat7\Parameters] >> service.reg
+ reg import service.reg
+
+workdir "@PROGRAMFILESX86@\Apache Software Foundation\Tomcat 7.0"
+
+batch
+ fart.exe --ignore-case conf\tomcat-users.xml "</tomcat-users>" "<user username=\"tomcat\" password=\"tomcat\" roles=\"standard,manager-gui\" /></tomcat-users>"
+ echo 1
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+###################################
+# Meta tags
+###################################
+
+meta title="Apache Tomcat"
+meta namespace=apache
+meta name=tomcat
+meta tag=$tag
+
+###################################
+# Startup File
+###################################
+
+setworkdir "@PROGRAMFILESX86@\Apache Software Foundation\Tomcat 7.0"
+startup file ("cmd","/k echo Visit http://localhost:8080 to manage tomcat with preconfigured user tomcat/tomcat, if you haven't already.")
