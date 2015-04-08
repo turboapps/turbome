@@ -1,0 +1,126 @@
+#
+# [Project name] spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/[path_to_spoon.me]
+#
+# Created with Spoon CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Pull dependency images
+###################################
+
+# from microsoft/dotnet:4.0.3
+
+# using gnu/wget,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Get URL from web
+# Example: using python
+# 
+# cmd pip install requests --quiet
+# 
+# batch 
+#   echo import requests >> getUrl.py 
+#   echo import re >> getUrl.py 
+#   echo r = requests.get('http://www.videolan.org/vlc') >> getUrl.py 
+#   echo url = ''.join(list(re.findall('(get.videolan.org\/vlc\/.*exe)', r.text)[0])) >> getUrl.py 
+#   echo print(url) >> getUrl.py 
+# 
+# cmd python getUrl.py
+# var url = $out
+# cmd echo $out
+
+# Download
+# Example: using wget
+# 
+# using gnu/wget:1.11.4
+# cmd wget --no-check-certificate --no-verbose -O Setup.exe http://notepad-plus-plus.org/download/
+
+# Install
+
+
+# Update
+
+# Get version
+# Example 1: from file using python
+# 
+# using python:3.4.1 
+# cmd pip install pypiwin32 --quiet 
+# 
+# batch 
+#   echo from win32com.client import Dispatch > getTag.py 
+#   echo parser = Dispatch("Scripting.FileSystemObject") >> getTag.py 
+#   echo print(parser.GetFileVersion(r^"c:\Skype\Phone\Skype.exe^")) >> getTag.py
+# cmd python getVersion.py
+# var version = $out
+#
+# ---------------------------------
+# 
+# Example 2: from file using powershell
+# cmd "echo (Get-Item ""c:\Skype\Phone\Skype.exe"").VersionInfo.ProductVersion >> GetVersion.ps1"
+# cmd "powershell -executionpolicy remotesigned -File ""GetVersion.ps1"" "
+# var version = $out
+# 
+# ---------------------------------
+# 
+# Example 3: from website content
+# 
+# batch 
+#   echo import requests >> getVersion.py 
+#   echo import re >> getVersion.py 
+#   echo r = requests.get('https://www.drupal.org/project/drupal') >> getVersion.py 
+#   echo version = ''.join(list(re.findall('(http://ftp.drupal.org/files/projects/drupal-(\d+\.\d+).zip)', r.text)[0][1])) >> getVersion.py 
+#   echo print(version) >> getVersion.py 
+# cmd python getVersion.py
+# var version = $out
+
+
+###################################
+# Environment Variables
+###################################
+
+# Example: 
+# env = path="c:\Skype"
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+# cmd rmdir c:\Workspace /s /q
+# cmd rmdir C:\wget /s /q
+# cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta title=""
+meta namespace=
+meta name=
+meta tag=$version
+
+
+###################################
+# Startup File
+###################################
+
+# Example 1: console message:
+# startup file ("cmd","/k echo Project version: ", $version)
+# 
+# Example 2: run app
+# startup file 
+# startup file ("c:\Notepad++\notepad")
