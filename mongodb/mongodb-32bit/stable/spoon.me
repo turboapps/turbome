@@ -1,0 +1,92 @@
+#
+# MongoDB 32-bit spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/mongodb/mongodb-32bit/spoon.me
+#
+# Created with Spoon CMD version 1.4.1124.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Get URL from web
+cmd pip install requests --quiet
+
+batch 
+  echo import requests >> getUrl.py 
+  echo import re >> getUrl.py 
+  echo r = requests.get('https://www.mongodb.org/downloads') >> getUrl.py 
+  echo version = ''.join(list(re.findall('(https.*-(\d+\.\d+\.*\d*)-.*msi)', r.text)[0][1])) >> getUrl.py 
+  echo r = requests.get('https://www.mongodb.org/dl/win32') >> getUrl.py
+  echo url = ''.join(list(re.findall('(http.*i386-' + version + '-signed\.msi)..win', r.text)[0])) >> getUrl.py
+  echo print(url) >> getUrl.py 
+cmd python getUrl.py
+var url = $out
+
+# cmd wget --no-check-certificate --no-verbose -O mongodbSetup.msi http://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.0.1-signed.msi
+cmd wget --no-check-certificate --no-verbose -O mongodbSetup.msi $url
+
+# Install
+cmd "msiexec.exe /q /i mongodbSetup.msi INSTALLLOCATION=""c:\mongodb"" "
+cmd mkdir c:\data\db
+
+# Update
+
+# Get version
+batch 
+  echo import requests >> getVersion.py 
+  echo import re >> getVersion.py 
+  echo r = requests.get('https://www.mongodb.org/downloads') >> getVersion.py 
+  echo version = ''.join(list(re.findall('(https.*-(\d+\.\d+\.*\d*)-.*msi)', r.text)[0][1])) >> getVersion.py 
+  echo print(version) >> getVersion.py 
+cmd python getVersion.py
+var version = $out
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\mongodb\bin"
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+# cmd rmdir c:\Workspace /s /q
+# cmd rmdir C:\wget /s /q
+# cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="MongoDB 32-bit"
+meta namespace=mongodb
+meta name=mongodb-32bit
+meta tag=$version
+
+
+###################################
+# Startup File
+###################################
+
+# Example 1: console message:
+startup file ("cmd", "/k start mongod")
