@@ -30,17 +30,17 @@ batch
  echo print(re.findall('(\d*\.\d*\.\d*) distributions', r.text )[0]) >> getTag.py
 
 cmd python getTag.py
-var tag = $out
+var tag = out
 
-var url = "http://dl.bintray.com/groovy/maven/groovy-binary-" + $tag + ".zip"
+var url = "http://dl.bintray.com/groovy/maven/groovy-binary-" + tag + ".zip"
 
-cmd "wget --no-check-certificate -O groovy-binary.zip " + $url
+cmd "wget --no-check-certificate -O groovy-binary.zip %url%"
 cmd 7z x groovy-binary.zip -oc:\Groovy
 
 
-env GROOVY_HOME="c:/Groovy/groovy-" + $tag
-env spn_groovy="c:/Groovy/groovy-" + $tag  + "/bin/groovy"
-env PATH="%PATH%;C:/Groovy/groovy-" + $tag + "/bin/"
+env GROOVY_HOME="c:/Groovy/groovy-" + tag
+env spn_groovy="c:/Groovy/groovy-" + tag  + "/bin/groovy"
+env PATH="%PATH%;C:/Groovy/groovy-" + tag + "/bin/"
 
 ###################################
 # Clean up
@@ -53,6 +53,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Groovy"
-meta namespace=pivotal
-meta name=groovy
-meta tag=$tag
+meta namespace="pivotal"
+meta name="groovy"
+meta tag=tag

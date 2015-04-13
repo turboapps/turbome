@@ -13,15 +13,15 @@ batch cmd
 cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/pmateusz/browser-automation/master/source/Python/GetLatestUrl.py
 cmd python GetLatestUrl.py --url ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest-beta/win32/en-US/ --regex Firefox\sSetup\s\d.*.exe
 
-var url = $out
+var url = out
 
 cmd "echo import re > getTag.py"
-cmd "echo print(re.findall('Firefox Setup (.*).exe','" + $url + "')[0]) >> getTag.py"
+cmd "echo print(re.findall('Firefox Setup (.*).exe','%url%')[0]) >> getTag.py"
 
 cmd python getTag.py
-var tag = $out
+var tag = out
 
-cmd wget -O firefox.exe --no-check-certificate --no-verbose $url
+cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
 cmd "firefox.exe /INI=c:\Workspace\install.ini"
 
 batch
@@ -39,8 +39,8 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Firefox Beta"
-meta namespace=mozilla
-meta name=firefox-beta
-meta tag=$tag
+meta namespace="mozilla"
+meta name="firefox-beta"
+meta tag=tag
 
 startup file ("c:\FirefoxBeta\firefox.exe")

@@ -35,11 +35,10 @@ batch
   echo print(url) >> getUrl.py 
 
 cmd python getUrl.py
-var url = $out
-cmd echo $out
+var url = out
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O VlcSetup.exe $url
+cmd "wget --no-check-certificate --no-verbose -O VlcSetup.exe %url%"
 
 # Install
 cmd VlcSetup.exe /S
@@ -53,7 +52,7 @@ batch
   echo print(version) >> getVersion.py
 
 cmd python getVersion.py
-var version = $out
+var version = out
 
 
 ###################################
@@ -79,9 +78,9 @@ cmd rmdir C:\python34 /s /q
 ###################################
 
 meta title="VLC nightly"
-meta namespace=videolan
-meta name=vlc-nightly
-meta tag=$version
+meta namespace="videolan"
+meta name="vlc-nightly"
+meta tag=version
 
 
 ###################################

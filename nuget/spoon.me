@@ -27,7 +27,7 @@ cmd wget --no-check-certificate --no-verbose -O C:\NuGet\nuget.exe http://nuget.
 # Get version number
 cmd echo ^(Get-Item "C:\NuGet\nuget.exe" ^).VersionInfo.ProductVersion >> GetVersion.ps1
 cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
-var version = $out
+var version = out
 
 
 ###################################
@@ -49,9 +49,9 @@ cmd del GetVersion.ps1
 ###################################
 
 meta title="NuGet"
-meta namespace=nuget
-meta name=nuget
-meta tag=$version
+meta namespace="nuget"
+meta name="nuget"
+meta tag=version
 
 
 
@@ -59,4 +59,4 @@ meta tag=$version
 # Startup File
 ###################################
 
-startup file ("cmd","/k echo NuGet version: ", $version)
+startup file ("cmd","/k echo NuGet version: ", version)

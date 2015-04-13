@@ -10,7 +10,7 @@ using wget,python:3.4.1
 
 cmd pip install requests --quiet
 
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 batch
@@ -24,29 +24,29 @@ batch
 
 cmd python getRelease.py
 
-var data = $out
+var data = out
 
 
 
-cmd "python -c ""print(" + $data + "[0])"""
+cmd "python -c ""print(%data%[0])"""
 
-var url = $out
-
-
-cmd "python -c ""print(" + $data + "[1])"""
-
-var tag = $out
+var url = out
 
 
-cmd "python -c ""print(" + $data + "[2])"""
+cmd "python -c ""print(%data%[1])"""
 
-var dir = $out
+var tag = out
 
-cmd "wget -O rubyinstaller.exe --no-check-certificate + " $url
+
+cmd "python -c ""print(%data%[2])"""
+
+var dir = out
+
+cmd "wget -O rubyinstaller.exe --no-check-certificate %url%"
 
 cmd "rubyinstaller.exe /verysilent"
 
-env path = "c:\" + $dir + "\bin"
+env path = "c:\" + dir + "\bin"
 
 workdir c:\
 
@@ -55,6 +55,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Ruby"
-meta namespace=ruby 
-meta name=ruby 
-meta tag=$tag
+meta namespace="ruby"
+meta name="ruby"
+meta tag=tag

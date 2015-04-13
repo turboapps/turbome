@@ -22,22 +22,22 @@ batch
 
 cmd python getRelease.py
 
-var data = $out
+var data = out
 
 
 
-cmd "python -c ""print(" + $data + "[0])"""
+cmd "python -c ""print(%data%[0])"""
 
-var url = $out
-
-
-cmd "python -c ""print(" + $data + "[1])"""
-
-var tag = $out
+var url = out
 
 
+cmd "python -c ""print(%data%[1])"""
 
-cmd "wget -O nunit.msi --no-check-certificate + " $url
+var tag = out
+
+
+
+cmd "wget -O nunit.msi --no-check-certificate %url%"
 
 cmd "nunit.msi INSTALLDIR=c:\nunit /qn"
 
@@ -50,6 +50,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Nunit"
-meta namespace=nunit 
-meta name=nunit 
-meta tag=$tag
+meta namespace="nunit"
+meta name="nunit"
+meta tag=tag

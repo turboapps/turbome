@@ -22,7 +22,7 @@ cmd pip install requests --quiet
 
 # Set working directory
 workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace
+cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 batch
@@ -34,12 +34,12 @@ batch
 
 cmd python getVersion.py
 
-var version = $out
+var version = out
 
-var url = "https://downloads.mariadb.org/f/mariadb-" + $version + "/win32-packages/mariadb-" + $version +"-win32.msi"
+var url = "https://downloads.mariadb.org/f/mariadb-" + version + "/win32-packages/mariadb-" + version +"-win32.msi"
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O mariadb.msi $url
+cmd "wget --no-check-certificate --no-verbose -O mariadb.msi %url%"
 
 # Install
 cmd ("msiexec", "/i", "mariadb.msi", "INSTALLDIR=C:\MariaDB", "/qn")
@@ -66,6 +66,6 @@ cmd rmdir c:\python34 /s /q
 ###################################
 
 meta title="MariaDB"
-meta namespace=mariadb
-meta name=mariadb
-meta tag=$version
+meta namespace="mariadb"
+meta name="mariadb"
+meta tag=version

@@ -20,19 +20,19 @@ batch
  echo print(list(re.findall('(http.*?(\d*\.\d*\.\d*)-bin.zip)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
-var data = $out
+var data = out
 
-cmd "python -c ""print(" + $data + "[0])"""
-var url = $out
+cmd "python -c ""print( %data% [0])"""
+var url = out
 
-cmd "python -c ""print(" + $data + "[1])"""
-var tag = $out
+cmd "python -c ""print( %data% [1])"""
+var tag = out
 
-cmd "wget -O ant.zip --no-check-certificate + " $url
+cmd "wget -O ant.zip --no-check-certificate %url%"
 
 cmd "7z x ant.zip -oC:\Ant"
 
-env PATH = "c:\Ant\apache-ant-" + $tag + "\bin" 
+env PATH = "c:\Ant\apache-ant-" + tag + "\bin" 
 
 workdir c:\
 
@@ -41,6 +41,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Ant"
-meta namespace=apache 
-meta name=ant
-meta tag=$tag
+meta namespace="apache"
+meta name="ant"
+meta tag=tag

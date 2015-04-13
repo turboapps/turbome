@@ -33,12 +33,11 @@ batch
   echo print(url) >> getUrl.py
 
 cmd python getUrl.py
-var url = $out
-cmd echo $out
+var url = out
 
 # Download
 
-cmd wget --no-check-certificate --no-verbose -O gradle.zip $url
+cmd "wget --no-check-certificate --no-verbose -O gradle.zip %url%"
 
 # Unpack
 cmd 7z x gradle.zip -oc:\gradle
@@ -51,14 +50,14 @@ batch
   echo version = ''.join(list(re.findall('gradleVersion = "(.*)\+.*"', r.text)[0])) >> getVersion.py
   echo print(version) >> getVersion.py
 cmd python getVersion.py
-var version = $out
+var version = out
 
 
 ###################################
 # Environment Variables
 ###################################
 
-env path="c:\gradle\gradle-" + $version + "+0000\bin"
+env path="c:\gradle\gradle-" + version + "+0000\bin"
 
 
 ###################################
@@ -77,13 +76,13 @@ cmd rmdir C:\python34 /s /q
 ###################################
 
 meta title="Gradle nightly"
-meta namespace=gradle
-meta name=gradle-nightly
-meta tag=$version
+meta namespace="gradle"
+meta name="gradle-nightly"
+meta tag=version
 
 
 ###################################
 # Startup File
 ###################################
 
-startup file ("cmd","/k echo Gradle nightly version: ", $version)
+startup file ("cmd","/k echo Gradle nightly version: ", version)

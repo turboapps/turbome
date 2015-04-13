@@ -32,7 +32,7 @@ batch
   echo print(re.findall('ReleaseNotes(\d*\.\d*\.*\d*)\.md', r.text)[0]) >> getVersion.py
 
 cmd python getVersion.py
-var tag = $out
+var tag = out
 
 # Download
 cmd mkdir c:\junit
@@ -40,15 +40,15 @@ cmd mkdir c:\junit
 workdir c:\junit
 
 cmd "wget --no-check-certificate --no-verbose http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
-cmd "wget --no-check-certificate --no-verbose http://search.maven.org/remotecontent?filepath=junit/junit/" + $tag + "/junit-" + $tag + ".jar"
+cmd "wget --no-check-certificate --no-verbose http://search.maven.org/remotecontent?filepath=junit/junit/%tag%/junit-%tag%.jar"
 
 
 ###################################
 # Environment Variables
 ###################################
 
-env JUNIT_HOME=c:\junit
-env CLASSPATH="c:\junit\junit"+ $tag +".jar;.;"
+env JUNIT_HOME="c:\junit"
+env CLASSPATH="c:\junit\junit" + tag + ".jar;.;"
 
 
 ###################################
@@ -67,13 +67,13 @@ cmd rmdir C:\python34 /s /q
 ###################################
 
 meta title="Junit"
-meta namespace=junit
-meta name=junit
-meta tag=$tag
+meta namespace="junit"
+meta name="junit"
+meta tag=tag
 
 
 ###################################
 # Startup File
 ###################################
 
-startup file ("cmd","/k echo JUnit version: ", $tag)
+startup file ("cmd","/k echo JUnit version: ", tag)

@@ -21,15 +21,15 @@ batch
  echo print(re.findall('\d+\.\d+\.\d+\.\d+', r.text)[0]) >> getNewestVersion.py
 
 cmd python getNewestVersion.py
-var version = $out
-var url = "http://get.geo.opera.com.global.prod.fastly.net/pub/opera/desktop/"+ $version + "/win/Opera_" + $version + "_Setup.exe"
+var version = out
+var url = "http://get.geo.opera.com.global.prod.fastly.net/pub/opera/desktop/"+ version + "/win/Opera_" + version + "_Setup.exe"
 
-cmd "python -c ""print('" + $version + "'.split('.')[0])"""
-var tag = $out
+cmd "python -c ""print('%version%'.split('.')[0])"""
+var tag = out
  
-cmd wget --no-check-certificate --no-verbose $url
-cmd "Opera_" + $version + "_Setup.exe --silent --setdefaultbrowser=1 --import-browser-data=0 --enable-stats=0 --launchopera=0 --installfolder=c:\Opera\"
-cmd del "c:\Opera\" + $version + "\opera_autoupdate.exe"
+cmd "wget --no-check-certificate --no-verbose %url%"
+cmd "Opera_%version%_Setup.exe --silent --setdefaultbrowser=1 --import-browser-data=0 --enable-stats=0 --launchopera=0 --installfolder=c:\Opera\"
+cmd del "c:\Opera\%version%\opera_autoupdate.exe"
 
 workdir c:\
 
@@ -38,8 +38,8 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Opera Browser"
-meta namespace=opera
-meta name=opera
-meta tag=$tag
+meta namespace="opera"
+meta name="opera"
+meta tag=tag
 
 startup file ("c:\Opera\launcher.exe")

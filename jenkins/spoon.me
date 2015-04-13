@@ -32,9 +32,9 @@ batch
   echo print(re.findall('jenkins-(\d*\.\d*\.*\d*)\.zip', f.read() )[0]) >> getVersion.py
 
 cmd python getVersion.py
-var version = $out
+var version = out
 
-cmd 7z x "jenkins-" + $version + ".zip"
+cmd 7z x "jenkins-%version%.zip"
 
 cmd "jenkins.msi /qn"
 
@@ -43,7 +43,7 @@ workdir @PROGRAMFILESX86@\jenkins
 
 cmd "mkdir plugins & echo 1"
 
-workdir @PROGRAMFILESX86@\jenkins\plugins
+workdir "@PROGRAMFILESX86@\jenkins\plugins"
 
 cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/git/2.3.5/git.hpi
 cmd wget --no-check-certificate https://updates.jenkins-ci.org/download/plugins/git-client/1.16.1/git-client.hpi
@@ -57,7 +57,7 @@ cmd wget --no-check-certificate https://raw.githubusercontent.com/spoonapps/spoo
 ###################################
 
 # Example: 
-env JENKINS_HOME=@PROGRAMFILESX86@\jenkins\
+env JENKINS_HOME="@PROGRAMFILESX86@\jenkins\"
 
 
 ###################################
@@ -76,9 +76,9 @@ cmd rmdir C:\python34 /s /q
 ###################################
 
 meta title="jenkins"
-meta namespace=jenkinsci
-meta name=jenkins
-meta tag=$version
+meta namespace="jenkinsci"
+meta name="jenkins"
+meta tag=version
 
 
 ###################################

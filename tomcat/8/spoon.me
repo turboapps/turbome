@@ -29,15 +29,15 @@ batch
  echo print(list(re.findall('(http://.*?v(\d*\.\d*\.\d*).*?exe)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
-var data = $out
+var data = out
 
-cmd "python -c ""print(" + $data + "[0])"""
-var url = $out
+cmd "python -c ""print(%data%[0])"""
+var url = out
 
-cmd "python -c ""print(" + $data + "[1])"""
-var tag = $out
+cmd "python -c ""print(%data%[1])"""
+var tag = out
 
-cmd "wget -O tomcat.exe --no-check-certificate + " $url
+cmd "wget -O tomcat.exe --no-check-certificate %url%"
 
 cmd "tomcat.exe /S"
 
@@ -81,9 +81,9 @@ cmd rmdir c:\Python34 /s /q
 ###################################
 
 meta title="Apache Tomcat"
-meta namespace=apache
-meta name=tomcat
-meta tag=$tag
+meta namespace="apache"
+meta name="tomcat"
+meta tag=tag
 
 ###################################
 # Startup File

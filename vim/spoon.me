@@ -26,33 +26,35 @@ cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/s
 
 cmd "python GetLastestSF.py --url=http://sourceforge.net/projects/cream/rss?path=/Vim -r=.*gvim.*exe"
 
-var url = $out
+var url = out
 
 cmd "echo import re > getTag.py"
-cmd "echo print(re.findall('(\d*\.\d*\.\d*)','" + $url + "')[0]) >> getTag.py"
+cmd "echo print(re.findall('(\d*\.\d*\.\d*)','%url%')[0]) >> getTag.py"
 
 cmd python getTag.py
-var tag = $out
+var tag = out
 
 # Download
-cmd wget -O vim.exe --no-check-certificate $url
+cmd "wget -O vim.exe --no-check-certificate %url%"
 
 cmd "vim.exe /S "
 
-cmd "python -c ""print('" + $tag + "'.split('.')[0] + '" + $tag + "'.split('.')[1])"""
-var version = $out
+cmd "python -c ""print('%tag%'.split('.')[0] + '%tag%'.split('.')[1])"""
+var version = out
   
 ###################################
 # Environment Variables
 ###################################
 
-env path="@PROGRAMFILESX86@\vim\vim" + $version
+env path="@PROGRAMFILESX86@\vim\vim" + version
 
 ###################################
 # Startup File
 ###################################
 
-startup file """@PROGRAMFILESX86@\vim\vim" + $version + "\gvim.exe"""
+var startupfile = "@PROGRAMFILESX86@\vim\vim" + version + "\gvim.exe"
+
+startup file (startupfile)
 
 ###################################
 # Clean up
@@ -65,6 +67,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="VIM"
-meta namespace=vim
-meta name=vim
-meta tag=$tag
+meta namespace="vim"
+meta name="vim"
+meta tag=tag

@@ -31,16 +31,16 @@ batch
 
 cmd "python getTag.py"
 
-var tag = $out
+var tag = out
 
-var url = "https://github.com/grails/grails-core/releases/download/v" + $tag + "/grails-" + $tag + ".zip"
+var url = "https://github.com/grails/grails-core/releases/download/v" + tag + "/grails-"+ tag + ".zip"
 
-cmd "wget --no-check-certificate -O grails.zip " + $url
+cmd "wget --no-check-certificate -O grails.zip %url%"
 cmd 7z x grails.zip -oc:\Grails
 
 
-env GRAILS_HOME="c:/Grails/grails-" + $tag
-env PATH="%PATH%;C:/Grails/grails-" + $tag + "/bin/"
+env GRAILS_HOME="c:/Grails/grails-" + tag
+env PATH="C:/Grails/grails-" + tag + "/bin/"
 
 ###################################
 # Clean up
@@ -53,6 +53,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="Grails"
-meta namespace=grails
-meta name=grails
-meta tag=$tag
+meta namespace="grails"
+meta name="grails"
+meta tag=tag

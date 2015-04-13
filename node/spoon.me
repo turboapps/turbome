@@ -32,22 +32,22 @@ batch
 
 cmd python getRelease.py
 
-var data = $out
+var data = out
 
 
 
-cmd "python -c ""print(" + $data + "[0])"""
+cmd "python -c ""print(%data%[0])"""
 
-var url = $out
-
-
-cmd "python -c ""print(" + $data + "[1])"""
-
-var tag = $out
+var url = out
 
 
+cmd "python -c ""print(%data%[1])"""
 
-cmd "wget -O node.msi --no-check-certificate + " $url
+var tag = out
+
+
+
+cmd "wget -O node.msi --no-check-certificate %url%"
 
 cmd node.msi /qn
 # Manually create npm folder, because node installer fails to do so
@@ -81,6 +81,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="NodeJS"
-meta namespace=node
-meta name=node
-meta tag=$tag
+meta namespace="node"
+meta name="node"
+meta tag=tag

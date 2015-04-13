@@ -10,7 +10,6 @@ using wget,python:3.4.1,7-zip
 
 cmd pip install requests --quiet
 
-workdir c:\
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
@@ -23,13 +22,13 @@ batch
 
 cmd python getRelease.py
 
-var tag = $out
+var tag = out
 
-cmd "wget -O nginx.zip --no-check-certificate http://nginx.org/download/nginx-" + $tag + ".zip"
+cmd "wget -O nginx.zip --no-check-certificate http://nginx.org/download/nginx-%tag%.zip"
 
 cmd 7z x nginx.zip
 
-cmd "move nginx-" + $tag + " c:\nginx"
+cmd "move nginx-%tag% c:\nginx"
 
 workdir c:\
 
@@ -41,6 +40,6 @@ env path="C:\nginx"
 setworkdir C:\nginx
 
 meta title="nginx"
-meta namespace=nginx 
-meta name=nginx 
-meta tag=$tag
+meta namespace="nginx"
+meta name="nginx"
+meta tag=tag

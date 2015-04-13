@@ -22,27 +22,27 @@ batch
 
 cmd python getRelease.py
 
-var data = $out
+var data = out
 
 
 
-cmd "python -c ""print(" + $data + "[0])"""
+cmd "python -c ""print(%data%[0])"""
 
-var url = $out
-
-
-cmd "python -c ""print(" + $data + "[1])"""
-
-var tag = $out
+var url = out
 
 
+cmd "python -c ""print(%data%[1])"""
 
-cmd "wget -O sbt.msi --no-check-certificate + " $url
+var tag = out
+
+
+
+cmd "wget -O sbt.msi --no-check-certificate %url%"
 
 cmd "sbt.msi /qn"
 
-env PATH = @PROGRAMFILESX86@\sbt\bin
-env SBT_HOME = @PROGRAMFILESX86@\sbt\
+env PATH = "@PROGRAMFILESX86@\sbt\bin"
+env SBT_HOME = "@PROGRAMFILESX86@\sbt\"
 
 workdir c:\
 
@@ -51,6 +51,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="sbt"
-meta namespace=sbt 
-meta name=sbt
-meta tag=$tag
+meta namespace="sbt" 
+meta name="sbt"
+meta tag=tag

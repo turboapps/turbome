@@ -20,9 +20,6 @@ using gnu/wget,7-zip/7-zip,python/python:3.4.1,fart/fart
 
 cmd pip install requests --quiet
 
-# Set working directory
-workdir C:\
-
 # Create app directory
 cmd mkdir C:\php
 workdir C:\php
@@ -35,24 +32,24 @@ batch
 
 cmd python getVersion.py
 
-var data = $out
+var data = out
 
 
 
-cmd "python -c ""print(" + $data + "[0])"""
+cmd "python -c ""print(%data%[0])"""
 
-var url = "http://windows.php.net" + $out
+var url = "http://windows.php.net" + out
 
 
-cmd "python -c ""print(" + $data + "[1])"""
+cmd "python -c ""print(%data%[1])"""
 
-var tag = $out
+var tag = out
 
 
 
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O php.zip $url
+cmd "wget --no-check-certificate --no-verbose -O php.zip %url%"
 
 # Install
 cmd 7z.exe x php.zip
@@ -72,7 +69,7 @@ batch cmd
 # Environment Variables
 ###################################
 
-env path=C:\php
+env path="C:\php"
 
 
 ###################################
@@ -88,9 +85,9 @@ setworkdir C:\php
 ###################################
 
 meta title="PHP"
-meta name=php
-meta namespace=php
-meta tag=$tag 
+meta name="php"
+meta namespace="php"
+meta tag=tag 
 
 ###################################
 # Clean up

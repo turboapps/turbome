@@ -19,8 +19,8 @@ using gnu/wget,fart/fart,7-zip/7-zip,python/python:3.4.1
 ###################################
 
 # Set working directory
-workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace	
+
+cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Download
@@ -37,7 +37,7 @@ batch
   echo print(version) >> getVersion.py
 
 cmd python getVersion.py
-var version = $out
+var version = out
 
 workdir C:\
 
@@ -159,9 +159,9 @@ cmd rmdir c:\python34 /s /q
 ###################################
 
 meta title="Wordpress"
-meta name=wordpress
-meta namespace=wordpress
-meta tag=$version
+meta name="wordpress"
+meta namespace="wordpress"
+meta tag=version
 
 
 ###################################

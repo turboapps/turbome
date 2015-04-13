@@ -22,13 +22,13 @@ batch
 
 cmd python getRelease.py
 
-var tag = $out
+var tag = out
 
-cmd "python -c ""print('" + $tag + "'.split('.')[0])"""
-var version = $out
+cmd "python -c ""print('%tag%'.split('.')[0])"""
+var version = out
 
 
-cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_" + $version + "_plugin.msi"
+cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_%version%_plugin.msi"
 
 cmd "setup.msi /qn"
 
@@ -40,6 +40,6 @@ cmd rmdir c:\Python34 /s /q
 
 
 meta title="Adobe FlashPlayer"
-meta namespace=adobe
-meta name=flash
-meta tag=$tag
+meta namespace="adobe"
+meta name="flash"
+meta tag=tag

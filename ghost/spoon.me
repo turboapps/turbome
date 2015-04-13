@@ -33,10 +33,10 @@ batch
  echo print(re.findall('/zip/ghost-(\d*\.\d*\.\d*).zip', r.text )[0]) >> getTag.py
 
 cmd python getTag.py
-var tag = $out
+var tag = out
 
 # Download and unzip
-cmd "wget --no-check-certificate -O ghost.zip https://ghost.org/zip/ghost-" + $tag + ".zip"
+cmd "wget --no-check-certificate -O ghost.zip https://ghost.org/zip/ghost-%tag%.zip"
 
 cmd 7z x ghost.zip
 
@@ -83,6 +83,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="ghost"
-meta namespace=ghost
-meta name=ghost
-meta tag=$tag
+meta namespace="ghost"
+meta name="ghost"
+meta tag=tag

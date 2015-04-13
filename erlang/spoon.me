@@ -31,33 +31,33 @@ batch
 
 cmd python getRelease.py
 
-var data = $out
+var data = out
 
 
 
-cmd "python -c ""print(" + $data + "[0])"""
+cmd "python -c ""print(%data%[0])"""
 
-var url = $out
-
-
-cmd "python -c ""print(" + $data + "[1])"""
-
-var tag = $out
+var url = out
 
 
+cmd "python -c ""print(%data%[1])"""
 
-cmd "wget --no-check-certificate -O erlang.exe http://www.erlang.org" + $url 
+var tag = out
+
+
+
+cmd "wget --no-check-certificate -O erlang.exe http://www.erlang.org%url%" 
 
 # Install Erlang
-cmd "erlang.exe /S /D=C:\erlang-" + $tag
+cmd "erlang.exe /S /D=C:\erlang-%tag%"
 
 
 ###################################
 # Environment Variables
 ###################################
 
-env ERLANG_HOME="C:\erlang-" + $tag
-env PATH="C:\erlang-" + $tag + "\bin"
+env ERLANG_HOME="C:\erlang-" + tag
+env PATH="C:\erlang-" + tag + "\bin"
 
 
 ###################################
@@ -70,6 +70,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
 meta title="erlang OTP"
-meta namespace=erlang
-meta name=erlang 
-meta tag=$tag
+meta namespace="erlang"
+meta name="erlang" 
+meta tag=tag

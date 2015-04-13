@@ -9,7 +9,6 @@ using wget,python:3.4.1
 
 cmd pip install pypiwin32 --quiet
 
-workdir c:\
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
@@ -22,7 +21,7 @@ batch
  echo print(parser.GetFileVersion(r^"c:\Skype\Phone\Skype.exe^")) >> getTag.py
 
 cmd python getTag.py
-var tag = $out
+var tag = out
 
 workdir c:\
 
@@ -31,8 +30,8 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\python34 /s /q
 
 meta title="Skype"
-meta namespace=microsoft
-meta name=skype
-meta tag=$tag
+meta namespace="microsoft"
+meta name="skype"
+meta tag=tag
 
 startup file ("C:\Skype\Phone\Skype.exe")

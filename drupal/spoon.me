@@ -20,8 +20,7 @@ using gnu/wget,fart/fart,7-zip/7-zip,python/python:3.4.1
 cmd pip install requests --quiet
 
 # Set working directory
-workdir c:\
-cmd mkdir c:\Workspace & cd c:\Workspace	
+cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 batch
@@ -32,19 +31,19 @@ batch
   echo print(version) >> getVersion.py
 
 cmd python getVersion.py
-var version = $out
-var url = "http://ftp.drupal.org/files/projects/drupal-" + $version + ".zip"
+var version = out
+var url = "http://ftp.drupal.org/files/projects/drupal-" + version + ".zip"
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O drupal.zip $url
+cmd "wget --no-check-certificate --no-verbose -O drupal.zip %url%"
 
 # Download and extract Drupal
 cmd 7z x drupal.zip -oc:\drupal-temp
 workdir C:\
-# cmd del C:\$filename
+
 cmd mkdir c:\drupal
-var extractedpath = "c:\drupal-temp\drupal-" + $version + "\*.*"
-cmd xcopy /s/e $extractedpath c:\drupal
+var extractedpath = "c:\drupal-temp\drupal-" + version + "\*.*"
+cmd xcopy /s/e %extractedpath% c:\drupal
 cmd del c:\drupal-temp /S /Q
 cmd rmdir c:\drupal-temp /S /Q
 
@@ -158,9 +157,9 @@ cmd rmdir c:\python34 /s /q
 ###################################
 
 meta title="Drupal"
-meta namespace=drupal
-meta name=drupal
-meta tag=$version
+meta namespace="drupal"
+meta name="drupal"
+meta tag=version
 
 
 ###################################

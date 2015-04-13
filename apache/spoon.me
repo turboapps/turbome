@@ -29,7 +29,6 @@ var intalldir = "C:\\apache\\apache2"
 cmd pip install requests --quiet
 
 # Set working directory
-workdir c:\
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
@@ -40,18 +39,18 @@ batch
   echo print(re.findall('httpd-(.*x86-vc11.*)\.zip', r.text )[0]) >> getVersion.py
 
 cmd python getVersion.py
-var version = $out
+var version = out
 
-var url = "http://www.apachehaus.com/downloads/httpd-" + $version  + ".zip"
+var url = "http://www.apachehaus.com/downloads/httpd-" + version  + ".zip"
 
-cmd "python -c ""print('" + $version + "'.split('-')[0])"""
+cmd "python -c ""print('%version%'.split('-')[0])"""
 
-var tag = $out
+var tag = out
 
 
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O httpd.zip $url
+cmd "wget --no-check-certificate --no-verbose -O httpd.zip %url%"
 
 cmd 7z x httpd.zip
 cmd mkdir c:\apache
@@ -90,9 +89,9 @@ cmd rmdir c:\python34 /s /q
 ###################################
 
 meta title="apache"
-meta name=apache
-meta namespace=apache
-meta tag=$tag 
+meta name="apache"
+meta namespace="apache"
+meta tag=tag 
 
 
 ###################################
