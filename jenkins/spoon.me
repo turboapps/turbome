@@ -22,20 +22,21 @@ using gnu/wget,python/python:3.4.1,7-zip
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-cmd wget --no-check-certificate --no-verbose -O jenkins.zip http://mirrors.jenkins-ci.org/windows/latest
+cmd wget --no-check-certificate --no-verbose http://mirrors.jenkins-ci.org/windows/latest
 
-cmd 7z x jenkins.zip
 cmd "dir > output.txt"
 
 batch
   echo import re >> getVersion.py
   echo f = open('output.txt', 'r') >> getVersion.py
-  echo print(re.findall('jenkins-(\d*\.\d*\.*\d*)\.msi', f.read() )[0]) >> getVersion.py
+  echo print(re.findall('jenkins-(\d*\.\d*\.*\d*)\.zip', f.read() )[0]) >> getVersion.py
 
 cmd python getVersion.py
 var version = $out
 
-cmd "jenkins-" + $version + ".msi /qn"
+cmd 7z x "jenkins-" + $version + ".zip"
+
+cmd "jenkins.msi /qn"
 
 
 workdir @PROGRAMFILESX86@\jenkins
