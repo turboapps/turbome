@@ -23,16 +23,16 @@ batch
 
 cmd python getRelease.py
 
-var data = out
+var data = last
 
 cmd "python -c ""print(%data%[0])"""
-var version = out
+var version = last
 
 cmd "python -c ""print(%data%[1])"""
-var update = out
+var update = last
 
 cmd "python -c ""print(%data%[2])"""
-var url = out
+var url = last
 
 var tag = version + "u" + update
 

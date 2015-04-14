@@ -22,10 +22,10 @@ batch
 
 cmd python getRelease.py
 
-var tag = out
+var tag = last
 
 cmd "python -c ""print('%tag%'.split('.')[0])"""
-var version = out
+var version = last
 
 
 cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_%version%_plugin.msi"

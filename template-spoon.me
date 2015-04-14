@@ -37,8 +37,8 @@ workdir c:\Workspace
 #   echo print(url) >> getUrl.py 
 # 
 # cmd python getUrl.py
-# var url = $out
-# cmd echo $out
+# var url = last
+# cmd echo %url%
 
 # Download
 # Example: using wget
@@ -62,14 +62,14 @@ workdir c:\Workspace
 #   echo parser = Dispatch("Scripting.FileSystemObject") >> getTag.py 
 #   echo print(parser.GetFileVersion(r^"c:\Skype\Phone\Skype.exe^")) >> getTag.py
 # cmd python getVersion.py
-# var version = $out
+# var version = last
 #
 # ---------------------------------
 # 
 # Example 2: from file using powershell
 # cmd "echo (Get-Item ""c:\Skype\Phone\Skype.exe"").VersionInfo.ProductVersion >> GetVersion.ps1"
 # cmd "powershell -executionpolicy remotesigned -File ""GetVersion.ps1"" "
-# var version = $out
+# var version = last
 # 
 # ---------------------------------
 # 
@@ -82,7 +82,7 @@ workdir c:\Workspace
 #   echo version = ''.join(list(re.findall('(http://ftp.drupal.org/files/projects/drupal-(\d+\.\d+).zip)', r.text)[0][1])) >> getVersion.py 
 #   echo print(version) >> getVersion.py 
 # cmd python getVersion.py
-# var version = $out
+# var version = last
 
 
 ###################################
@@ -109,9 +109,9 @@ workdir c:\
 ###################################
 
 meta title=""
-meta namespace=
-meta name=
-meta tag=$version
+meta namespace=""
+meta name=""
+meta tag=version
 
 
 ###################################
@@ -119,7 +119,7 @@ meta tag=$version
 ###################################
 
 # Example 1: console message:
-# startup file ("cmd","/k echo Project version: ", $version)
+# startup file ("cmd","/k echo Project version: ", version)
 # 
 # Example 2: run app
 # startup file 

@@ -33,7 +33,7 @@ batch
  echo print(re.findall('/zip/ghost-(\d*\.\d*\.\d*).zip', r.text )[0]) >> getTag.py
 
 cmd python getTag.py
-var tag = out
+var tag = last
 
 # Download and unzip
 cmd "wget --no-check-certificate -O ghost.zip https://ghost.org/zip/ghost-%tag%.zip"

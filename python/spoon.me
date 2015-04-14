@@ -26,23 +26,22 @@ using python:3.4.1
 
  cmd python getRelease.py
 
- var data = out
+ var data = last
 
 
 
  cmd "python -c ""print(%data%[0])"""
 
- var url = out
+ var url = last
 
 
  cmd "python -c ""print(%data%[1])"""
 
- var tag = out
-
+ var tag = last
 
  cmd "python -c ""print(%data%[2])"""
 
- var version = out
+ var version = last
 
  cmd "wget -O python.msi --no-check-certificate %url%"
  

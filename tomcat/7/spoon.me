@@ -29,13 +29,13 @@ batch
  echo print(list(re.findall('(http://.*?v(\d*\.\d*\.\d*).*?exe)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
-var data = out
+var data = last
 
 cmd "python -c ""print(%data%[0])"""
-var url = out
+var url = last
 
 cmd "python -c ""print(%data%[1])"""
-var tag = out
+var tag = last
 
 cmd "wget -O tomcat.exe --no-check-certificate %url%"
 

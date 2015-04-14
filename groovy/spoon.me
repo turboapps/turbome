@@ -30,7 +30,7 @@ batch
  echo print(re.findall('(\d*\.\d*\.\d*) distributions', r.text )[0]) >> getTag.py
 
 cmd python getTag.py
-var tag = out
+var tag = last
 
 var url = "http://dl.bintray.com/groovy/maven/groovy-binary-" + tag + ".zip"
 

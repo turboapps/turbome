@@ -31,19 +31,18 @@ batch
 
 cmd python getRelease.py
 
-var data = out
+var data = last
 
 
 
 cmd "python -c ""print(%data%[0])"""
 
-var url = out
+var url = last
 
 
 cmd "python -c ""print(%data%[1])"""
 
-var tag = out
-
+var tag = last
 
 
 cmd "wget --no-check-certificate -O erlang.exe http://www.erlang.org%url%" 

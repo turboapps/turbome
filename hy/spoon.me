@@ -22,12 +22,11 @@ cmd pip install hy --quiet
 
 cmd hy -v
 
-var data = out
+var data = last
 
 cmd "python -c ""print('%data%'.split(' ')[1])"""
 
-var tag = out
-
+var tag = last
 
 
 batch

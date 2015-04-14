@@ -32,19 +32,18 @@ batch
 
 cmd python getVersion.py
 
-var data = out
+var data = last
 
 
 
 cmd "python -c ""print(%data%[0])"""
 
-var url = "http://windows.php.net" + out
+var url = "http://windows.php.net" + last
 
 
 cmd "python -c ""print(%data%[1])"""
 
-var tag = out
-
+var tag = last
 
 
 

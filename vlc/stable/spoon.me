@@ -35,7 +35,7 @@ batch
   echo print(url) >> getUrl.py 
 
 cmd python getUrl.py
-var url = out
+var url = last
 
 # Download
 cmd "wget --no-check-certificate --no-verbose -O VlcSetup.exe %url%"
@@ -52,7 +52,7 @@ batch
   echo print(version) >> getVersion.py
 
 cmd python getVersion.py
-var version = out
+var version = last
 
 
 ###################################

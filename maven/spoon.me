@@ -20,13 +20,13 @@ batch
  echo print(list(re.findall('(http.*?(\d*\.\d*\.\d*)-bin.zip)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
-var data = out
+var data = last
 
 cmd "python -c ""print(%data%[0])"""
-var url = out
+var url = last
 
 cmd "python -c ""print(%data%[1])"""
-var tag = out
+var tag = last
 
 cmd "wget -O maven.zip --no-check-certificate %url%"
 

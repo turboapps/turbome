@@ -32,7 +32,7 @@ batch
   echo print(re.findall('jenkins-(\d*\.\d*\.*\d*)\.zip', f.read() )[0]) >> getVersion.py
 
 cmd python getVersion.py
-var version = out
+var version = last
 
 cmd 7z x "jenkins-%version%.zip"
 

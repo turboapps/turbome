@@ -39,14 +39,13 @@ batch
   echo print(re.findall('httpd-(.*x86-vc11.*)\.zip', r.text )[0]) >> getVersion.py
 
 cmd python getVersion.py
-var version = out
+var version = last
 
 var url = "http://www.apachehaus.com/downloads/httpd-" + version  + ".zip"
 
 cmd "python -c ""print('%version%'.split('-')[0])"""
 
-var tag = out
-
+var tag = last
 
 
 # Download

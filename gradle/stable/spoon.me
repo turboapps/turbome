@@ -33,7 +33,7 @@ batch
   echo print(url) >> getUrl.py
 
 cmd python getUrl.py
-var url = out
+var url = last
 
 # Download
 
@@ -50,7 +50,7 @@ batch
   echo version = ''.join(list(re.findall('Download Gradle (\d.\d)', r.text)[0])) >> getVersion.py
   echo print(version) >> getVersion.py
 cmd python getVersion.py
-var version = out
+var version = last
 
 
 ###################################

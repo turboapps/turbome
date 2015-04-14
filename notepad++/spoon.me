@@ -14,13 +14,13 @@ batch
 
 cmd python getUrl.py
 
-var url = out
+var url = last
 
 cmd "echo import re > getTag.py"
 cmd "echo print(re.findall('npp.(.*)\.[Ii]nstaller.exe','%url%')[0]) >> getTag.py"
 
 cmd python getTag.py
-var tag = out
+var tag = last
 
 cmd "wget --no-check-certificate --no-verbose %url%"
 

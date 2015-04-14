@@ -32,7 +32,7 @@ batch
   echo print(re.findall('ReleaseNotes(\d*\.\d*\.*\d*)\.md', r.text)[0]) >> getVersion.py
 
 cmd python getVersion.py
-var tag = out
+var tag = last
 
 # Download
 cmd mkdir c:\junit

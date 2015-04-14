@@ -24,23 +24,22 @@ batch
 
 cmd python getRelease.py
 
-var data = out
+var data = last
 
 
 
 cmd "python -c ""print(%data%[0])"""
 
-var url = out
+var url = last
 
 
 cmd "python -c ""print(%data%[1])"""
 
-var tag = out
-
+var tag = last
 
 cmd "python -c ""print(%data%[2])"""
 
-var dir = out
+var dir = last
 
 cmd "wget -O rubyinstaller.exe --no-check-certificate %url%"
 

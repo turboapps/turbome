@@ -33,7 +33,7 @@ batch
  echo print(re.findall('Mercurial-(\d?\.\d?\.\d*\.*\d*)\s*\(32-bit exe\)', r.text )[0])  >> getTag.py
 
 cmd python getTag.py
-var tag = out
+var tag = last
 
 # Download and unzip
 cmd "wget --no-check-certificate -O mercurial.exe http://mercurial.selenic.com/release/windows/Mercurial-%tag%.exe"

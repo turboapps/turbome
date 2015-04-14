@@ -26,13 +26,13 @@ cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/s
 
 cmd "python GetLastestSF.py --url=http://sourceforge.net/projects/cream/rss?path=/Vim -r=.*gvim.*exe"
 
-var url = out
+var url = last
 
 cmd "echo import re > getTag.py"
 cmd "echo print(re.findall('(\d*\.\d*\.\d*)','%url%')[0]) >> getTag.py"
 
 cmd python getTag.py
-var tag = out
+var tag = last
 
 # Download
 cmd "wget -O vim.exe --no-check-certificate %url%"
@@ -40,7 +40,7 @@ cmd "wget -O vim.exe --no-check-certificate %url%"
 cmd "vim.exe /S "
 
 cmd "python -c ""print('%tag%'.split('.')[0] + '%tag%'.split('.')[1])"""
-var version = out
+var version = last
   
 ###################################
 # Environment Variables

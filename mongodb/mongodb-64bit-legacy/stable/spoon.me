@@ -34,10 +34,10 @@ batch
   echo url = ''.join(list(re.findall('(http.*x86_64-' + version + '-signed\.msi)..win', r.text)[0])) >> getUrl.py
   echo print(url) >> getUrl.py 
 cmd python getUrl.py
-var url = $out
+var url = last
 
 # cmd wget --no-check-certificate --no-verbose -O mongodbSetup.msi http://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.0.1-signed.msi
-cmd wget --no-check-certificate --no-verbose -O mongodbSetup.msi $url
+cmd "wget --no-check-certificate --no-verbose -O mongodbSetup.msi %url%"
 
 # Install
 cmd "msiexec.exe /q /i mongodbSetup.msi INSTALLLOCATION=""c:\mongodb"" "
@@ -53,7 +53,7 @@ batch
   echo version = ''.join(list(re.findall('(https.*-(\d+\.\d+\.*\d*)-.*msi)', r.text)[0][1])) >> getVersion.py 
   echo print(version) >> getVersion.py 
 cmd python getVersion.py
-var version = $out
+var version = last
 
 
 ###################################
@@ -79,9 +79,9 @@ workdir c:\
 ###################################
 
 meta title="MongoDB 64-bit legacy"
-meta namespace=mongodb
-meta name=mongodb-64bit-legacy
-meta tag=$version
+meta namespace="mongodb"
+meta name="mongodb-64bit-legacy"
+meta tag=version
 
 
 ###################################
