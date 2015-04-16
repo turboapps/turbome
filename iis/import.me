@@ -1,0 +1,163 @@
+mount "C:\=@SYSDRIVE@\mountedfs" 
+from clean when (not host has os:windows7 and not host has os:windows8.1)
+from spoonbrew/iis7-base:9 when host has os:windows7
+from spoonbrew/iis8-base:5 when host has os:windows8.1
+
+meta name = "imported-iis"
+
+workdir @SYSDRIVE@
+setworkdir @SYSDRIVE@
+
+require privilege:admin, architecture:current
+
+# Greeting message
+# Check if user wants to proceed with IIS import
+batch cmd
+  echo. 
+  echo.  Spoon Import.me Script
+  echo. 
+  echo.  Name: Internet Information Services (IIS)
+  echo.  Description: Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks.
+  echo. 
+  echo.  Website URL: http://www.iis.net/
+  echo.  Support URL: http://forums.iis.net/
+  echo.
+  echo.  Script Source: https://github.com/spoonapps/spoonme/blob/master/iis/import.me
+  echo.
+  echo.
+  echo.  Caution! This script will import files and settings from your computer into a Spoon container.
+  echo.  Caution! Please make sure you set the container to private mode for sensitive data or production environments.
+  echo.
+  set /P spoonPrompt=" Please enter 'ok' to continue or 'cancel' to abort: "
+  if /I "%spoonPrompt%"=="ok" (
+  echo.
+  echo.  Script will now import Internet Information Services from this computer...
+  ping localhost -n 5 > nul
+  ) else (
+  echo.
+  echo.
+  echo.  ERROR: User has aborted the import script.
+  echo.
+  echo.
+  exit /b 1
+  )
+
+# Check if IIS is installed
+batch cmd
+  echo.
+  echo.  Checking if IIS is installed...
+  
+  if not exist C:\mountedfs\windows\system32\inetsrv\InetMgr.exe if not exist C:\mountedfs\windows\syswow64\inetsrv\InetMgr.exe (
+  echo.
+  echo.
+  echo   ERROR: IIS does not appear to be installed on this machine. Please install and try again.
+  echo.
+  echo.
+  exit /b 1
+  )
+  
+# Copy files
+# Export encryption keys into a protable format, so that IIS runs on different machines
+# Check for .NET 3.5 or 4
+batch cmd
+  echo.
+  echo.  Copying IIS binaries...
+  echo.
+  xcopy /s/e/h/i "C:\mountedfs\windows\system32\inetsrv" "C:\windows\system32\inetsrv"
+  xcopy /s/e/h/i "C:\mountedfs\windows\syswow64\inetsrv" "C:\windows\syswow64\inetsrv"
+  cmd /c c:\iis-init\setup.cmd
+  
+  echo. 
+  echo.  Checking for Microsoft .NET Framework...
+  echo. 
+  if exist "%windir%\microsoft.net\framework64\v2.0.50727\aspnet_regiis.exe" (
+  echo.  Found %windir%\microsoft.net\framework64\v2.0.50727\aspnet_regiis.exe.
+  pushd "%windir%\microsoft.net\framework64\v2.0.50727"
+  ) else (
+  if exist "%windir%\microsoft.net\framework\v2.0.50727\aspnet_regiis.exe" (
+  echo.  Found %windir%\microsoft.net\framework\v2.0.50727\aspnet_regiis.exe.
+  pushd "%windir%\microsoft.net\framework\v2.0.50727"
+  ) else (
+  if exist "%windir%\microsoft.net\framework64\v4.0.30319\aspnet_regiis.exe" (
+  echo.  Found %windir%\microsoft.net\framework64\v4.0.30319\aspnet_regiis.exe.
+  pushd "%windir%\microsoft.net\framework64\v4.0.30319"
+  ) else (
+  if exist "%windir%\microsoft.net\framework\v4.0.30319\aspnet_regiis.exe" (
+  echo.  Found %windir%\microsoft.net\framework\v4.0.30319\aspnet_regiis.exe.
+  pushd "%windir%\microsoft.net\framework\v4.0.30319"
+  ) else (
+  echo.
+  echo.
+  echo  ERROR: .NET Framework 3.5 or 4 is not detected. Please install framework or add the microsoft/dotnet image from the Spoon hub and try again.
+  echo.
+  echo.
+  exit /b 1
+  )
+  )    
+  )
+  )
+  
+  echo. 
+  echo.  Exporting IIS keys to a portable format...
+  echo. 
+  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\6de9cb26d2b98c01ec4e9e8b34824aa2*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\76944fb33636aeddb9590521c2e8815a*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\7a436fe806e483969f48a894af2fe9a1*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\bedbf0b4da5f8061b6444baedf4c00b1*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\c2319c42033a5ca7f44e731bfd3fa2b5*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\d6d986f09a1ee04e24c949879fdb506c*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+
+  aspnet_regiis.exe -px "iisConfigurationKey" "C:\iis-init\iisConfigurationKey.xml" -pri
+  aspnet_regiis.exe -px "iisWasKey" "C:\iis-init\iisWasKey.xml" -pri
+  aspnet_regiis.exe -px "WMSvc Certificate Key Container" "C:\iis-init\WMSvcCertificateKeyContainer.xml" -pri
+  aspnet_regiis.exe -px "NetFrameworkConfigurationKey" "C:\iis-init\NetFrameworkConfigurationKey.xml" -pri
+  aspnet_regiis.exe -px "Microsoft Internet Information Server" "C:\iis-init\MicrosoftInternetInformationServer.xml"
+  aspnet_regiis.exe -px "MS IIS DCOM Server" "C:\iis-init\MSIISDCOMServer.xml"
+  popd
+  
+  echo. 
+  echo.  Cleaning up IIS keys...
+  echo. 
+  del "%PROGRAMDATA%\Microsoft\Crypto\RSA\MachineKeys\76944fb33636aeddb9590521c2e8815a*" /Q/A 1> nul 2> nul
+  del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\6de9cb26d2b98c01ec4e9e8b34824aa2*" /Q/A 1> nul 2> nul
+  del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\7a436fe806e483969f48a894af2fe9a1*" /Q/A 1> nul 2> nul
+  del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\bedbf0b4da5f8061b6444baedf4c00b1*" /Q/A 1> nul 2> nul
+  del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\c2319c42033a5ca7f44e731bfd3fa2b5*" /Q/A 1> nul 2> nul
+  del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\d6d986f09a1ee04e24c949879fdb506c*"  /Q/A 1> nul 2> nul
+
+# Final message
+echo " "  
+echo "  Script has finished importing Internet Information Services (IIS)!"
+echo " "
+echo "  1) The default port for IIS is 80. If you already have a server listening to that port, you can:"
+echo "     a. Use the route add statement to redirect the virtual port 80 to a different native port, such as 8081."
+echo "        Spoon (344a393e) C:\> route add tcp,udp 8081:80"
+echo "     b. Start a virtual command prompt and change the default port using IIS Manager."
+echo "        Spoon (344a393e) C:\> cmd"
+echo "        (344a393e) C:\> start inetmgr.exe"
+echo " "
+echo "  2) Start a virtual command prompt to configure the virtual IIS container."
+echo "     Spoon (344a393e) C:\> cmd"
+echo " "
+echo "     # Using the virtual cmd prompt, start IIS Manager to configure the server."
+echo "     (344a393e) C:\> start inetmgr.exe"
+echo " "
+echo "     # Using the virtual cmd prompt, browse or change the default IIS website."
+echo "     (344a393e) C:\> cd inetpub"
+echo "     (344a393e) C:\inetpub> .. do something .."
+echo " "
+echo "  3) Commit this container container to an image and push it to hub."
+echo "     Spoon (344a393e) C:\> meta name = ""my-iis-image"""
+echo "     Spoon (344a393e) C:\> commit"
+echo "     Spoon (344a393e) C:\> push"
+echo " "
+echo "  == Bugs =="
+echo " "
+echo "     Bug CLNT-3976: Shim fails to find inetmgr.exe if the container is started from spoosh console."
+echo "                    Run c:\iis-init\iis-init.cmd manually if running the container through spoosh console."
+echo "                    This bug does not affect you if you commit the container to an image and then run it."
+echo " "
+echo "     Bug CLNT-3974: VM 11.8.601 crashes when starting the w3svc service. Use VM 11.8.589 until the bug is fixed."
+echo " "
+echo " "
+yield
