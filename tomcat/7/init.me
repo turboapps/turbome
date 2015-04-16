@@ -1,8 +1,12 @@
 from apache/tomcat
+
 workdir @SYSDRIVE@
+setworkdir @SYSDRIVE@
+
+cmd title=Tomcat Server
+meta name = "tomcat-server"
 
 echo " "
-echo "  Apache Tomcat Server"
 echo "  Apache Tomcat is an open-source web server and servlet container developed by the Apache Software Foundation (ASF). Tomcat implements several Java EE specifications including Java Servlet, JavaServer Pages (JSP), Java EL, and WebSocket, and provides a ""pure Java"" HTTP web server environment for Java code to run in."
 echo " "
 echo "  Website URL: http://tomcat.apache.org/"

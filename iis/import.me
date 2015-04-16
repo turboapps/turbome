@@ -12,11 +12,11 @@ from spoonbrew/iis7-base:9 when host has os:windows7
 from spoonbrew/iis8-base:5 when host has os:windows8.1
 from spoonbrew/iis8-base:5 when host has os:windows8
 
-cmd title=IIS Server
-meta name = "iis-server"
-
 workdir @SYSDRIVE@
 setworkdir @SYSDRIVE@
+
+cmd title=IIS Server
+meta name = "iis-server"
 
 require privilege:admin, architecture:current
 

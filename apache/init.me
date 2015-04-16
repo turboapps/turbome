@@ -1,9 +1,13 @@
 from apache/apache
+
 workdir @SYSDRIVE@
+setworkdir @SYSDRIVE@
+
+cmd title=Apache Server
+meta name = "apache-server"
 
 echo "  "
-echo "  Name: Apache Server"
-echo "  Description: Apache is an HTTP web server that supports a variety of features, many implemented as compiled modules which extend the core functionality. These can range from server-side programming language support to authentication schemes."
+echo "  Apache is an HTTP web server that supports a variety of features, many implemented as compiled modules which extend the core functionality. These can range from server-side programming language support to authentication schemes."
 echo "  "
 echo "  Website URL: http://httpd.apache.org/"
 echo "  Support URL: http://httpd.apache.org/support.html"

@@ -1,9 +1,13 @@
 from nginx/nginx
+
 workdir @SYSDRIVE@
+setworkdir @SYSDRIVE@
+
+cmd title=Nginx Server
+meta name = "nginx-server"
 
 echo "  "
-echo "  Name: Nginx Server"
-echo "  Description: Nginx is a an open source reverse proxy server for HTTP, HTTPS, SMTP, POP3, and IMAP protocols, as well as a load balancer, HTTP cache, and a web server."
+echo "  Nginx is a an open source reverse proxy server for HTTP, HTTPS, SMTP, POP3, and IMAP protocols, as well as a load balancer, HTTP cache, and a web server."
 echo "  "
 echo "  Website URL: http://nginx.org/en/"
 echo "  Support URL: http://nginx.org/en/support.html"
