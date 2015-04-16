@@ -12,7 +12,8 @@ from spoonbrew/iis7-base:9 when host has os:windows7
 from spoonbrew/iis8-base:5 when host has os:windows8.1
 from spoonbrew/iis8-base:5 when host has os:windows8
 
-meta name = "imported-iis"
+cmd title=IIS Server
+meta name = "iis-server"
 
 workdir @SYSDRIVE@
 setworkdir @SYSDRIVE@
@@ -25,17 +26,16 @@ batch cmd
   echo. 
   echo.  Spoon Import.me Script
   echo. 
-  echo.  Name: Internet Information Services (IIS)
-  echo.  Description: Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks.
+  Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks.
   echo. 
   echo.  Website URL: http://www.iis.net/
   echo.  Support URL: http://forums.iis.net/
   echo.
-  echo.  Script Source: https://github.com/spoonapps/spoonme/blob/master/iis/import.me
+  echo.  Init Script Source: https://github.com/spoonapps/spoonme/blob/master/iis/import.me
   echo.
   echo.
-  echo.  Caution! This script will import files and settings from your computer into a Spoon container.
-  echo.  Caution! Please make sure you set the container to private mode for sensitive data or production environments.
+  echo.  CAUTION! This script will import files and settings from your computer into a Spoon container.
+  echo.  CAUTION! Please make sure you set the container to private mode for sensitive data or production environments.
   echo.
   set /P spoonPrompt=" Please enter 'ok' to continue or 'cancel' to abort: "
   if /I "%spoonPrompt%"=="ok" (
