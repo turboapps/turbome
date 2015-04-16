@@ -1,0 +1,65 @@
+#
+# ASPNet-vnext stable .me file
+# https://github.com/spoonium/spoonme/tree/master/aspnet-vnext
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Pull dependency images
+###################################
+
+using python/python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+cmd "@powershell -NoProfile -ExecutionPolicy unrestricted -Command ""iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.ps1'))"""
+
+cmd kvm upgrade
+
+cmd kvm list > output.txt & echo 1
+
+batch
+  echo import re >> getVersion.py
+  echo f = open('output.txt', 'r') >> getVersion.py
+  echo print(re.findall('\s(\d*\.\d*\.\d*\.*\d*-.*?)\s', f.read() )[0]) >> getVersion.py
+
+cmd python getVersion.py
+var version = last
+
+###################################
+# Environment Variables
+###################################
+
+# not needed
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="ASPNet-VNext"
+meta namespace="microsoft"
+meta name="aspnet-vnext"
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
