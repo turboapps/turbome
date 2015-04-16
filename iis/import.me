@@ -1,7 +1,16 @@
 mount "C:\=@SYSDRIVE@\mountedfs" 
-from clean when (not host has os:windows7 and not host has os:windows8.1)
+
+# Workaround because of CLNT-3978; uncomment when fixed
+# from clean when (not host has os:windows7 and not host has os:windows8.1)
+# from spoonbrew/iis7-base:9 when host has os:windows7
+# from spoonbrew/iis8-base:5 when host has os:windows8.1
+
+from clean when host has os:windowsxp
+from clean when host has os:windowsvista
+from clean when host has os:windows10
 from spoonbrew/iis7-base:9 when host has os:windows7
 from spoonbrew/iis8-base:5 when host has os:windows8.1
+from spoonbrew/iis8-base:5 when host has os:windows8
 
 meta name = "imported-iis"
 
@@ -44,7 +53,6 @@ batch cmd
 
 # Check if IIS is installed
 batch cmd
-  echo.
   echo.  Checking if IIS is installed...
   
   if not exist C:\mountedfs\windows\system32\inetsrv\InetMgr.exe if not exist C:\mountedfs\windows\syswow64\inetsrv\InetMgr.exe (
@@ -60,7 +68,6 @@ batch cmd
 # Export encryption keys into a protable format, so that IIS runs on different machines
 # Check for .NET 3.5 or 4
 batch cmd
-  echo.
   echo.  Copying IIS binaries...
   echo.
   xcopy /s/e/h/i "C:\mountedfs\windows\system32\inetsrv" "C:\windows\system32\inetsrv"
@@ -117,7 +124,6 @@ batch cmd
   
   echo. 
   echo.  Cleaning up IIS keys...
-  echo. 
   del "%PROGRAMDATA%\Microsoft\Crypto\RSA\MachineKeys\76944fb33636aeddb9590521c2e8815a*" /Q/A 1> nul 2> nul
   del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\6de9cb26d2b98c01ec4e9e8b34824aa2*" /Q/A 1> nul 2> nul
   del "%PROGRAMDATA%\microsoft\Crypto\RSA\MachineKeys\7a436fe806e483969f48a894af2fe9a1*" /Q/A 1> nul 2> nul
