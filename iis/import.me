@@ -67,8 +67,8 @@ batch cmd
 # create helper python script to remove configProtectedData section of applicationHost.config
 batch cmd
   echo import xml.etree.ElementTree as xml > c:\iis-init\trim.py
-  echo configFile = r"C:\Windows\sysnative\inetsrv\config\applicationHost.config" >> c:\iis-init\trim.py
-  echo tempFile = r"C:\Windows\sysnative\inetsrv\config\applicationHost.config.temp" >> c:\iis-init\trim.py
+  echo configFile = r"C:\Windows\system32\inetsrv\config\applicationHost.config" >> c:\iis-init\trim.py
+  echo tempFile = r"C:\Windows\system32\inetsrv\config\applicationHost.config.temp" >> c:\iis-init\trim.py
   echo tree = xml.parse(configFile) >> c:\iis-init\trim.py
   echo data = tree.find('configProtectedData') >> c:\iis-init\trim.py
   echo data.clear() >> c:\iis-init\trim.py
