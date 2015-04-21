@@ -67,8 +67,8 @@ batch cmd
 # create helper python script to remove configProtectedData section of applicationHost.config
 batch cmd
   echo import xml.etree.ElementTree as xml > c:\iis-init\trim.py
-  echo configFile = r"C:\Windows\system32\inetsrv\config\applicationHost.config" >> c:\iis-init\trim.py
-  echo tempFile = r"C:\Windows\system32\inetsrv\config\applicationHost.config.temp" >> c:\iis-init\trim.py
+  echo configFile = r"C:\iis-init\applicationHost.config" >> c:\iis-init\trim.py
+  echo tempFile = r"C:\iis-init\applicationHost.config.temp" >> c:\iis-init\trim.py
   echo tree = xml.parse(configFile) >> c:\iis-init\trim.py
   echo data = tree.find('configProtectedData') >> c:\iis-init\trim.py
   echo data.clear() >> c:\iis-init\trim.py
@@ -122,7 +122,9 @@ batch cmd
   echo. 
   echo.  Exporting IIS keys to a portable format...
   echo. 
+  copy C:\Windows\system32\inetsrv\config\applicationHost.config c:\iis-init\ /y
   python c:\iis-init\trim.py
+  copy c:\iis-init\applicationHost.config C:\Windows\system32\inetsrv\config\applicationHost.config /y
   %windir%\system32\inetsrv\iissetup.exe /install SharedLibraries
 
   aspnet_regiis.exe -px "iisConfigurationKey" "C:\iis-init\iisConfigurationKey.xml" -pri
