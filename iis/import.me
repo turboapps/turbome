@@ -1,16 +1,16 @@
 mount "C:\" "@SYSDRIVE@\mountedfs" 
 
-# Workaround because of CLNT-3978; uncomment when fixed
-# from clean when (not host has os:windows7 and not host has os:windows8.1)
-# from spoonbrew/iis7-base:9 when host has os:windows7
-# from spoonbrew/iis8-base:5 when host has os:windows8.1
+from clean when (not host has os:windows7 and not host has os:windows8.1)
+from spoonbrew/iis7-base when host has os:windows7
+from spoonbrew/iis8-base when host has os:windows8.1
 
-from clean when host has os:windowsxp
-from clean when host has os:windowsvista
-from clean when host has os:windows10
-from spoonbrew/iis7-base:10 when host has os:windows7
-from spoonbrew/iis8-base:6 when host has os:windows8.1
-from spoonbrew/iis8-base:6 when host has os:windows8
+cmd "echo." when (not host has os:windows7 and not host has os:windows8.1)
+cmd "echo." when (not host has os:windows7 and not host has os:windows8.1)
+cmd "echo. ERROR: IIS import is supported for Windows 7, 8.1, 2008r2, and 20012r2." when (not host has os:windows7 and not host has os:windows8.1)
+cmd "echo." when (not host has os:windows7 and not host has os:windows8.1)
+cmd "echo." when (not host has os:windows7 and not host has os:windows8.1)
+cmd "exit /b 1" when (not host has os:windows7 and not host has os:windows8.1)
+
 using python
 
 workdir @SYSDRIVE@
