@@ -128,7 +128,7 @@ batch cmd
   copy "c:\iis-init\applicationHost.config" "C:\Windows\system32\inetsrv\config\applicationHost.config" /Y
   del "c:\iis-init\applicationHost.config" /Q/A 1> nul 2> nul
   del "c:\iis-init\applicationHost.config.temp" /Q/A 1> nul 2> nul
-  
+
   %windir%\system32\inetsrv\iissetup.exe /install SharedLibraries
 
   echo. 
