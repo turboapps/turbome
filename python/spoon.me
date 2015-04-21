@@ -1,15 +1,31 @@
 #
-# python Spoon.me file
+# python spoon.me file
 # https://github.com/spoonapps/spoonme/tree/master/python
+#
+# Created with Spoon CMD version 1.4.1171.0
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
 
-using wget,7-zip
+###################################
+# Pull dependency images
+###################################
 
+using gnu/wget,7-zip/7-zip
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
 cmd mkdir c:\Workspace
 workdir c:\Workspace
+
+# Get version and URL from web
+var tag = ""
+var version = ""
 
 batch
  echo import sys > getRelease.py
@@ -25,39 +41,50 @@ using python:3.4.1
  cmd pip install requests --quiet
 
  cmd python getRelease.py
-
  var data = last
 
-
-
  cmd "python -c ""print(%data%[0])"""
-
  var url = last
 
-
  cmd "python -c ""print(%data%[1])"""
-
  var tag = last
 
  cmd "python -c ""print(%data%[2])"""
-
  var version = last
 
  cmd "wget -O python.msi --no-check-certificate %url%"
  
- env path = "c:\" + version + ";c:\" + version + "\scripts"
-
- meta title="Python"
- meta namespace="python"
- meta name="python" 
- meta tag=tag
-
+# Install
 cmd rmdir c:\Python34 /s /q
-
 cmd "python.msi /qn"
+
+
+###################################
+# Environment Variables
+###################################
+
+env path = "c:\" + version + ";c:\" + version + "\scripts"
+
+
+###################################
+# Clean up
+###################################
 
 workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
 
+
+###################################
+# Meta tags
+###################################
+
+meta title="Python"
+meta namespace="python"
+meta name="python" 
+meta tag=tag
+
+###################################
+# Startup File
+###################################

@@ -1,6 +1,8 @@
 #
-# Hy lang Spoon.me file
-# https://github.com/spoonium/spoonme/tree/master/hy
+# Hy lang spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/hy
+#
+# Created with Spoon CMD version 1.4.1171.0
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -10,32 +12,23 @@
 # Pull dependency images
 ###################################
 
-from python
+from python/python:3.4.1
+
 
 ###################################
 # Download and install
 ###################################
 
+# Set working directory
 workdir c:\
-
 cmd pip install hy --quiet
 
+# Get version
 cmd hy -v
-
 var data = last
 
 cmd "python -c ""print('%data%'.split(' ')[1])"""
-
-var tag = last
-
-
-batch
- echo (print ^"I was going to code in python syntax, but then I got hy.^") > awesome.hy
-
-###################################
-# Startup File
-###################################
-
+var version = last
 
 ###################################
 # Environment Variables
@@ -46,7 +39,21 @@ batch
 # Clean up
 ###################################
 
+
+###################################
+# Meta tags
+###################################
+
 meta title="Hy lang"
 meta namespace="hylang"
 meta name="hy"
-meta tag=tag
+meta tag=version
+
+###################################
+# Startup File
+###################################
+
+batch
+ echo (print ^"I was going to code in python syntax, but then I got hy.^") > awesome.hy
+
+startup file ("cmd", "/k echo Hy version: " + version)
