@@ -11,6 +11,7 @@ from clean when host has os:windows10
 from spoonbrew/iis7-base:10 when host has os:windows7
 from spoonbrew/iis8-base:6 when host has os:windows8.1
 from spoonbrew/iis8-base:6 when host has os:windows8
+using python
 
 workdir @SYSDRIVE@
 setworkdir @SYSDRIVE@
@@ -61,7 +62,22 @@ batch cmd
   echo.
   exit /b 1
   )
-  
+
+# create helper python script to remove configProtectedData section of applicationHost.config
+batch cmd
+  echo import xml.etree.ElementTree as xml > c:\iis-init\trim.py
+  echo configFile = r"C:\Windows\sysnative\inetsrv\config\applicationHost.config" >> c:\iis-init\trim.py
+  echo tempFile = r"C:\Windows\sysnative\inetsrv\config\applicationHost.config.temp" >> c:\iis-init\trim.py
+  echo tree = xml.parse(configFile) >> c:\iis-init\trim.py
+  echo data = tree.find('configProtectedData') >> c:\iis-init\trim.py
+  echo data.clear() >> c:\iis-init\trim.py
+  echo tree.write(tempFile) >> c:\iis-init\trim.py
+  echo temp = open(tempFile, "r") >> c:\iis-init\trim.py
+  echo final = open(configFile, "w") >> c:\iis-init\trim.py
+  echo final.writelines(temp.readlines()) >> c:\iis-init\trim.py
+  echo temp.close() >> c:\iis-init\trim.py
+  echo final.close() >> c:\iis-init\trim.py
+
 # Copy files
 # Export encryption keys into a protable format, so that IIS runs on different machines
 # Check for .NET 3.5 or 4
@@ -105,12 +121,8 @@ batch cmd
   echo. 
   echo.  Exporting IIS keys to a portable format...
   echo. 
-  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\6de9cb26d2b98c01ec4e9e8b34824aa2*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
-  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\76944fb33636aeddb9590521c2e8815a*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
-  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\7a436fe806e483969f48a894af2fe9a1*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
-  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\bedbf0b4da5f8061b6444baedf4c00b1*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
-  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\c2319c42033a5ca7f44e731bfd3fa2b5*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
-  xcopy /h "C:\mountedfs\programdata\microsoft\Crypto\RSA\MachineKeys\d6d986f09a1ee04e24c949879fdb506c*" "C:\programdata\microsoft\crypto\rsa\machinekeys\"
+  python c:\iis-init\trim.py
+  %windir%\system32\inetsrv\iissetup.exe /install SharedLibraries
 
   aspnet_regiis.exe -px "iisConfigurationKey" "C:\iis-init\iisConfigurationKey.xml" -pri
   aspnet_regiis.exe -px "iisWasKey" "C:\iis-init\iisWasKey.xml" -pri
