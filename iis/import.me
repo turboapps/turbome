@@ -24,24 +24,23 @@ require privilege:admin, architecture:current
 
 # Greeting message
 # Check if user wants to proceed with IIS import
+echo ""
+echo "  Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks."
+echo ""
+echo "  Website URL: http://www.iis.net/"
+echo "  Support URL: http://forums.iis.net/"
+echo ""
+echo "  Init Script Source: https://github.com/spoonapps/spoonme/blob/master/iis/import.me"
+echo ""
+echo "  CAUTION! This script will import files, settings, and security data from your computer into a Spoon container."
+echo "  CAUTION! Please make sure you set the container to private mode for sensitive data or production environments."
+echo ""
+
 batch cmd
-  echo. 
-  echo.  Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks.
-  echo. 
-  echo.  Website URL: http://www.iis.net/
-  echo.  Support URL: http://forums.iis.net/
-  echo.
-  echo.  Init Script Source: https://github.com/spoonapps/spoonme/blob/master/iis/import.me
-  echo.
-  echo.
-  echo.  CAUTION! This script will import files and settings from your computer into a Spoon container.
-  echo.  CAUTION! Please make sure you set the container to private mode for sensitive data or production environments.
-  echo.
   set /P spoonPrompt=" Please enter 'ok' to continue or 'cancel' to abort: "
   if /I "%spoonPrompt%"=="ok" (
   echo.
-  echo.  Script will now import Internet Information Services from this computer...
-  ping localhost -n 5 > nul
+
   ) else (
   echo.
   echo.
