@@ -126,7 +126,8 @@ batch cmd
   copy "C:\Windows\system32\inetsrv\config\applicationHost.config" "c:\iis-init\applicationHost.config" /Y
   python c:\iis-init\trim.py
   copy "c:\iis-init\applicationHost.config" "C:\Windows\system32\inetsrv\config\applicationHost.config" /Y
-  del "%PROGRAMDATA%\Microsoft\Crypto\RSA\MachineKeys\76944fb33636aeddb9590521c2e8815a*" /Q/A 1> nul 2> nul
+  del "c:\iis-init\applicationHost.config" /Q/A 1> nul 2> nul
+  del "c:\iis-init\applicationHost.config.temp" /Q/A 1> nul 2> nul
   
   %windir%\system32\inetsrv\iissetup.exe /install SharedLibraries
 
