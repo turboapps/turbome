@@ -8,14 +8,14 @@ mount "C:\" "@SYSDRIVE@\mountedfs"
 from clean when host has os:windowsxp
 from clean when host has os:windowsvista
 from clean when host has os:windows10
-from spoonbrew/iis7-base:9 when host has os:windows7
-from spoonbrew/iis8-base:5 when host has os:windows8.1
-from spoonbrew/iis8-base:5 when host has os:windows8
+from spoonbrew/iis7-base:10 when host has os:windows7
+from spoonbrew/iis8-base:6 when host has os:windows8.1
+from spoonbrew/iis8-base:6 when host has os:windows8
 
 workdir @SYSDRIVE@
 setworkdir @SYSDRIVE@
 
-cmd title=IIS Server
+cmd title IIS Server
 meta name = "iis-server"
 
 require privilege:admin, architecture:current
@@ -24,9 +24,7 @@ require privilege:admin, architecture:current
 # Check if user wants to proceed with IIS import
 batch cmd
   echo. 
-  echo.  Spoon Import.me Script
-  echo. 
-  Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks.
+  echo.  Internet Information Services (IIS) for Windows Server is a flexible, secure and manageable Web server for hosting anything on the Web. From media streaming to web applications, IIS's scalable and open architecture is ready to handle the most demanding tasks.
   echo. 
   echo.  Website URL: http://www.iis.net/
   echo.  Support URL: http://forums.iis.net/
