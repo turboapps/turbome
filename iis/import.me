@@ -1,4 +1,7 @@
-mount "C:\" "@SYSDRIVE@\mountedfs" 
+requires privilege:admin
+require privilege:admin, architecture:current
+
+mount "C:\" "@SYSDRIVE@\mountedfs"
 
 from clean when (not host has os:windows7 and not host has os:windows8.1)
 from spoonbrew/iis7-base when host has os:windows7
@@ -18,9 +21,6 @@ setworkdir @SYSDRIVE@
 
 cmd title IIS Server
 meta name = "iis-server"
-
-requires privilege:admin
-require privilege:admin, architecture:current
 
 # Greeting message
 # Check if user wants to proceed with IIS import
@@ -176,14 +176,5 @@ echo "  3) Commit this container container to an image and push it to hub."
 echo "     Spoon (344a393e) C:\> meta name = ""my-iis-image"""
 echo "     Spoon (344a393e) C:\> commit"
 echo "     Spoon (344a393e) C:\> push"
-echo " "
-echo "  == Bugs =="
-echo " "
-echo "     Bug CLNT-3976: Shim fails to find inetmgr.exe if the container is started from spoosh console."
-echo "                    Run c:\iis-init\iis-init.cmd manually if running the container through spoosh console."
-echo "                    This bug does not affect you if you commit the container to an image and then run it."
-echo " "
-echo "     Bug CLNT-3974: VM 11.8.601 crashes when starting the w3svc service. Use VM 11.8.589 until the bug is fixed."
-echo " "
 echo " "
 yield
