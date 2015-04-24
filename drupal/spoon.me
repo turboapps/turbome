@@ -51,6 +51,8 @@ cmd rmdir c:\drupal-temp /S /Q
 cmd "copy" c:\drupal\sites\default\default.settings.php c:\drupal\sites\default\settings.php
 cmd fart.exe c:\drupal\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
 
+cmd fart.exe c:\drupal\.htaccess "Order allow,deny" "Require all denied" & ver > nul
+
 ###################################
 # Initialize Apache
 ###################################
