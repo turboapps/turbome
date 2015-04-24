@@ -1,0 +1,341 @@
+diff --git a/flash/spoon.me b/flash/spoon.me
+index c215d8d..5a413b0 100644
+--- a/flash/spoon.me
++++ b/flash/spoon.me
+@@ -1,18 +1,32 @@
+ #
+-# Adobe FlashPlayer Spoon.me file
++# Adobe FlashPlayer spoon.me file
+ # https://github.com/spoonapps/spoonme/tree/master/flash
+ #
++# Created with Spoon CMD version 1.4.1171.0
++#
+ # Licensed under the Apache License, Version 2.0
+ # http://www.apache.org/licenses/LICENSE-2.0
+ 
+ 
+-using wget,python:3.4.1
++###################################
++# Pull dependency images
++###################################
++
++using gnu/wget,python/python:3.4.1
++
+ 
+-cmd pip install requests --quiet
+ 
++###################################
++# Download and install
++###################################
++
++# Set working directory
+ cmd mkdir c:\Workspace
+ workdir c:\Workspace
+ 
++# Get version
++cmd pip install requests --quiet
++
+ batch
+  echo import sys > getRelease.py
+  echo import requests >> getRelease.py
+@@ -27,11 +41,22 @@ var tag = last
+ cmd "python -c ""print('%tag%'.split('.')[0])"""
+ var version = last
+ 
+-
++# Download
+ cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_%version%_plugin.msi"
+ 
++# Install
+ cmd "setup.msi /qn"
+ 
++
++###################################
++# Environment Variables
++###################################
++
++
++###################################
++# Clean up
++###################################
++
+ workdir c:\
+ 
+ cmd rmdir c:\Workspace /s /q
+@@ -39,7 +64,16 @@ cmd rmdir c:\wget /s /q
+ cmd rmdir c:\Python34 /s /q
+ 
+ 
++###################################
++# Meta tags
++###################################
++
+ meta title="Adobe FlashPlayer"
+ meta namespace="adobe"
+ meta name="flash"
+ meta tag=tag
++
++
++###################################
++# Startup File
++###################################
+diff --git a/hy/spoon.me b/hy/spoon.me
+index 4741541..7860fcb 100644
+--- a/hy/spoon.me
++++ b/hy/spoon.me
+@@ -1,6 +1,8 @@
+ #
+-# Hy lang Spoon.me file
+-# https://github.com/spoonium/spoonme/tree/master/hy
++# Hy lang spoon.me file
++# https://github.com/spoonapps/spoonme/tree/master/hy
++#
++# Created with Spoon CMD version 1.4.1171.0
+ #
+ # Licensed under the Apache License, Version 2.0
+ # http://www.apache.org/licenses/LICENSE-2.0
+@@ -10,43 +12,48 @@
+ # Pull dependency images
+ ###################################
+ 
+-from python
++from python/python:3.4.1
++
+ 
+ ###################################
+ # Download and install
+ ###################################
+ 
++# Set working directory
+ workdir c:\
+-
+ cmd pip install hy --quiet
+ 
++# Get version
+ cmd hy -v
+-
+ var data = last
+ 
+ cmd "python -c ""print('%data%'.split(' ')[1])"""
+-
+-var tag = last
+-
+-
+-batch
+- echo (print ^"I was going to code in python syntax, but then I got hy.^") > awesome.hy
++var version = last
+ 
+ ###################################
+-# Startup File
++# Environment Variables
+ ###################################
+ 
+ 
+ ###################################
+-# Environment Variables
++# Clean up
+ ###################################
+ 
+ 
+ ###################################
+-# Clean up
++# Meta tags
+ ###################################
+ 
+ meta title="Hy lang"
+ meta namespace="hylang"
+ meta name="hy"
+-meta tag=tag
++meta tag=version
++
++###################################
++# Startup File
++###################################
++
++batch
++ echo (print ^"I was going to code in python syntax, but then I got hy.^") > awesome.hy
++
++startup file ("cmd", "/k echo Hy version: " + version)
+diff --git a/python/README.md b/python/README.md
+index 3b8f75c..40951a4 100644
+--- a/python/README.md
++++ b/python/README.md
+@@ -2,10 +2,10 @@ Requires running from an admin command prompt.
+ 
+ Build using:
+ 
+-    spoon build -name="python:3.4.2" python-3.4.2.me
++    spoon build -name="python:3.4.3" python-3.4.3.me
+ 
+ To test:
+     
+-    spoon try -a python:3.4.2
+-    (15f315b2) c:\>python --version
+-    Python 3.4.2
+\ No newline at end of file
++    spoon try -a python:3.4.3
++    (15f315b2) c:\> python --version
++    Python 3.4.3
+\ No newline at end of file
+diff --git a/python/init.me b/python/init.me
+new file mode 100644
+index 0000000..c2cd515
+--- /dev/null
++++ b/python/init.me
+@@ -0,0 +1,39 @@
++from python/python
++
++workdir @SYSDRIVE@
++setworkdir @SYSDRIVE@
++
++cmd title=Python
++meta name = "python"
++
++echo "  "
++echo "  Programming language that lets you work quickly and integrate systems more effectively."
++echo "  "
++echo "  Website URL: https://www.python.org/"
++echo "  Support URL: https://docs.python.org/3/"
++echo "  "
++echo "  Install Path: C:\PythonXY (or Python version X.Y.Z)"
++echo "  "
++echo "  Script Source: https://github.com/spoonapps/spoonme/blob/master/python/init.me"
++echo "  "
++echo "  Try this to get started with Python:"
++echo "  "
++echo "  1) Start a virtual command prompt"
++echo "     Spoon (344a393e) C:\> cmd"
++echo "  "
++echo "  2) Launch python:"
++echo "     (344a393e) C:\> python"
++echo "  "
++echo "  3) Enjoy the fruits of your labor!"
++echo "     You can now start typing your code."
++echo "  "
++echo "  == Notes =="
++echo "     This is Python version for x86 OS architecture."
++echo "  "
++echo "     Two paths are added to the PATH system variable: C:\PythonXY; C:\PythonXY\Scripts"
++echo "  "
++echo "     To stop Python Shell please run 'quit()' in the Python Shell."
++echo "     For more help, please run 'python -h' in the virtual command prompt."
++echo "  "
++echo "  "
++yield
+\ No newline at end of file
+diff --git a/python/spoon.me b/python/spoon.me
+index 3a23a14..e340e06 100644
+--- a/python/spoon.me
++++ b/python/spoon.me
+@@ -1,16 +1,32 @@
+ #
+-# python Spoon.me file
++# python spoon.me file
+ # https://github.com/spoonapps/spoonme/tree/master/python
+ #
++# Created with Spoon CMD version 1.4.1171.0
++#
+ # Licensed under the Apache License, Version 2.0
+ # http://www.apache.org/licenses/LICENSE-2.0
+ 
+ 
+-using wget,7-zip
++###################################
++# Pull dependency images
++###################################
++
++using gnu/wget,7-zip/7-zip
++
+ 
++###################################
++# Download and install
++###################################
++
++# Set working directory
+ cmd mkdir c:\Workspace
+ workdir c:\Workspace
+ 
++# Get version and URL from web
++var tag = ""
++var version = ""
++
+ batch
+  echo import sys > getRelease.py
+  echo import requests >> getRelease.py
+@@ -25,39 +41,50 @@ using python:3.4.1
+  cmd pip install requests --quiet
+ 
+  cmd python getRelease.py
+-
+  var data = last
+ 
+-
+-
+  cmd "python -c ""print(%data%[0])"""
+-
+  var url = last
+ 
+-
+  cmd "python -c ""print(%data%[1])"""
+-
+  var tag = last
+ 
+  cmd "python -c ""print(%data%[2])"""
+-
+  var version = last
+ 
+  cmd "wget -O python.msi --no-check-certificate %url%"
+  
+- env path = "c:\" + version + ";c:\" + version + "\scripts"
++# Install
++cmd rmdir c:\Python34 /s /q
++cmd "python.msi /qn"
+ 
+- meta title="Python"
+- meta namespace="python"
+- meta name="python" 
+- meta tag=tag
+ 
+-cmd rmdir c:\Python34 /s /q
++###################################
++# Environment Variables
++###################################
+ 
+-cmd "python.msi /qn"
++env path = "c:\" + version + ";c:\" + version + "\scripts"
++
++
++###################################
++# Clean up
++###################################
+ 
+ workdir c:\
+ 
+ cmd rmdir c:\Workspace /s /q
+ cmd rmdir c:\wget /s /q
+ 
++
++###################################
++# Meta tags
++###################################
++
++meta title="Python"
++meta namespace="python"
++meta name="python" 
++meta tag=tag
++
++###################################
++# Startup File
++###################################
+diff --git a/template-spoon.me b/template-spoon.me
+index a24e1bf..006eebd 100644
+--- a/template-spoon.me
++++ b/template-spoon.me
+@@ -38,7 +38,6 @@ workdir c:\Workspace
+ # 
+ # cmd python getUrl.py
+ # var url = last
+-# cmd echo %url%
+ 
+ # Download
+ # Example: using wget

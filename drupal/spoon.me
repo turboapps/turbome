@@ -61,13 +61,13 @@ batch cmd
   echo. >> httpd.conf
   
   REM Enable PHP
-  echo LoadModule php5_module "C:/php/php5apache2_2.dll">> httpd.conf
+  echo LoadModule php5_module "C:/php/php5apache2_4.dll">> httpd.conf
   echo AddHandler application/x-httpd-php .php>> httpd.conf
   echo PHPIniDir "C:/php">> httpd.conf
   fart.exe --ignore-case httpd.conf "DirectoryIndex " "DirectoryIndex index.php "
   
   REM Set document root to Drupal directory
-  fart.exe --ignore-case httpd.conf "C:/apache/apache2/htdocs" "C:/drupal"
+  fart.exe --ignore-case httpd.conf "${SRVROOT}/htdocs" "C:/drupal"
   
   REM Enable mod rewrite for pretty links
   fart.exe --ignore-case httpd.conf "#LoadModule rewrite_module modules/mod_rewrite.so" "LoadModule rewrite_module modules/mod_rewrite.so"
@@ -167,4 +167,4 @@ meta tag=version
 ###################################
 
 workdir C:\drupal
-startup file ("cmd","/k echo Visit http://localhost:%spn_config_Apache-Port%/install.php to configure Drupal, if you haven't already.")
+startup file ("cmd","/k echo Visit http://localhost:8080/install.php to configure Drupal, if you haven't already.")
