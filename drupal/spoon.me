@@ -10,7 +10,7 @@
 # Pull dependency images
 ###################################
 
-from apache/apache,php/php,mysql/mysql
+layer apache/apache,php/php,mysql/mysql
 using gnu/wget,fart/fart,7-zip/7-zip,python/python:3.4.1
 
 ###################################
@@ -50,8 +50,8 @@ cmd rmdir c:\drupal-temp /S /Q
 # Configure database settings
 cmd "copy" c:\drupal\sites\default\default.settings.php c:\drupal\sites\default\settings.php
 cmd fart.exe c:\drupal\sites\default\settings.php "$databases = array();" "$databases = array ('default' => array ('default' => array ('database' => 'drupal','username' => 'root','password' => '','host' => 'localhost','port' => '','driver' => 'mysql','prefix' => '',),),);" & ver > nul
-
 cmd fart.exe c:\drupal\.htaccess "Order allow,deny" "Require all denied" & ver > nul
+
 
 ###################################
 # Initialize Apache

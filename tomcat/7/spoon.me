@@ -9,7 +9,7 @@
 # Pull dependency images
 ###################################
 
-from jdk:8
+layer jdk:8
 using wget,python:3.4.1,7-zip,fart
 
 cmd pip install requests --quiet
