@@ -1,0 +1,25 @@
+from xunit/xunit
+
+workdir @SYSDRIVE@
+setworkdir @SYSDRIVE@
+
+cmd title xUnit
+
+echo "           ╖╦╬╬╬╬╬╬╬╬╦╥┌             Spoon Shell v" + spoonversion
+echo "       ╓╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╖"
+echo "     ╓╬╬╬╬╬╬╬╬╬╩     ╩╬╬╬╬╬╬╥        cmd             start command prompt"
+echo "    ╬╬╬╬╬╬╬╬╬╬         ╚╬╬╬╬╬╬       cmd <command>   execute command and return to shell"
+echo "   ╬╬╬╬╬╬╬╬╬╬  ╬         ╩╬╬╬╬╬      from <image>    add image to container"
+echo "  ╠╬╬╬╬╬╬╬╬╬  ╬╬╕ ╬╬╦╥╓╓╓╓╓╬╬╬╬╬     using <image>   temporarily use image in container"
+echo "  ╬╬╬╬╬╬╩ ╬╛ ╚╩╬╬  ╬╬╬╬╬╬╬╬╬╬╬╬╬     keep            save container on exit"
+echo "  ╬╬╬╬╬         ╠╬       ╬╬╬╬╬╬╬     commit          create image from container state"
+echo "  ╘╬╬╬╬        ╬╩ ╩       ╬╬╬╬╬╛     push            save container to image and push to Spoon Hub"
+echo "   ╚╬╬╬╦       ╬          ╬╬╬╬╩      exit            exit"
+echo "    ╚╬╬╬╬╬╦╦╦╬╬╬╬╖      ╓╬╬╬╬╩       help            see all available commands"
+echo "      ╩╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╩"
+echo "        ╚╩╬╬╬╬╬╬╬╬╬╬╬╬╬╬╩╩"
+echo "             ╚╩╩╩╩╩╩╩"
+echo ""
+echo "  This container includes xUnit."
+echo ""
+yield
