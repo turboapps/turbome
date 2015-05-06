@@ -17,7 +17,7 @@ meta name="tomcat"
 # Pull dependency images
 ###################################
 
-layer jdk:8
+from jdk:8
 using wget,python:3.4.1,7-zip,fart
 
 cmd pip install requests --quiet
