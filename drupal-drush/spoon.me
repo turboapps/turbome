@@ -1,3 +1,7 @@
+meta title="Drupal Drush"
+meta description="Drupal with Drush"
+meta version="1.0"
+
 # Automatically build Drupal with Drush image
  
 # Pull dependency images
@@ -23,6 +27,3 @@ workdir c:\drush
 cmd composer global require drush/drush:dev-master
 cmd echo @%HOMEDRIVE%%HOMEPATH%\AppData\Roaming\Composer\vendor\bin\drush.php.bat %* > drush.bat
 env PATH=c:\drush
-meta title="Drupal Drush"
-meta description="Drupal with Drush"
-meta version="1.0"

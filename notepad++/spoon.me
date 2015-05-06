@@ -1,3 +1,14 @@
+#
+# Notepad++ Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/notepad++
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Notepad++"
+meta namespace="npp"
+meta name="notepadplusplus"
+
 using wget,python:3.4.1
 
 cmd pip install requests --quiet
@@ -33,9 +44,6 @@ cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 cmd rmdir c:\Notepad++\updater /s /q 
 
-meta title="Notepad++"
-meta namespace="npp"
-meta name="notepadplusplus"
 meta tag=tag
 
 startup file ("c:\Notepad++\notepad++.exe")

@@ -5,6 +5,10 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+meta title="Skype"
+meta namespace="microsoft"
+meta name="skype"
+
 using wget,python:3.4.1
 
 cmd pip install pypiwin32 --quiet
@@ -29,9 +33,6 @@ cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
 cmd rmdir c:\python34 /s /q
 
-meta title="Skype"
-meta namespace="microsoft"
-meta name="skype"
 meta tag=tag
 
 startup file ("C:\Skype\Phone\Skype.exe")

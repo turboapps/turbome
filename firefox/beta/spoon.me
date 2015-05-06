@@ -1,3 +1,7 @@
+meta title="Firefox Beta"
+meta namespace="mozilla"
+meta name="firefox-beta"
+
 using wget,python:3.4.1
 
 cmd pip install requests --quiet
@@ -38,9 +42,6 @@ cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
 
-meta title="Firefox Beta"
-meta namespace="mozilla"
-meta name="firefox-beta"
 meta tag=tag
 
 startup file ("c:\FirefoxBeta\firefox.exe")

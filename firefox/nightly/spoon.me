@@ -5,6 +5,9 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+meta title="Firefox Nightly"
+meta namespace="mozilla"
+meta name="firefox-nightly"
 
 using python:3.4.1,wget,7-zip
 
@@ -28,9 +31,6 @@ batch cmd
  rmdir c:\Workspace /s /q
  rmdir c:\wget /s /q
 
-meta title="Firefox Nightly"
-meta namespace="mozilla"
-meta name="firefox-nightly"
 meta tag=dateiso
 meta website="%DOWNLOAD_URL%"
 meta version="%DATE%"
