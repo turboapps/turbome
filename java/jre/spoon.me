@@ -38,16 +38,20 @@ var update = last
 cmd "python -c ""print(%data%[2])"""
 var url = last
 
-var tag = version + "u" + update
+var tag = version + "." + update
 
-cmd wget -O setup.exe --no-check-certificate url
+cmd "wget -O setup.exe --no-check-certificate %url%"
 
 cmd "setup.exe /s"
 
-cmd cd c:\
+workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+# this path contains symlinks and currenlty they are not properly supported in vm
+# so remove it 
+cmd rmdir c:\ProgramData\Oracle /s /q
 
+env path="@PROGRAMFILESX86@\java\jre1." + version + ".0_" + update + "\bin\"
 
 meta tag=tag
