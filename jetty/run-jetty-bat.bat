@@ -1,14 +1,15 @@
+@echo off
 echo "Starting Jetty"
-echo "Jetty home: %JETTY_HOME%"
-echo "Web apps are in: %WEB_APPS%"
+echo "Jetty home: %%JETTY_HOME%%=%JETTY_HOME%"
+echo "Web apps are in: %%WEB_APPS%%=%WEB_APPS%"
+echo "Any war in that location will be picked up"
+echo "Alternative, mount the folder with our war files to %WEB_APPS%" 
+echo "Like spoon run --mount C:\my-wars=C:\Jetty\webapps"
 
-IF "%1"=="" GOTO start-jetty
-echo "Coping %1 to %WEB_APPS%"
-xcopy %1 %WEB_APPS%
+if not exist %WEB_APPS% mkdir %WEB_APPS%
 
+echo "Current wars:"
+dir %WEB_APPS%
 
-
-
-:start-jetty
 cd %JETTY_HOME%
 "%JAVA_HOME%/bin/java" -jar %JETTY_HOME%/start.jar 
