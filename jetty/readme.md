@@ -5,7 +5,8 @@ Jetty Servlet container, of http://www.eclipse.org/jetty/
 # Running It.
 Just type `spoon run jetty`, and Jetty will start at port 8080.
 # Run War File
-Just type `spoon run jetty my-war.war`, Jetty will start and your web app available at port 8080, /my-war.
+The war files are expected in %WEB_APPS% (C:\Jetty\webapps). Copy your war file to there.
+Alternatively you can map a folder containing your war files to that folder: `spoon run --mount C:\my-wars=C:\Jetty\webapps jetty/jetty`
 
 # Base Image
 You can use this as a base image. Copy you war-file or context file to the location defined by %WEB_APPS%.
