@@ -1,0 +1,60 @@
+#
+# sbt Spoon.me file
+# https://github.com/spoonapps/spoonme/tree/master/sbt
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Setup meta
+meta title="jetty"
+meta namespace="jetty" 
+meta name="jetty-7"
+
+#Basic dependencies and tools
+from jre:8
+using wget,python:3.4.1,7-zip
+
+#Prepare pythone for version grabbing
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Fetch version
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://download.eclipse.org/jetty/stable-7/dist/') >> getRelease.py
+ echo print(re.findall('jetty-distribution-(7\.\d*\.\d*\.v\d*)\.zip', r.text )[0]) >> getRelease.py
+
+cmd python getRelease.py
+
+var tag = last
+meta tag=tag
+
+var url = "http://mirrors.ibiblio.org/eclipse/jetty/stable-7/dist/jetty-distribution-" + tag + ".zip"
+
+# Prepare Jetty
+cmd "wget -O jetty.zip --no-check-certificate %url%"
+cmd 7z x jetty.zip -oC:\Workspace\jetty
+cmd del jetty.zip
+
+var sourceFolder = "C:\Workspace\jetty\jetty-distribution-" + tag + "\*"
+cmd "xcopy /E %sourceFolder% C:\Jetty\*"
+copy "run-jetty-bat.bat" "C:\Jetty\run-jetty-bat.bat"
+
+env JETTY_HOME="C:\Jetty\"
+env WEB_APPS="C:\Jetty\webapps"
+
+workdir "c:\"
+setworkdir "C:\Jetty\"
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\Jetty\webapps /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
+
+startup file ("C:\Jetty\run-jetty-bat.bat")
