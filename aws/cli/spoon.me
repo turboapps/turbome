@@ -1,0 +1,31 @@
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+# Pull dependency images
+from clean
+using wget
+
+# Setup meta
+meta title="AWS Command Line Interface"
+meta namespace="amazon-web-services" 
+meta name="cli"
+
+# Set working directory
+cmd mkdir C:\Workspace
+workdir C:\Workspace
+
+# Download
+cmd wget --no-check-certificate -O aws-cli.msi https://s3.amazonaws.com/aws-cli/AWSCLI32.msi
+
+# Install
+cmd aws-cli.msi /quiet
+
+workdir C:\
+cmd rmdir /s /q c:\Workspace
+
+cmd mkdir C:\aws-info
+copy "aws-info.bat" "C:\aws-info\aws-info.bat"
+
+startup file "C:\aws-info\aws-info.bat"
