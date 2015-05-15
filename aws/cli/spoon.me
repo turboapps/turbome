@@ -1,0 +1,51 @@
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+# Pull dependency images
+from clean
+using wget,python:3.4.1
+
+#Prepare Python for version grabbing
+cmd pip install requests --quiet
+
+# Fetch version
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('https://aws.amazon.com/releasenotes/CLI?browse=1') >> getRelease.py
+ echo print(re.findall('Release: AWS CLI (\d*\.\d*\.\d*)', r.text )[0]) >> getRelease.py
+
+cmd python getRelease.py
+
+var tag = last
+meta tag=tag
+
+# Setup meta
+meta title="AWS Command Line Interface"
+meta namespace="amazon-web-services" 
+meta name="cli"
+
+# Set working directory
+cmd mkdir C:\Workspace
+workdir C:\Workspace
+
+# Download
+cmd wget --no-check-certificate -O aws-cli.msi https://s3.amazonaws.com/aws-cli/AWSCLI32.msi
+
+# Install
+cmd aws-cli.msi /quiet
+
+workdir C:\
+
+cmd mkdir C:\aws-info
+copy "aws-info.bat" "C:\aws-info\aws-info.bat"
+
+# Cleanup
+cmd rmdir /s /q c:\Workspace
+cmd rmdir /s /q c:\wget
+cmd rmdir /s /q c:\Python34 
+
+startup file "C:\aws-info\aws-info.bat"
