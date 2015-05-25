@@ -3,9 +3,9 @@ require privilege:admin, architecture:current
 
 mount "C:\" "@SYSDRIVE@\mountedfs"
 
-from clean when (not host has os:windows7 and not host has os:windows8.1)
-from spoonbrew/iis7-base when host has os:windows7
-from spoonbrew/iis8-base when host has os:windows8.1
+layer clean when (not host has os:windows7 and not host has os:windows8.1)
+layer spoonbrew/iis7-base when host has os:windows7
+layer spoonbrew/iis8-base when host has os:windows8.1
 
 cmd "echo." when (not host has os:windows7 and not host has os:windows8.1)
 cmd "echo." when (not host has os:windows7 and not host has os:windows8.1)
