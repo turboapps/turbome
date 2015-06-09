@@ -40,7 +40,7 @@ batch
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
  echo r = requests.get('https://jdk9.java.net/download/') >> getRelease.py
- echo version = list(re.findall('win32JREj^"\).href = ^"http://www.java.net/download/jdk9/archive/b(\d*)/.*.exe', r.text)) >> getRelease.py
+ echo version = list(re.findall('win32JREj^"\).href = ^"http://www.java.net/download/jdk9/archive/(.*?\d*)/.*.exe', r.text)) >> getRelease.py
  echo url = [re.findall('win32JREj"\).href = "(http.*.exe)', r.text)[0]] >> getRelease.py
  echo print(version + url) >> getRelease.py
 
@@ -53,7 +53,7 @@ var version = last
 cmd "python -c ""print(%data%[1])"""
 var url = last
 
-var tag = "9." + version
+var tag = "9" + version
 
 # Check if version exists. If yes - break the process
 batch
