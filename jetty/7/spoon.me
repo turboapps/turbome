@@ -42,7 +42,9 @@ cmd del jetty.zip
 
 var sourceFolder = "C:\Workspace\jetty\jetty-distribution-" + tag + "\*"
 cmd "xcopy /E %sourceFolder% C:\Jetty\*"
-copy "run-jetty-bat.bat" "C:\Jetty\run-jetty-bat.bat"
+
+cmd wget --no-check-certificate https://raw.githubusercontent.com/spoonapps/spoonme/master/jetty/run-jetty-bat.bat
+cmd copy run-jetty-bat.bat C:\Jetty\run-jetty-bat.bat
 
 env JETTY_HOME="C:\Jetty\"
 env WEB_APPS="C:\Jetty\webapps"
