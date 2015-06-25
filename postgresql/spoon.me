@@ -1,0 +1,54 @@
+##
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Setup meta
+meta title="postgresql"
+meta namespace="postgresql" 
+meta name="postgresql"
+
+#Basic dependencies and tools
+from clean,microsoft/vcredist:2008
+using wget,python:3.4.1,7-zip
+
+#Prepare pythone for version grabbing
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Fetch version
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://www.enterprisedb.com/products-services-training/pgbindownload') >> getRelease.py
+ echo print(re.findall('Binaries from installer version (9\.\d*\.\d*)', r.text )[0]) >> getRelease.py
+
+cmd python getRelease.py
+
+var tag = last
+meta tag=tag
+
+
+var url = "http://get.enterprisedb.com/postgresql/postgresql-" + tag + "-1-windows-binaries.zip"
+
+
+# Download and prepare PostgreSQL
+cmd "wget -O postgree.zip --no-check-certificate %url%"
+cmd 7z x postgree.zip -oC:\
+
+copy "run-postgre-sql.bat" "C:\pgsql\run-postgre-sql.bat"
+
+env POSTGRESQL="C:\pgsql\"
+env PGDATA="C:\pg-data\"
+env PATH="C:\pgsql\bin"
+
+workdir "c:\pgsql"
+setworkdir "C:\pgsql\"
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+startup file ("C:\pgsql\run-postgre-sql.bat")
