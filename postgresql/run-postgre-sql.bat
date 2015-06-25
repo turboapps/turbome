@@ -1,5 +1,5 @@
 @echo off
-echo Starting Jetty
+echo Proparing PostgreSQL
 echo PostgreSQL home: %%POSTGRESQL%=%POSTGRESQL%
 echo Data is stored in: %%PGDATA%%=%PGDATA%
 echo If the folder doesn't exist, a new db will be created there
