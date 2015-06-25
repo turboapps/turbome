@@ -16,7 +16,7 @@ batch
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
  echo r = requests.get('https://aws.amazon.com/releasenotes/CLI?browse=1') >> getRelease.py
- echo print(re.findall('Release: AWS CLI (\d*\.\d*\.\d*)', r.text )[0]) >> getRelease.py
+ echo print(re.findall('Release: AWS Command Line Interface (\d*\.\d*\.\d*)', r.text )[0]) >> getRelease.py
 
 cmd python getRelease.py
 

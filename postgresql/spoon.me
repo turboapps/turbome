@@ -8,7 +8,7 @@ meta namespace="postgresql"
 meta name="postgresql"
 
 #Basic dependencies and tools
-from clean,microsoft/vcredist:2008
+layer microsoft/vcredist:2008
 using wget,python:3.4.1,7-zip
 
 #Prepare pythone for version grabbing
