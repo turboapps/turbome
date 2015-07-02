@@ -18,8 +18,8 @@ meta name="aspnet5"
 ###################################
 # Pull dependency images
 ###################################
-
-using python/python:3.4.1,powershell
+layer powershell,dotnet:4.5
+using python/python:3.4.1
 
 
 ###################################
@@ -41,7 +41,7 @@ cmd dnvm list > output.txt & echo 1
 batch
   echo import re >> getVersion.py
   echo f = open('output.txt', 'r') >> getVersion.py
-  echo print(re.findall('\s(\d*\.\d*\.\d*\.*\d*-.*?)\s', f.read() )[0]) >> getVersion.py
+  echo print(re.findall('\s\d*\.\d*\.\d*\.*\d*-(.*?)\s', f.read() )[0]) >> getVersion.py
 
 cmd python getVersion.py
 var version = last
