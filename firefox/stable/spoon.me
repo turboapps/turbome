@@ -17,7 +17,6 @@ cmd  mkdir c:\Workspace
 workdir c:\Workspace
 batch cmd
  echo [Install] > install.ini
- echo InstallDirectoryPath=c:\Firefox\ >> install.ini
  echo MaintenanceService=false >> install.ini
 
 cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/spoonapps/spoonme/master/tools/python/GetLatestUrl.py
@@ -35,7 +34,8 @@ cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
 cmd "firefox.exe /INI=c:\Workspace\install.ini"
 
 batch
- cd c:\Firefox
+ if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
+ cd "Mozilla Firefox"
  wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/spoonapps/spoonme/master/firefox/config/mozilla.cfg
  cd browser
  wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/spoonapps/spoonme/master/firefox/config/browser/override.ini
@@ -50,4 +50,4 @@ cmd rmdir c:\Python34 /s /q
 
 meta tag=tag
 
-startup file ("C:\Firefox\firefox.exe")
+startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe")
