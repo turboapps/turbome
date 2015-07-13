@@ -36,7 +36,7 @@ cmd pip install requests --quiet
 batch
   echo import requests >> getUrl.py
   echo import re >> getUrl.py
-  echo r = requests.get('https://gradle.org/downloads/') >> getUrl.py
+  echo r = requests.get('http://gradle.org/downloads/') >> getUrl.py
   echo url = ''.join(list(re.findall('(https://.*?-bin.zip)', r.text)[0])) >> getUrl.py
   echo print(url) >> getUrl.py
 

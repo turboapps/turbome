@@ -33,7 +33,7 @@ workdir c:\Workspace
 batch
   echo import requests >> getVersion.py
   echo import re >> getVersion.py
-  echo r = requests.get('https://www.drupal.org/project/drupal') >> getVersion.py
+  echo r = requests.get('http://www.drupal.org/project/drupal') >> getVersion.py
   echo version = ''.join(list(re.findall('(http://ftp.drupal.org/files/projects/drupal-(\d+\.\d+).zip)', r.text)[0][1])) >> getVersion.py
   echo print(version) >> getVersion.py
 

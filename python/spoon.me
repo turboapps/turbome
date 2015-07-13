@@ -39,7 +39,7 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo r = requests.get('https://www.python.org/downloads/windows/') >> getRelease.py
+ echo r = requests.get('http://www.python.org/downloads/windows/') >> getRelease.py
  echo url = re.findall('a href="(.*)"^>Windows x86 MSI ', r.text)[0] >> getRelease.py
  echo tag = re.findall('.*python-(.*)\.msi', url)[0] >> getRelease.py
  echo version = 'Python'+tag.split('.')[0]+tag.split('.')[1] >> getRelease.py

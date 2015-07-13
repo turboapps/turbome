@@ -35,7 +35,7 @@ workdir c:\Workspace
 batch
  echo import requests >> getVersion.py
  echo import re >> getVersion.py
- echo r = requests.get('https://mariadb.com/kb/en/mariadb/changelogs-mariadb-100-series/') >> getVersion.py
+ echo r = requests.get('http://mariadb.com/kb/en/mariadb/changelogs-mariadb-100-series/') >> getVersion.py
  echo version = ''.join(list(re.findall('(MariaDB (\d+\.\d+\.\d+))', r.text)[0][1])) >> getVersion.py
  echo print(version) >> getVersion.py
 

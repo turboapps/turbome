@@ -30,7 +30,7 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo r = requests.get('https://nodejs.org/download/') >> getRelease.py
+ echo r = requests.get('http://nodejs.org/download/') >> getRelease.py
  echo print(list(re.findall('^"(.*v(\d*\.\d*\.\d*).*x86.msi)^"', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
