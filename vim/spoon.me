@@ -55,9 +55,7 @@ env path="@PROGRAMFILESX86@\vim\vim" + version
 # Startup File
 ###################################
 
-var startupfile = "@PROGRAMFILESX86@\vim\vim" + version + "\gvim.exe"
-
-startup file (startupfile)
+startup file ("@PROGRAMFILESX86@\vim\vim" + version + "\gvim.exe")
 
 ###################################
 # Clean up
