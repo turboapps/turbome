@@ -33,7 +33,7 @@ cmd "echo print(re.findall('npp.(.*)\.[Ii]nstaller.exe','%url%')[0]) >> getTag.p
 cmd python getTag.py
 var tag = last
 
-cmd "wget --no-check-certificate --no-verbose %url%"
+cmd "wget --no-check-certificate --no-verbose https://notepad-plus-plus.org/%url%"
 
 cmd "npp.%tag%.Installer.exe /S /D=C:\Notepad++"
 
