@@ -1,0 +1,67 @@
+#
+# ADP Browser Spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/adpbrowser
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="adpbrowser"
+meta namespace="adp"
+meta name="adpbrowser"
+
+###################################
+# Install settings
+###################################
+
+var firefoxUrl = "https://download.mozilla.org/?product=firefox-38.1.0esr-SSL&os=win&lang=en-US"
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean,adobe/flash,oracle/jre:7.60
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+cmd xcopy /s @SYSDRIVE@\Config .
+
+# Install Firefox 38 ESR and apply its configs
+using wget
+  cmd "wget -q -O firefox.exe --no-check-certificate --no-verbose ""%firefoxUrl%"""
+  cmd "firefox.exe -ms /INI=@SYSDRIVE@\Workspace\install.ini"
+  cmd "copy /Y mozilla.cfg @SYSDRIVE@\firefox\"
+  cmd "copy /Y override.ini @SYSDRIVE@\firefox\browser\"
+  cmd "mkdir @SYSDRIVE@\firefox\browser\defaults\preferences & mkdir @SYSDRIVE@\firefox\browser\defaults\profile"
+  cmd "copy /Y local-settings.js @SYSDRIVE@\firefox\browser\defaults\preferences"
+  cmd "copy /Y permissions.sqlite @SYSDRIVE@\firefox\browser\defaults\profile"
+
+# Disable Java auto update
+cmd "if exist ""@PROGRAMFILESX86@"" (reg delete ""HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Update"" /f) else (reg delete ""HKLM\SOFTWARE\JavaSoft\Java Update"" /f)"
+
+# Disable Flash auto update
+cmd "copy /Y mms.cfg @SYSWOW64@\Macromed\Flash"
+cmd "copy /Y mms.cfg @SYSTEM@\Macromed\Flash"
+
+###################################
+# Startup File
+###################################
+
+startup file ("@SYSDRIVE@\firefox\firefox.exe")
+
+###################################
+# Environment Variables
+###################################
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
