@@ -1,0 +1,1 @@
+spoon build --admin --overwrite spoon.me --mount=%~dp0config=@SYSDRIVE@\Config spoon.me
