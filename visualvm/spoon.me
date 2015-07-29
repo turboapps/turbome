@@ -1,0 +1,69 @@
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Setup meta
+meta title="visualvm"
+meta namespace="visualvm" 
+meta name="visualvm"
+
+#Basic dependencies and tools
+from base,oracle/jdk:8
+using wget,python:3.4.1,7-zip
+
+#Prepare pythone for version grabbing
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Fetch version
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://visualvm.java.net/download.html') >> getRelease.py
+ echo print(re.findall('VisualVM (1\.\d\.\d)', r.text )[0]) >> getRelease.py
+
+cmd python getRelease.py
+
+var tag = last
+meta tag=tag
+
+
+# Fetch version, compressed for download
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://visualvm.java.net/download.html') >> getRelease.py
+ echo print(re.findall('VisualVM (1\.\d\.\d)', r.text )[0].replace(".", "")) >> getRelease.py
+
+cmd python getRelease.py
+
+var downloadtag = last
+
+echo downloadtag
+
+var url = "https://java.net/downloads/visualvm/release" + downloadtag  + "/visualvm_" + downloadtag + ".zip"
+
+
+# Prepare Jetty
+cmd "wget -O visualvm.zip --no-check-certificate %url%"
+cmd 7z x visualvm.zip -oC:\Workspace\visualvm
+cmd del visualvm.zip
+
+cmd mkdir C:\VisualVM
+
+var copycommand = "xcopy /E C:\Workspace\visualvm\visualvm_" + downloadtag + " C:\VisualVM\*"
+cmd "%copycommand%"
+
+workdir "c:\VisualVM"
+setworkdir "C:\VisualVM\"
+
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+startup file ("C:\VisualVM\bin\visualvm.exe")
