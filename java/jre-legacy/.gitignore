@@ -1,0 +1,2 @@
+# ignore *.exe of installers for the script
+*.exe
