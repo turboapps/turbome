@@ -1,0 +1,81 @@
+#
+# Visual Studio Code spoon.me file
+# https://github.com/spoonium/spoonme/tree/master/visual-studio-code
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+########################################
+# Dependencies
+########################################
+
+layer clean
+
+using wget, python:3.4.1
+cmd pip install requests --quiet
+
+########################################
+# Define meta information
+########################################
+
+meta title = "Visual Studio Code"
+meta namespace = "microsoft"
+meta name = "vscode"
+
+########################################
+# Define variables and template images
+########################################
+
+var codeHost = "code.visualstudio.com"
+var codeInfo = "https://code.visualstudio.com/Updates"
+var codeDownload = "https://code.visualstudio.com/download"
+var userAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.130 Safari/537.36"
+
+
+########################################
+# Get current version
+########################################
+
+# Set working directory
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+batch
+	echo import requests, re, json >> getTag.py
+	echo headers = {'Host' : '%codeHost%', 'User-Agent': '%userAgent%'} >> getTag.py
+	echo r = requests.get('%codeInfo%', headers=headers, verify=False) >> getTag.py
+	echo print(re.findall('VS Code v([0-9.]+)', r.text)[0]) >> getTag.py
+
+cmd python getTag.py
+
+var tag = last
+meta tag = tag
+
+########################################
+# Get url to download from website
+########################################
+
+batch
+	echo import requests, re, json >> getUrl.py
+	echo headers = {'Host' : '%codeHost%', 'User-Agent': '%userAgent%'} >> getUrl.py
+	echo r = requests.get('%codeDownload%', headers=headers, verify=False) >> getUrl.py
+	echo print(re.findall('a.*href="(.*)".*Download for Windows', r.text)[0]) >> getUrl.py
+
+cmd python getUrl.py
+var getPackage = "wget --no-check-certificate --no-verbose " + last
+
+cmd %getPackage%
+
+cmd "VSCodeSetup.exe -s"
+
+workdir @SYSDRIVE@
+
+# ########################################
+# # Cleanup
+# ######################################## 
+
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+
+startup file ("@APPDATALOCAL@\Code\app-" + tag + "\Code.exe")
