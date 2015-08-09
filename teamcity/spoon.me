@@ -21,7 +21,7 @@ var teamcityTagPattern = "https://download.jetbrains.com/teamcity/TeamCity-(\d*\
 # Pull dependency images
 ###################################
 
-layer oracle/jre
+layer oracle/jdk
 using wget,7-zip,python:3.4.1
 
 ###################################
@@ -43,11 +43,13 @@ cmd "wget -q -O teamcity.tar.gz --no-check-certificate --no-verbose ""https://do
 cmd "7z e teamcity.tar.gz"
 cmd "7z x teamcity.tar -oc:\ | find /v ""ing  """
 
-# Copy jvm.dll to directory which Teamcity uses
-cmd "mkdir ""%JAVA_HOME%\bin\server"" && xcopy /s ""%JAVA_HOME%\bin\client"" ""%JAVA_HOME%\bin\server"""
+# Copy jvm.dll to directory which Teamcity uses (for older JRE versions)
+# cmd "if not exist ""%JAVA_HOME%\bin\server"" (mkdir ""%JAVA_HOME%\bin\server"" && xcopy /s ""%JAVA_HOME%\bin\client"" ""%JAVA_HOME%\bin\server"")"
 
 # Install TeamCity service and run it automatically
 cmd "@SYSDRIVE@\TeamCity\bin\teamcity-server.bat service install /runAsSystem"
+cmd "@SYSDRIVE@\TeamCity\BuildAgent\bin\service.install"
+cmd "@SYSDRIVE@\TeamCity\BuildAgent\bin\service.start"
 
 ###################################
 # Clean up
