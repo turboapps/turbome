@@ -48,8 +48,8 @@ cmd "7z x teamcity.tar -oc:\ | find /v ""ing  """
 
 # Install TeamCity service and run it automatically
 cmd "@SYSDRIVE@\TeamCity\bin\teamcity-server.bat service install /runAsSystem"
-cmd "@SYSDRIVE@\TeamCity\BuildAgent\bin\service.install"
-cmd "@SYSDRIVE@\TeamCity\BuildAgent\bin\service.start"
+cmd "@SYSDRIVE@\TeamCity\BuildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -i ../conf/wrapper.conf"
+cmd "@SYSDRIVE@\TeamCity\BuildAgent\launcher\bin\TeamCityAgentService-windows-x86-32.exe -t ../conf/wrapper.conf"
 
 ###################################
 # Clean up
