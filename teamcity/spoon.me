@@ -41,10 +41,7 @@ var tag = last
 # Download and install last version
 cmd "wget -q -O teamcity.tar.gz --no-check-certificate --no-verbose ""https://download.jetbrains.com/teamcity/TeamCity-%tag%.tar.gz"""
 cmd "7z e teamcity.tar.gz"
-cmd "7z x teamcity.tar -oc:\ | find /v ""ing  """
-
-# Copy jvm.dll to directory which Teamcity uses (for older JRE versions)
-# cmd "if not exist ""%JAVA_HOME%\bin\server"" (mkdir ""%JAVA_HOME%\bin\server"" && xcopy /s ""%JAVA_HOME%\bin\client"" ""%JAVA_HOME%\bin\server"")"
+cmd "7z x teamcity.tar -oc:\ | find /v ""ing  """                                                                                                   
 
 # Install TeamCity service and run it automatically
 cmd "@SYSDRIVE@\TeamCity\bin\teamcity-server.bat service install /runAsSystem"
