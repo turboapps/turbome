@@ -36,7 +36,7 @@ cmd pip install requests --quiet
 batch
   echo import requests >> getUrl.py
   echo import re >> getUrl.py
-  echo r = requests.get('http://gradle.org/downloads/') >> getUrl.py
+  echo r = requests.get('http://gradle.org/downloads/', headers={'User-Agent' : "Magic Browser"}) >> getUrl.py
   echo url = ''.join(list(re.findall('(https://.*?-bin.zip)', r.text)[0])) >> getUrl.py
   echo print(url) >> getUrl.py
 
@@ -54,7 +54,7 @@ cmd 7z x gradle.zip -oc:\gradle
 batch
   echo import requests >> getVersion.py
   echo import re >> getVersion.py
-  echo r = requests.get('http://gradle.org') >> getVersion.py
+  echo r = requests.get('http://gradle.org', headers={'User-Agent' : "Magic Browser"}) >> getVersion.py
   echo version = ''.join(list(re.findall('Download Gradle (\d.\d)', r.text)[0])) >> getVersion.py
   echo print(version) >> getVersion.py
 cmd python getVersion.py
