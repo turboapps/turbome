@@ -35,7 +35,7 @@ batch
 cmd python getTag.py
 var tag = last
 
-var url = "http://dl.bintray.com/groovy/maven/groovy-binary-" + tag + ".zip"
+var url = "http://dl.bintray.com/groovy/maven/apache-groovy-binary-" + tag + ".zip"
 
 cmd "wget --no-check-certificate -O groovy-binary.zip %url%"
 cmd 7z x groovy-binary.zip -oc:\Groovy
