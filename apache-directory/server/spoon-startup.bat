@@ -1,12 +1,12 @@
 @echo off
-echo "Soon will start up ApacheDS"
-echo "If you want to store the data outside the container,"
-echo "Please mount the C:\ApacheDB\instances"
-echo "Example spoon run --mount C:\DataOnHost=C:\ApacheDB\instances"
-echo "If you don't want to launch the container, but manipulate config files"
-echo "Use --startup-file=cmd to get a command prompt"
-echo "Default port will be 10389"
-echo "Default admin is: uid=admin,ou=system  Password: secret"
+echo Soon will start up ApacheDS
+echo If you want to store the data outside the container,
+echo Please mount the C:\ApacheDB\instances
+echo Example spoon run --mount C:\DataOnHost=C:\ApacheDB\instances
+echo If you don't want to launch the container, but manipulate config files
+echo Use --startup-file=cmd to get a command prompt
+echo Default port will be 10389
+echo Default admin is: uid=admin,ou=system  Password: secret
 
 set PATH=%PATH%;%JAVA_HOME%/bin
 
