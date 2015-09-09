@@ -1,6 +1,6 @@
 #
-# sbt Spoon.me file
-# https://github.com/spoonapps/spoonme/tree/master/sbt
+# sbt turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/sbt
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -43,7 +43,7 @@ cmd del jetty.zip
 var sourceFolder = "C:\Workspace\jetty\jetty-distribution-" + tag + "\*"
 cmd "xcopy /E %sourceFolder% C:\Jetty\*"
 
-cmd wget --no-check-certificate https://raw.githubusercontent.com/spoonapps/spoonme/master/jetty/run-jetty-bat.bat
+cmd wget --no-check-certificate https://raw.githubusercontent.com/turboapps/spoonme/master/jetty/run-jetty-bat.bat
 cmd copy run-jetty-bat.bat C:\Jetty\run-jetty-bat.bat
 
 env JETTY_HOME="C:\Jetty\"

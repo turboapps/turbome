@@ -7,8 +7,8 @@ It installs to `C:\rubydevkit472`
 Build and launch the container
 
 ```
-spoon build -n=ruby-devkit:2.1.3 spoon.me
-spoon run ruby-devkit:2.1.3
+turbo build -n=ruby-devkit:2.1.3 turbo.it
+turbo run ruby-devkit:2.1.3
 ```
 
 Confirm your Ruby environment is correctly using the DevKit by running `gem install json --platform=ruby`. 

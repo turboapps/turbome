@@ -1,9 +1,9 @@
-NuGet Spoon Container
+NuGet Turbo Container
 ================
 NuGet build tool, see https://www.nuget.org
 
 # Running It.
-Just type `spoon run nuget`. A window will open, where the `nuget` command is available.
+Just type `turbo run nuget`. A window will open, where the `nuget` command is available.
 
 #Build Stable Version
 Firt, define the version you want to use with `set VERSION=[Version-Number]`, then run the back file `build.bat`. Example:
@@ -14,4 +14,4 @@ Firt, define the version you want to use with `set VERSION=[Version-Number]`, th
 The image will be named `nuget:[Version-Number]`, like `nuget:2.8.1`
 
 #Build Local Version
-The `local-spoon.me` picks up NuGet directly from `.\nuget.exe`. It is intended for continues builds, where the previous step left nuget there.
+The `local-turbo.it` picks up NuGet directly from `.\nuget.exe`. It is intended for continues builds, where the previous step left nuget there.

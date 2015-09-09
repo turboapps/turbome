@@ -4,7 +4,7 @@ echo "Jetty home: %%JETTY_HOME%%=%JETTY_HOME%"
 echo "Web apps are in: %%WEB_APPS%%=%WEB_APPS%"
 echo "Any war in that location will be picked up"
 echo "Alternative, mount the folder with our war files to %WEB_APPS%" 
-echo "Like spoon run --mount C:\my-wars=C:\Jetty\webapps"
+echo "Like turbo run --mount C:\my-wars=C:\Jetty\webapps"
 
 if not exist %WEB_APPS% mkdir %WEB_APPS%
 

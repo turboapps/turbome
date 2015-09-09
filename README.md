@@ -1,25 +1,24 @@
-# spoon.me
+# turbo.it
 
 The official repository for trusted build scripts for popular open source projects.
 
-*Have a script to contribute?* Send a pull request and we'll send you an awesome Spoon T-shirt!
+*Have a script to contribute?* Send a pull request and we'll send you an awesome Turbo T-shirt!
 
-*If you are the owner of a project*, please contact *support@spoon.net* and we can set you up
+*If you are the owner of a project*, please contact *support@turbo.net* and we can set you up
 with an official project account.
 
-## What is a `spoon.me` file?
+## What is a `turbo.it` file?
 
-`spoon.me` files are SpoonScripts that contain instructions to automatically package applications. By
-convention, packaging scripts are named `spoon.me` and placed in the root of a repository.
+`turbo.it` files are TurboScripts that contain instructions to automatically package applications. By
+convention, packaging scripts are named `turbo.it` and placed in the root of a repository.
 
-Spoon containers can be shared on the [Spoon.net](http://spoon.net) online hub and deployed
-to end users on the [Turbo.net](http://turbo.net) desktop hosting service.
+Turbo containers can be shared on the [turbo.net](http://turbo.net) online hub.
 
 ## License
 |                      |                                          |
 |:---------------------|:-----------------------------------------|
-| **Author:**          | Spoon (<support@spoon.net>)
-| **Copyright:**       | Copyright (c) 2014 Spoon
+| **Author:**          | Turbo (<support@turbo.net>)
+| **Copyright:**       | Copyright (c) 2014 Turbo
 | **License:**         | Apache License, Version 2.0
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at 

@@ -3,9 +3,9 @@ PostgreSQL
 PostgreSQL container, of http://www.postgresql.org
 
 # Getting Started
-Just type `spoon run postgresql`, and PostgreSQL will start at the default port
+Just type `turbo run postgresql`, and PostgreSQL will start at the default port
 
-    spoon run postgresql/postgresql
+    turbo run postgresql/postgresql
 	
 #Defaults
 PostgreSQL uses default port: 5432

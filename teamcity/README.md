@@ -6,4 +6,4 @@ The TeamCity server runs on http://localhost:8111/.
 
 To build: 
 
-    spoon build /path/to/spoon.me
+    turbo build /path/to/turbo.it

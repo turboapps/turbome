@@ -1,6 +1,6 @@
 #
-# MySQL Spoon.me file
-# https://github.com/spoonium/spoonme/tree/master/mysql
+# MySQL turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/mysql
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -24,7 +24,7 @@ workdir C:\
 workdir c:\
 cmd mkdir c:\Workspace & cd c:\Workspace
 
-cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/spoonapps/spoonme/master/tools/python/GetLastestSF.py
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/spoonme/master/tools/python/GetLastestSF.py
 
 cmd "python GetLastestSF.py --url=http://sourceforge.net/projects/mysql.mirror/rss -r=.*mysql.*win32.*zip"
 

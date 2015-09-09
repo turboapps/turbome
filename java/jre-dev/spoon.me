@@ -1,8 +1,8 @@
 #
-# Oracle's Java Runtime Environment 9 Early Access Release spoon.me file
-# https://github.com/spoonapps/spoonme/blob/master/java/jre-dev/spoon.me
+# Oracle's Java Runtime Environment 9 Early Access Release turbo.it file
+# https://github.com/turboapps/spoonme/blob/master/java/jre-dev/turbo.it
 #
-# Created with Spoon CMD version 1.4.1355.0
+# Created with Turbo CMD version 1.4.1355.0
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -57,7 +57,7 @@ var tag = "9" + version
 
 # Check if version exists. If yes - break the process
 batch
-  spoon tags oracle/jre-dev >> existing_versions.txt
+  turbo tags oracle/jre-dev >> existing_versions.txt
   find /c "%tag%" existing_versions.txt
   if %errorlevel% equ 0 copy null.txt null.txt
 

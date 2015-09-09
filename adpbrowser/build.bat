@@ -1,1 +1,1 @@
-spoon build --admin --overwrite spoon.me --mount=%~dp0config=@SYSDRIVE@\Config spoon.me
+turbo build --admin --overwrite turbo.it --mount=%~dp0config=@SYSDRIVE@\Config turbo.it

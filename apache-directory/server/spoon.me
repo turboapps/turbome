@@ -1,5 +1,5 @@
 #
-# Apache DS Server spoon.me file
+# Apache DS Server turbo.it file
 ###################################
 
 meta title="Apache DS"
@@ -7,7 +7,7 @@ meta namespace="apache-directory"
 meta name="server"
 
 # Pull dependency images
-# 7zip is used to work around spoon bugs =(
+# 7zip is used to work around turbo bugs =(
 layer jre:8.0,7-zip/7-zip
 
 # Temporary dependencies during build
@@ -56,10 +56,10 @@ cmd 7z a instances instances
 cmd rename instances instances-backup
 
 # Show a nice promt when you startup the container
-copy "spoon-startup.bat" "c:\ApacheDS\spoon-startup.bat"
+copy "turbo-startup.bat" "c:\ApacheDS\turbo-startup.bat"
 setworkdir c:\ApacheDS
 
-startup file ("c:\ApacheDS\spoon-startup.bat")
+startup file ("c:\ApacheDS\turbo-startup.bat")
 
 
 #cleanup

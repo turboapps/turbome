@@ -30,15 +30,15 @@ echo ""
 echo "  Website URL: http://www.iis.net/"
 echo "  Support URL: http://forums.iis.net/"
 echo ""
-echo "  Init Script Source: https://github.com/spoonapps/spoonme/blob/master/iis/import.me"
+echo "  Init Script Source: https://github.com/turboapps/spoonme/blob/master/iis/import.me"
 echo ""
-echo "  CAUTION! This script will import files, settings, and security data from your computer into a Spoon container."
+echo "  CAUTION! This script will import files, settings, and security data from your computer into a Turbo container."
 echo "  CAUTION! Please make sure you set the container to private mode for sensitive data or production environments."
 echo ""
 
 batch cmd
-  set /P spoonPrompt=" Please enter 'ok' to continue or 'cancel' to abort: "
-  if /I "%spoonPrompt%"=="ok" (
+  set /P turboPrompt=" Please enter 'ok' to continue or 'cancel' to abort: "
+  if /I "%turboPrompt%"=="ok" (
   echo.
 
   ) else (
@@ -109,7 +109,7 @@ batch cmd
   ) else (
   echo.
   echo.
-  echo  ERROR: .NET Framework 3.5 or 4 is not detected. Please install framework or add the microsoft/dotnet image from the Spoon hub and try again.
+  echo  ERROR: .NET Framework 3.5 or 4 is not detected. Please install framework or add the microsoft/dotnet image from the Turbo Hub and try again.
   echo.
   echo.
   exit /b 1
@@ -157,13 +157,13 @@ echo "  Script has finished importing Internet Information Services (IIS)!"
 echo " "
 echo "  1) The default port for IIS is 80. If you already have a server listening to that port, you can:"
 echo "     a. Use the route add statement to redirect the virtual port 80 to a different native port, such as 8081."
-echo "        Spoon (344a393e) C:\> route add tcp,udp 8081:80"
+echo "        Turbo (344a393e) C:\> route add tcp,udp 8081:80"
 echo "     b. Start a virtual command prompt and change the default port using IIS Manager."
-echo "        Spoon (344a393e) C:\> cmd"
+echo "        Turbo (344a393e) C:\> cmd"
 echo "        (344a393e) C:\> start inetmgr.exe"
 echo " "
 echo "  2) Start a virtual command prompt to configure the virtual IIS container."
-echo "     Spoon (344a393e) C:\> cmd"
+echo "     Turbo (344a393e) C:\> cmd"
 echo " "
 echo "     # Using the virtual cmd prompt, start IIS Manager to configure the server."
 echo "     (344a393e) C:\> start inetmgr.exe"
@@ -173,8 +173,8 @@ echo "     (344a393e) C:\> cd inetpub"
 echo "     (344a393e) C:\inetpub> .. do something .."
 echo " "
 echo "  3) Commit this container to an image and push it to hub."
-echo "     Spoon (344a393e) C:\> meta name = ""my-iis-image"""
-echo "     Spoon (344a393e) C:\> commit"
-echo "     Spoon (344a393e) C:\> push"
+echo "     Turbo (344a393e) C:\> meta name = ""my-iis-image"""
+echo "     Turbo (344a393e) C:\> commit"
+echo "     Turbo (344a393e) C:\> push"
 echo " "
 yield

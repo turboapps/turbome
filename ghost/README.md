@@ -6,4 +6,4 @@ Version: 0.5.7
 
 To build: 
 
-	spoon build -n=ghost /path/to/spoon.me
+	turbo build -n=ghost /path/to/turbo.it

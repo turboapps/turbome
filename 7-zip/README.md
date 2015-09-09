@@ -6,4 +6,4 @@ Version: 9.20
 
 To build: 
 
-	spoon build -n=7zip /path/to/spoon.me
+	turbo build -n=7zip /path/to/turbo.it
