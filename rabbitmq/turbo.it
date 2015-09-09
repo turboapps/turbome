@@ -1,0 +1,53 @@
+#
+# Rabbit MQ turbo.it file
+# https://github.com/...
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer erlang
+using wget
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+# Download RabbitMQ
+cmd	wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.4.3/rabbitmq-server-3.4.3.exe --no-check-certificate
+
+# Install RabbitMQ
+cmd ("rabbitmq-server-3.4.3.exe", "/S", "/NCRC", "/D=C:\rabbitmq")
+
+# Enable management plugin
+cmd ("C:\rabbitmq\rabbitmq_server-3.4.3\sbin\rabbitmq-plugins.bat", "enable", "--offline", "rabbitmq_management")
+
+
+###################################
+# Environment Variables
+###################################
+
+env PATH=%PATH%;C:\rabbitmq\rabbitmq_server-3.4.3\sbin
+
+
+###################################
+# Startup File
+###################################
+
+# Start RabbitMQ
+startup file ("cmd", "/k rabbitmq-server -detached")
+
+
+###################################
+# Clean up
+###################################
+
+cmd del rabbitmq-server-3.4.3.exe /Q

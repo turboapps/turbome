@@ -1,0 +1,76 @@
+#
+# MySQL turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/mysql
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1,7-zip
+
+cmd pip install requests --quiet
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+workdir c:\
+cmd mkdir c:\Workspace & cd c:\Workspace
+
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/spoonme/master/tools/python/GetLastestSF.py
+
+cmd "python GetLastestSF.py --url=http://sourceforge.net/projects/mysql.mirror/rss -r=.*mysql.*win32.*zip"
+
+var url = $out
+
+cmd "echo import re > getTag.py"
+cmd "echo print(re.findall('(\d*\.\d*\.\d*\.\d*)','" + $url + "')[0]) >> getTag.py"
+
+cmd python getTag.py
+var tag = $out
+
+# Download
+cmd wget -O mysql.zip --no-check-certificate $url
+
+cmd "7z x mysql.zip -oC:\mysql "
+  
+cmd cd C:\mysql\bin
+cmd mysqld.exe --install
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="C:\mysql\bin"
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\mysql
+# No startup files needed
+
+
+###################################
+# Clean up
+###################################
+
+workdir C:\
+
+cmd cd c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+meta title="Mysql"
+meta namespace=mysql
+meta name=mysql
+meta tag=$tag

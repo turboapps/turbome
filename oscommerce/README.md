@@ -6,4 +6,4 @@ Version: 2.3.4
 
 To build: 
 
-	spoon build -n=oscommerce /path/to/spoon.me
+	turbo build -n=oscommerce /path/to/turbo.it

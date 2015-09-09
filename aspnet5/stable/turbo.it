@@ -1,0 +1,75 @@
+#
+# ASP.NET 5 turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/aspnet5/turbo.it
+#
+# Created with Turbo CMD version 1.4.1171.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="ASPNET5"
+meta namespace="aspnet"
+meta name="aspnet5"
+
+###################################
+# Pull dependency images
+###################################
+layer powershell,dotnet:4.5.2
+using python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download
+cmd "@powershell -NoProfile -ExecutionPolicy unrestricted -Command ""&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"""
+
+# Install unstable version
+cmd dnvm upgrade
+
+cmd dnvm list > output.txt & echo 1
+
+batch
+  echo import re >> getVersion.py
+  echo f = open('output.txt', 'r') >> getVersion.py
+  echo print(re.findall('\s\d*\.\d*\.\d*\.*\d*-(.*?)\s', f.read() )[0]) >> getVersion.py
+
+cmd python getVersion.py
+var version = last
+
+###################################
+# Environment Variables
+###################################
+
+# not needed
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+
+###################################
+# Startup File
+###################################

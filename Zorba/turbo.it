@@ -1,0 +1,57 @@
+#
+# Zorba turbo.it file
+#http://www.zorba.io/home
+# https://github.com/turboapps/spoonme/tree/master/7-zip
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using wget
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+# Download
+
+cmd wget  -O \Installzorba.exe --no-check-certificate https://github.com/28msec/zorba/releases/download/3.0/zorba-3.0.0-win64-x64.exe  
+
+# Install
+
+cmd installzorba.exe
+workdir  "C:\Program Files (x86)\Zorba XQuery Processor 3.0.0\bin"
+#there is a bug in the current installer that creates the following DLL with the wrong name
+cmd ren iconv.dll libiconv.dll
+workdir c:\
+ 
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem;@PROGRAMFILESX86@\Zorba XQuery Processor 3.0.0"
+
+
+###################################
+# Startup File
+###################################
+
+
+
+
+###################################
+# Clean up
+###################################
+
+cmd del \installzorba.exe /Q

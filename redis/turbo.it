@@ -1,0 +1,42 @@
+#
+# Redis turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/redis
+#
+# Copyright (c) Microsoft Open Technologies, Inc.
+# https://github.com/MSOpenTech/redis/blob/2.8/license.txt
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using wget 7-zip
+
+###################################
+# Download and install
+###################################
+
+# Create app directory
+workdir C:\
+
+# Download and unzip
+cmd wget https://github.com/MSOpenTech/redis/releases/download/win-2.8.17.2/redis-2.8.17.zip --no-check-certificate -O redis.zip
+cmd 7z.exe e redis.zip
+
+###################################
+# Startup File
+###################################
+
+cmd redis-server.exe
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+
+# No clean up needed

@@ -1,0 +1,53 @@
+#
+# Firefox stanle turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/firefox
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Firefox"
+meta namespace="mozilla"
+meta name="firefox"
+
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+batch cmd
+ echo [Install] > install.ini
+ echo MaintenanceService=false >> install.ini
+
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/spoonme/master/tools/python/GetLatestUrl.py
+cmd python GetLatestUrl.py --url ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest/win32/en-US/ --regex Firefox\sSetup\s\d.*.exe
+
+var url = last
+
+cmd "echo import re > getTag.py"
+cmd "echo print(re.findall('Firefox Setup (.*).exe','%url%')[0]) >> getTag.py"
+
+cmd python getTag.py
+var tag = last
+
+cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
+cmd "firefox.exe /INI=c:\Workspace\install.ini"
+
+batch
+ if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
+ cd "Mozilla Firefox"
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/spoonme/master/firefox/config/mozilla.cfg
+ cd browser
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/spoonme/master/firefox/config/browser/override.ini
+ mkdir defaults\preferences & cd defaults\preferences
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/spoonme/master/firefox/config/browser/defaults/preferences/local-settings.js
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
+
+startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe")

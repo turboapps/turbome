@@ -6,4 +6,4 @@ Version: Latest (4.0.1)
 
 To build: 
 
-	spoon build -n=wordpress /path/to/spoon.me
+	turbo build -n=wordpress /path/to/turbo.it

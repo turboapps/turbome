@@ -6,4 +6,4 @@ Version: 5.6.20 (Win32)
 
 To build: 
 
-	spoon build -n=mysql /path/to/spoon.me
+	turbo build -n=mysql /path/to/turbo.it

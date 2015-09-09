@@ -6,4 +6,4 @@ Version: 2.8.17.2
 
 To build: 
 
-	spoon build -n=redis /path/to/spoon.me
+	turbo build -n=redis /path/to/turbo.it

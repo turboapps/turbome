@@ -6,7 +6,7 @@ Version: 6.3 (OTP 17.4 64-bit)
 
 To build: 
 
-	spoon build -n=erlang /path/to/spoon.me
+	turbo build -n=erlang /path/to/turbo.it
 
 It installs to `C:\erlang-6.3`
 

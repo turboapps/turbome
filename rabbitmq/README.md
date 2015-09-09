@@ -6,7 +6,7 @@ Version: 3.4.3
 
 To build: 
 
-	spoon build -n=rabbitmq /path/to/spoon.me
+	turbo build -n=rabbitmq /path/to/turbo.it
 
 It installs to `C:\rabbitmq-3.4.3`
 

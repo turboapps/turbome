@@ -6,4 +6,4 @@ Version: 7.34
 
 To build: 
 
-	spoon build -n=drupal /path/to/spoon.me
+	turbo build -n=drupal /path/to/turbo.it

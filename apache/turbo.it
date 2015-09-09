@@ -1,0 +1,104 @@
+#
+# Apache turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/apache
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="apache"
+meta name="apache"
+meta namespace="apache"
+
+###################################
+# Pull dependency images
+###################################
+
+layer microsoft/vcredist:2012
+using gnu/wget,7-zip/7-zip,python/python:3.4.1,gnu/sed
+
+
+###################################
+# Image settings
+###################################
+
+var port = "8080"
+var email = "admin@localhost"
+var intalldir = "C:\\apache\\apache2"
+
+###################################
+# Download and install
+###################################
+
+cmd pip install requests --quiet
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+  echo import requests >> getVersion.py
+  echo import re >> getVersion.py
+  echo r = requests.get('https://www.apachehaus.com/cgi-bin/download.plx') >> getVersion.py
+  echo print(re.findall('httpd-(.*x86-vc11.*)\.zip', r.text )[0]) >> getVersion.py
+
+cmd python getVersion.py
+var version = last
+
+var url = "http://www.apachehaus.com/downloads/httpd-" + version  + ".zip"
+
+cmd "python -c ""print('%version%'.split('-')[0])"""
+
+var tag = last
+
+
+# Download
+cmd "wget --no-check-certificate --no-verbose -O httpd.zip %url%"
+
+cmd 7z x httpd.zip
+cmd mkdir c:\apache
+cmd move apache* c:\apache\apache2
+workdir c:\apache\apache2
+
+batch
+  sed -i "s|^Listen 80|Listen 8080|" conf\httpd.conf
+  sed -i "s|\("^ServerAdmin\s" * *\).*|\1admin@localhost|" conf\httpd.conf
+  sed -i "s|\("^ServerName" *\)|#\1|" conf\httpd.conf
+  sed -i "s|/Apache24|C:\\apache\\apache2|" conf\httpd.conf
+
+batch
+  bin\httpd.exe -k install > nul
+  echo 1
+
+###################################
+# Environment Variables
+###################################
+
+env path="C:\apache\apache2\bin"
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\python34 /s /q
+
+###################################
+# Version
+###################################
+
+meta tag=tag 
+meta version=tag 
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\apache\apache2
+# No startup files needed

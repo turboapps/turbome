@@ -6,4 +6,4 @@ Version: 2.73
 
 To build: 
 
-	spoon build -n=blender /path/to/spoon.me
+	turbo build -n=blender /path/to/turbo.it

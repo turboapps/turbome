@@ -1,0 +1,59 @@
+#
+# Hy lang turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/hy
+#
+# Created with Turbo CMD version 1.4.1171.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Hy lang"
+meta namespace="hylang"
+meta name="hy"
+
+###################################
+# Pull dependency images
+###################################
+
+layer python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir c:\
+cmd pip install hy --quiet
+
+# Get version
+cmd hy -v
+var data = last
+
+cmd "python -c ""print('%data%'.split(' ')[1])"""
+var version = last
+
+###################################
+# Environment Variables
+###################################
+
+
+###################################
+# Clean up
+###################################
+
+
+###################################
+# Meta tags
+###################################
+
+meta tag=version
+
+###################################
+# Startup File
+###################################
+
+batch
+ echo (print ^"I was going to code in python syntax, but then I got hy.^") > awesome.hy
+
+startup file ("cmd", "/k echo Hy version: " + version)

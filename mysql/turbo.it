@@ -1,0 +1,55 @@
+#
+# MySQL turbo.it file
+# https://github.com/turboapps/spoonme/tree/master/mysql
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using gnu/wget
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+# Download
+cmd ("wget.exe","http://downloads.sourceforge.net/project/mysql.mirror/MySQL%205.6.20/mysql-5.6.20-win32.msi?r=&ts=1417734102&use_mirror=iweb")
+
+# Install
+batch cmd
+  msiexec /i mysql-5.6.20-win32.msi /qn INSTALLDIR="C:\mysql"
+  
+workdir C:\mysql\bin
+cmd mysqld.exe --install
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="C:\mysql\bin"
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\mysql
+# No startup files needed
+
+
+###################################
+# Clean up
+###################################
+
+workdir C:\
+cmd del mysql-5.6.20-win32.msi

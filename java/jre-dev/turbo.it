@@ -1,0 +1,104 @@
+#
+# Oracle's Java Runtime Environment 9 Early Access Release turbo.it file
+# https://github.com/turboapps/spoonme/blob/master/java/jre-dev/turbo.it
+#
+# Created with Turbo CMD version 1.4.1355.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="jre-dev"
+meta namespace="oracle"
+meta name="jre-dev"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Install additional python modules
+cmd pip install requests --quiet
+
+# Set working directory
+workdir c:\
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Get version and url fomr web
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://jdk9.java.net/download/') >> getRelease.py
+ echo version = list(re.findall('win32JREj^"\).href = ^"http://www.java.net/download/jdk9/archive/(.*?\d*)/.*.exe', r.text)) >> getRelease.py
+ echo url = [re.findall('win32JREj"\).href = "(http.*.exe)', r.text)[0]] >> getRelease.py
+ echo print(version + url) >> getRelease.py
+
+cmd python getRelease.py
+var data = last
+
+cmd "python -c ""print(%data%[0])"""
+var version = last
+
+cmd "python -c ""print(%data%[1])"""
+var url = last
+
+var tag = "9" + version
+
+# Check if version exists. If yes - break the process
+batch
+  turbo tags oracle/jre-dev >> existing_versions.txt
+  find /c "%tag%" existing_versions.txt
+  if %errorlevel% equ 0 copy null.txt null.txt
+
+# Download
+cmd "wget -O setup.exe --no-check-certificate --no-cookies --header ""Cookie: oraclelicense=accept-securebackup-cookie""  %url%"
+
+# Install
+cmd "setup.exe /s"
+
+# Update
+
+###################################
+# Environment Variables
+###################################
+
+env path="@PROGRAMFILESX86@\java\jre1.9.0\bin\"
+env java_home="@PROGRAMFILESX86@\java\jdk1.9.0"
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\python34 /s /q
+# this path contains symlinks and currenlty they are not properly supported in vm
+# so remove it 
+cmd rmdir c:\ProgramData\Oracle /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta tag=tag
+meta version=tag
+
+
+###################################
+# Startup File
+###################################

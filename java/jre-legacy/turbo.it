@@ -1,0 +1,44 @@
+#
+# Java runtime environment file for legacy versions
+# Requires JRE installer in the script's folder
+# https://github.com/turboapps/spoonme/tree/master/java
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title = "jre"
+meta namespace = "oracle"
+meta name = "jre"
+
+using python:3.4.1
+
+workdir c:\Workspace
+
+cmd "py -c ""import glob; import re; inst = glob.glob('jre-*-windows-*.exe')[0]; r = re.compile('jre-(\d+)u(\d+)-windows-(.*)\.exe'); m = r.match(inst); print(m.group(0, 1, 2, 3))"""
+var data = last
+
+cmd "py -c ""print(%data%[0])"""
+var name = last
+
+cmd "py -c ""print(%data%[1])"""
+var version = last
+
+cmd "py -c ""print(%data%[2])"""
+var update = last
+
+cmd "py -c ""print(%data%[3])"""
+var architecture = last
+
+var tag = version + "." + update
+cmd "%name% /s"
+
+workdir c:\
+
+cmd rmdir c:\Python34 /s /q
+# this path contains symlinks and currenlty they are not properly supported in vm
+# so remove it
+cmd rmdir c:\ProgramData\Sun /s /q
+
+env path = "@PROGRAMFILESX86@\java\jre" + version + "\bin\"
+
+meta tag = tag
