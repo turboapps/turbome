@@ -1,0 +1,68 @@
+# GIMP turbo.me file
+# https://github.com/turboapps/turbome/tree/master/gimp
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="gimp"
+meta namespace="gimp"
+meta name="gimp"
+
+###################################
+# Install settings
+###################################
+
+var gimpPage = "http://www.gimp.org/downloads/"
+var gimpTagPattern = "http:\/\/download\.gimp\.org\/pub\/gimp\/v([0-9\.]+)\/windows\/gimp-(\d*\.\d*\.\d*)-setup(.*).exe"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+cmd "python -c ""import sys, requests, re; r = requests.get('%gimpPage%'); print(re.findall('%gimpTagPattern%', r.text)[0])"""
+var res = last
+
+cmd "python -c ""print(%res%[0].split('.')[0])"""
+var major = last
+
+cmd "python -c ""print(%res%[0])"""
+var minor = last
+
+cmd "python -c ""print(%res%[1])"""
+var patch = last
+
+cmd "python -c ""print(%res%[2])"""
+var postfix = last
+
+# Download and install last version
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""http://download.gimp.org/pub/gimp/v%minor%/windows/gimp-%patch%-setup%postfix%.exe"""
+cmd install.exe /VERYSILENT
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\GIMP " + major + "\bin\gimp-" + minor + ".exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=patch
