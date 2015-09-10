@@ -1,6 +1,6 @@
 #
 # Firefox stanle turbo.me file
-# https://github.com/turboapps/spoonme/tree/master/firefox
+# https://github.com/turboapps/turbome/tree/master/firefox
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -37,11 +37,11 @@ cmd "firefox.exe /INI=c:\Workspace\install.ini"
 batch
  if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
  cd "Mozilla Firefox"
- wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/spoonme/master/firefox/config/mozilla.cfg
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg
  cd browser
- wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/spoonme/master/firefox/config/browser/override.ini
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini
  mkdir defaults\preferences & cd defaults\preferences
- wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/spoonme/master/firefox/config/browser/defaults/preferences/local-settings.js
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
 
 workdir c:\
 

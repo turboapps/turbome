@@ -1,6 +1,6 @@
 #
 # Chromium Canary turbo.me file
-# https://github.com/turboapps/spoonme/tree/master/chromium
+# https://github.com/turboapps/turbome/tree/master/chromium
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -15,7 +15,7 @@ workdir c:\
 
 batch cmd
 	mkdir c:\Workspace & cd c:\Workspace
-	wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/spoonme/master/tools/python/GetChromiumUrl.py
+	wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/tools/python/GetChromiumUrl.py
 	pip install requests --quiet
 	python GetChromiumUrl.py > download_url.txt
 	set /p DOWNLOAD_URL=<download_url.txt

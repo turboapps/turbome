@@ -6,7 +6,7 @@ index c215d8d..5a413b0 100644
  #
 -# Adobe FlashPlayer Spoon.me file
 +# Adobe FlashPlayer spoon.me file
- # https://github.com/spoonapps/spoonme/tree/master/flash
+ # https://github.com/spoonapps/turbome/tree/master/flash
  #
 +# Created with Spoon CMD version 1.4.1171.0
 +#
@@ -86,9 +86,9 @@ index 4741541..7860fcb 100644
 @@ -1,6 +1,8 @@
  #
 -# Hy lang Spoon.me file
--# https://github.com/spoonium/spoonme/tree/master/hy
+-# https://github.com/spoonium/turbome/tree/master/hy
 +# Hy lang spoon.me file
-+# https://github.com/spoonapps/spoonme/tree/master/hy
++# https://github.com/spoonapps/turbome/tree/master/hy
 +#
 +# Created with Spoon CMD version 1.4.1171.0
  #
@@ -199,7 +199,7 @@ index 0000000..c2cd515
 +echo "  "
 +echo "  Install Path: C:\PythonXY (or Python version X.Y.Z)"
 +echo "  "
-+echo "  Script Source: https://github.com/spoonapps/spoonme/blob/master/python/init.me"
++echo "  Script Source: https://github.com/spoonapps/turbome/blob/master/python/init.me"
 +echo "  "
 +echo "  Try this to get started with Python:"
 +echo "  "
@@ -231,7 +231,7 @@ index 3a23a14..e340e06 100644
  #
 -# python Spoon.me file
 +# python spoon.me file
- # https://github.com/spoonapps/spoonme/tree/master/python
+ # https://github.com/spoonapps/turbome/tree/master/python
  #
 +# Created with Spoon CMD version 1.4.1171.0
 +#
