@@ -1,0 +1,74 @@
+#
+# Erlang turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/erlang
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="erlang OTP"
+meta namespace="erlang"
+meta name="erlang" 
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+
+batch
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://www.erlang.org/download.html') >> getRelease.py
+ echo print(list(re.findall('(/download/.*?(\d*\.\d*\.*\d*).exe)', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+
+var data = last
+
+
+
+cmd "python -c ""print(%data%[0])"""
+
+var url = last
+
+
+cmd "python -c ""print(%data%[1])"""
+
+var tag = last
+
+
+cmd "wget --no-check-certificate -O erlang.exe http://www.erlang.org%url%" 
+
+# Install Erlang
+cmd "erlang.exe /S /D=C:\erlang-%tag%"
+
+
+###################################
+# Environment Variables
+###################################
+
+env ERLANG_HOME="C:\erlang-" + tag
+env PATH="C:\erlang-" + tag + "\bin"
+
+
+###################################
+# Clean up
+###################################
+
+workdir C:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag

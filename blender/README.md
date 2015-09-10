@@ -6,4 +6,4 @@ Version: 2.73
 
 To build: 
 
-	turbo build -n=blender /path/to/turbo.it
+	turbo build -n=blender /path/to/turbo.me

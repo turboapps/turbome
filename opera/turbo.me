@@ -1,0 +1,46 @@
+#
+# Opera Browser turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/opera
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Opera Browser"
+meta namespace="opera"
+meta name="opera"
+
+
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+ echo import sys > getNewestVersion.py
+ echo import requests >> getNewestVersion.py
+ echo import re >> getNewestVersion.py
+ echo r = requests.get('http://www.opera.com/download/guide/?os=windows^&list=all') >> getNewestVersion.py
+ echo print(re.findall('\d+\.\d+\.\d+\.\d+', r.text)[0]) >> getNewestVersion.py
+
+cmd python getNewestVersion.py
+var version = last
+var url = "http://get.geo.opera.com.global.prod.fastly.net/pub/opera/desktop/"+ version + "/win/Opera_" + version + "_Setup.exe"
+
+cmd "python -c ""print('%version%'.split('.')[0])"""
+var tag = last
+ 
+cmd "wget --no-check-certificate --no-verbose %url%"
+cmd "Opera_%version%_Setup.exe --silent --setdefaultbrowser=1 --import-browser-data=0 --enable-stats=0 --launchopera=0 --installfolder=c:\Opera\"
+cmd del "c:\Opera\%version%\opera_autoupdate.exe"
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
+
+startup file ("c:\Opera\launcher.exe")

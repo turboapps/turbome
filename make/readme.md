@@ -3,7 +3,7 @@ Make for Windows
 Make build tool, see http://www.mingw.org/
 
 ```
-turbo build -n=make make/turbo.it
+turbo build -n=make make/turbo.me
 turbo run make
 ```
 

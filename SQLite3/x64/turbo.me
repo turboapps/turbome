@@ -1,0 +1,54 @@
+#
+# Sqlite3 turbo.me file
+#http://cyqlite.sourceforge.net/     64 bit version
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using wget, 7-zip
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+# Download
+cmd mkdir sqlite3
+workdir c:\sqlite3
+
+# Install
+cmd wget  http://downloads.sourceforge.net/project/cyqlite/3.8.8/sqlite-dll-win64-x64-3080802.zip
+cmd 7z e sqlite-dll-win64-x64-3080802.zip
+#there is a bug in the current installer that creates the following DLL with the wrong name
+ 
+
+
+###################################
+# Environment Variables
+###################################
+
+ENV PATH="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\SQLITE3"
+
+
+
+###################################
+# Startup File
+###################################
+
+
+
+
+###################################
+# Clean up
+###################################
+
+cmd del \sqlite3\sqlite-dll-win64-x64-3080802.zip /Q

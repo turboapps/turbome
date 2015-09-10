@@ -1,0 +1,143 @@
+#
+# osCommerce turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/oscommerce
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer apache/apache,php/php,mysql/mysql
+using gnu/wget,fart/fart,7-zip/7-zip
+
+
+###################################
+# Initialize osCommerce
+###################################
+
+# Download and unzip install media
+workdir C:\
+cmd wget http://www.oscommerce.com/files/oscommerce-2.3.4.zip -O oscommerce.zip
+cmd 7z x oscommerce.zip -oc:\oscommerce-temp
+cmd del oscommerce.zip
+cmd mkdir oscommerce
+cmd mkdir oscommerce_docs
+cmd xcopy /s/e c:\oscommerce-temp\oscommerce-2.3.4\catalog\*.* C:\oscommerce
+cmd xcopy /s/e c:\oscommerce-temp\oscommerce-2.3.4\docs\*.* C:\oscommerce_docs\
+cmd copy c:\oscommerce-temp\oscommerce-2.3.4\README.MD C:\oscommerce_docs\README.MD
+cmd del c:\oscommerce-temp /S /Q
+cmd rmdir c:\oscommerce-temp /S /Q
+
+# Configure database settings
+cmd fart c:\oscommerce\install\templates\pages\install.php "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', null, 'class=" "<?php echo 'Username<br />' . osc_draw_input_field('DB_SERVER_USERNAME', 'root', 'class=" & ver > nul
+cmd fart c:\oscommerce\install\templates\pages\install.php "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', null, 'class=" "<?php echo 'Database Name<br />' . osc_draw_input_field('DB_DATABASE', 'oscommerce', 'class=" & ver > nul
+
+
+###################################
+# Initialize Apache
+###################################
+
+# Configure Apache
+workdir C:\apache\apache2\conf
+batch cmd
+  echo. >> httpd.conf
+  
+  REM Enable PHP
+  echo LoadModule php5_module "C:/php/php5apache2_2.dll">> httpd.conf
+  echo AddHandler application/x-httpd-php .php>> httpd.conf
+  echo PHPIniDir "C:/php">> httpd.conf
+  fart.exe --ignore-case httpd.conf "DirectoryIndex " "DirectoryIndex index.php "
+  
+  REM Set document root to osCommerce directory
+  fart.exe --ignore-case httpd.conf "C:/apache/apache2/htdocs" "C:/oscommerce"
+  
+  REM Enable mod rewrite for pretty links
+  fart.exe --ignore-case httpd.conf "#LoadModule rewrite_module modules/mod_rewrite.so" "LoadModule rewrite_module modules/mod_rewrite.so"
+  fart.exe --ignore-case httpd.conf "    Options Indexes FollowSymLinks" "    Options All"
+  fart.exe --ignore-case httpd.conf "    AllowOverride None" "    AllowOverride All"
+  ver > nul
+
+
+###################################
+# Initialize PHP
+###################################
+
+# Configure PHP
+workdir C:\php
+batch cmd
+  REM Uncomment required extension
+  fart.exe --ignore-case php.ini ";extension=php_mysql.dll" "extension=php_mysql.dll"  & ver > nul
+  fart.exe --ignore-case php.ini ";extension=php_gd2.dll" "extension=php_gd2.dll"  & ver > nul
+  fart.exe --ignore-case php.ini ";extension=php_curl.dll" "extension=php_curl.dll"  & ver > nul
+  fart.exe --ignore-case php.ini ";extension=php_openssl.dll" "extension=php_openssl.dll"  & ver > nul
+
+
+###################################
+# Initialize MySQL
+###################################
+
+workdir C:\mysql\bin
+batch cmd
+  echo Creating database instruction file
+  echo CREATE DATABASE oscommerce;> spn_cmd.txt
+
+  REM ### LOOP #######################################
+  REM Attempt to create the database 5 times, quit if all fail
+  REM On slow machines, mysqld may not start fast enough to succeed on the first try
+  :createDB
+
+  REM increment count
+  set /A spn_temp_count=%spn_temp_count%+1
+  echo Using database instruction file to configure mysql, attempt #%spn_temp_count%
+
+  REM sleep for 5 seconds
+  ping -n 6 127.0.0.1 > nul
+
+  REM pass database instruction file to mysql.exe
+  mysql -u root < spn_cmd.txt
+
+  REM if this fails more than 5 times, then fail the setup
+  IF %spn_temp_count% GEQ 6 GOTO fail
+
+  REM if this succeeds, no need to retry
+  IF %ERRORLEVEL% EQU 0 GOTO succeed
+
+  REM retry
+  goto createDB
+  REM ################################################
+
+  REM issue exit code on failure
+  :fail
+  echo MySQL setup failed.
+  exit /b 1
+
+  REM clean up and shutdown on success
+  :succeed
+  echo MySQL setup succeeded.
+  del spn_cmd.txt
+  REM mysqladmin.exe -u root shutdown
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\oscommerce
+startup file ("cmd","/k echo Visit http://localhost:%spn_config_Apache-Port% to configure osCommerce, if you haven't already.")
+
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+
+###################################
+# Clean up
+###################################
+
+# No clean up needed

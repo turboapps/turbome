@@ -1,0 +1,80 @@
+#
+# JUnit nightly turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/junit/turbo.me
+#
+# Created with Turbo CMD version 1.4.1106.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Junit"
+meta namespace="junit"
+meta name="junit"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Get URL from web
+cmd pip install requests --quiet
+
+batch
+  echo import requests >> getVersion.py
+  echo import re >> getVersion.py
+  echo r = requests.get('http://junit.org/') >> getVersion.py
+  echo print(re.findall('ReleaseNotes(\d*\.\d*\.*\d*)\.md', r.text)[0]) >> getVersion.py
+
+cmd python getVersion.py
+var tag = last
+
+# Download
+cmd mkdir c:\junit
+
+workdir c:\junit
+
+cmd "wget --no-check-certificate --no-verbose http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
+cmd "wget --no-check-certificate --no-verbose http://search.maven.org/remotecontent?filepath=junit/junit/%tag%/junit-%tag%.jar"
+
+
+###################################
+# Environment Variables
+###################################
+
+env JUNIT_HOME="c:\junit"
+env CLASSPATH="c:\junit\junit" + tag + ".jar;.;"
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\wget /s /q
+cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Meta tags
+###################################
+
+meta tag=tag
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd","/k echo JUnit version: ", tag)

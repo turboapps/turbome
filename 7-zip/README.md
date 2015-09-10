@@ -6,4 +6,4 @@ Version: 9.20
 
 To build: 
 
-	turbo build -n=7zip /path/to/turbo.it
+	turbo build -n=7zip /path/to/turbo.me

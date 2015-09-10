@@ -14,7 +14,7 @@ To build:
 Builds and `turbo run` must be performed from an admin command console or the Boxstarter console will fail to load.
 
 ```
-        turbo build -n=boxstarter /path/to/turbo.it
+        turbo build -n=boxstarter /path/to/turbo.me
 ```
 To install a Boxstarter package into your container from the Chocolatey or Myget Boxstarter repository:
 

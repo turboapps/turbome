@@ -1,0 +1,54 @@
+#
+# nunit turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/nunit
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Nunit"
+meta namespace="nunit"
+meta name="nunit"
+
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://nunit.org/index.php/index.php?p=download') >> getRelease.py
+ echo print(list(re.findall('a href="(.*.msi)".*-(\d*\.\d*\.\d*)\.msi', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+
+var data = last
+
+
+
+cmd "python -c ""print(%data%[0])"""
+
+var url = last
+
+
+cmd "python -c ""print(%data%[1])"""
+
+var tag = last
+
+
+cmd "wget -O nunit.msi --no-check-certificate %url%"
+
+cmd "nunit.msi INSTALLDIR=c:\nunit /qn"
+
+env path = "c:\nunit\bin"
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag

@@ -1,0 +1,88 @@
+#
+# Ghost turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/ghost
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="ghost"
+meta namespace="ghost"
+meta name="ghost"
+
+###################################
+# Pull dependency images
+###################################
+
+layer node
+using wget,7-zip,python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+cmd pip install requests --quiet
+
+# Create app directory
+cmd mkdir c:\ghost
+workdir C:\ghost
+
+
+batch
+ echo import sys > getTag.py
+ echo import requests >> getTag.py
+ echo import re >> getTag.py
+ echo r = requests.get('http://ghost.org/download/') >> getTag.py
+ echo print(re.findall('/zip/ghost-(\d*\.\d*\.\d*).zip', r.text )[0]) >> getTag.py
+
+cmd python getTag.py
+var tag = last
+
+# Download and unzip
+cmd "wget --no-check-certificate -O ghost.zip https://ghost.org/zip/ghost-%tag%.zip"
+
+cmd 7z x ghost.zip
+
+cmd del ghost.zip /Q
+cmd del getTag.py /Q
+
+# NPM install app
+cmd npm install --production
+
+
+###################################
+# Startup File
+###################################
+
+setworkdir C:\ghost
+
+# Create startup file
+batch cmd
+  echo @ECHO OFF > spn_start.cmd
+  echo ECHO Starting node.js... >> spn_start.cmd
+  echo C: >> spn_start.cmd
+  echo CD c:\ghost >> spn_start.cmd	
+  echo start "nodejs" npm start --production >> spn_start.cmd
+  echo ECHO Edit config.js to configure Ghost, if you haven't already.  >> spn_start.cmd
+  echo ECHO ON  >> spn_start.cmd
+  
+startup file ("cmd","/k C:\ghost\spn_start.cmd")
+
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag

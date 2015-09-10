@@ -1,0 +1,39 @@
+#
+# OpenRA turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/openra
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer dotnet:4.0.3
+using git
+
+
+###################################
+# Download source code
+###################################
+
+cmd git clone git://github.com/OpenRA/OpenRA.git "C:\OpenRA"
+
+
+###################################
+# Compile source code
+###################################
+
+workdir "C:\OpenRA\"
+cmd make.cmd dependencies
+cmd make.cmd all
+
+
+###################################
+# Startup File
+###################################
+
+cmd echo cd C:\OpenRA > C:\OpenRA\spn_start.cmd
+cmd echo OpenRA.Game.exe >> C:\OpenRA\spn_start.cmd
+startup file ("C:\OpenRA\spn_start.cmd")

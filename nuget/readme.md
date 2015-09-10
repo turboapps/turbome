@@ -14,4 +14,4 @@ Firt, define the version you want to use with `set VERSION=[Version-Number]`, th
 The image will be named `nuget:[Version-Number]`, like `nuget:2.8.1`
 
 #Build Local Version
-The `local-turbo.it` picks up NuGet directly from `.\nuget.exe`. It is intended for continues builds, where the previous step left nuget there.
+The `local-turbo.me` picks up NuGet directly from `.\nuget.exe`. It is intended for continues builds, where the previous step left nuget there.

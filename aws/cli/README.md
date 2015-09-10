@@ -8,4 +8,4 @@ To run:
 
 To build: 
 
-	turbo build turbo.it
+	turbo build turbo.me

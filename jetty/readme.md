@@ -16,4 +16,4 @@ WEB_APPS => Folder where the web apps reside
 JETTY_HOME => Folder where Jetty resides
 
 #Build It
-You can build this image with `turbo build turbo.it`
+You can build this image with `turbo build turbo.me`

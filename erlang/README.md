@@ -6,7 +6,7 @@ Version: 6.3 (OTP 17.4 64-bit)
 
 To build: 
 
-	turbo build -n=erlang /path/to/turbo.it
+	turbo build -n=erlang /path/to/turbo.me
 
 It installs to `C:\erlang-6.3`
 

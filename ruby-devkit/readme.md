@@ -7,7 +7,7 @@ It installs to `C:\rubydevkit472`
 Build and launch the container
 
 ```
-turbo build -n=ruby-devkit:2.1.3 turbo.it
+turbo build -n=ruby-devkit:2.1.3 turbo.me
 turbo run ruby-devkit:2.1.3
 ```
 

@@ -1,4 +1,4 @@
-# turbo.it
+# turbo.me
 
 The official repository for trusted build scripts for popular open source projects.
 
@@ -7,10 +7,10 @@ The official repository for trusted build scripts for popular open source projec
 *If you are the owner of a project*, please contact *support@turbo.net* and we can set you up
 with an official project account.
 
-## What is a `turbo.it` file?
+## What is a `turbo.me` file?
 
-`turbo.it` files are TurboScripts that contain instructions to automatically package applications. By
-convention, packaging scripts are named `turbo.it` and placed in the root of a repository.
+`turbo.me` files are TurboScripts that contain instructions to automatically package applications. By
+convention, packaging scripts are named `turbo.me` and placed in the root of a repository.
 
 Turbo containers can be shared on the [turbo.net](http://turbo.net) online hub.
 

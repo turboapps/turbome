@@ -6,4 +6,4 @@ Version: 2.8.17.2
 
 To build: 
 
-	turbo build -n=redis /path/to/turbo.it
+	turbo build -n=redis /path/to/turbo.me

@@ -6,4 +6,4 @@ Version: 2.3.4
 
 To build: 
 
-	turbo build -n=oscommerce /path/to/turbo.it
+	turbo build -n=oscommerce /path/to/turbo.me

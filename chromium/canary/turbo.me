@@ -1,0 +1,34 @@
+#
+# Chromium Canary turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/chromium
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Chromium Canary"
+meta namespace="google"
+meta name="chromium-canary"
+
+using clean,python:3.4.1,wget,7-zip
+
+workdir c:\
+
+batch cmd
+	mkdir c:\Workspace & cd c:\Workspace
+	wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/spoonme/master/tools/python/GetChromiumUrl.py
+	pip install requests --quiet
+	python GetChromiumUrl.py > download_url.txt
+	set /p DOWNLOAD_URL=<download_url.txt
+	wget -O chrome-win32.zip --no-check-certificate --no-verbose "%DOWNLOAD_URL%"
+	7z x chrome-win32.zip -y >nul
+	mkdir c:\Chromium
+	robocopy chrome-win32 c:\Chromium *.* /e /move >nul
+	cd c:\
+	rmdir c:\Workspace /s /q
+	rmdir c:\Python34 /s /q
+	rmdir c:\wget /s /q
+	
+meta tag=dateiso
+meta website="%DOWNLOAD_URL%"
+meta version="%DATE%"
+startup file ("c:\Chromium\chrome.exe")

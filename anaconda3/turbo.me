@@ -1,0 +1,58 @@
+#
+# Anaconda3 turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/anaconda3
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using gnu/wget,fart/fart
+
+
+###################################
+# Download and install
+###################################
+
+# Set workdir
+workdir C:\
+
+# Download
+cmd wget.exe http://repo.continuum.io/anaconda3/Anaconda3-2.1.0-Windows-x86.exe -O Anaconda3-2.1.0-Windows-x86.exe
+
+# Install
+cmd Anaconda3-2.1.0-Windows-x86.exe /S "/D=C:\Anaconda3"
+
+# Fix for Environment variable bug in anaconda3
+batch cmd
+  C:\fart\fart.exe C:\Anaconda3\Scripts\anaconda.bat ANACONDA_OLD_PATH=\"%%PATH%%\" \"ANACONDA_OLD_PATH=%%PATH%%\"
+  C:\fart\fart.exe C:\Anaconda3\Scripts\anaconda.bat PATH=\"%%ANACONDA%%;%%ANACONDA_SCRIPTS%%;%%PATH%%\" \"PATH=%%ANACONDA%%;%%ANACONDA_SCRIPTS%%;%%PATH%%\"
+  ver > nul
+
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+
+###################################
+# Startup File
+###################################
+
+# You may change the startup file by uncommenting one of the following lines:
+startup file ("@PROGRAMS@\Anaconda (32-bit)\Anaconda Command Prompt.lnk")
+# startup file ("@PROGRAMS@\Anaconda (32-bit)\Launcher.lnk")
+# startup file ("@PROGRAMS@\Anaconda (32-bit)\Spyder.lnk")
+
+
+###################################
+# Clean up
+###################################
+
+cmd del C:\Anaconda3-2.1.0-Windows-x86.exe /Q

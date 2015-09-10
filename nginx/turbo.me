@@ -1,0 +1,45 @@
+#
+# Nginx server turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/nginx
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="nginx"
+meta namespace="nginx"
+meta name="nginx"
+
+using wget,python:3.4.1,7-zip
+
+cmd pip install requests --quiet
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo r = requests.get('http://nginx.org/en/download.html') >> getRelease.py
+ echo print(re.findall('nginx/Windows-(\d*\.\d*\.\d*)', r.text)[0]) >> getRelease.py
+
+cmd python getRelease.py
+
+var tag = last
+
+cmd "wget -O nginx.zip --no-check-certificate http://nginx.org/download/nginx-%tag%.zip"
+
+cmd 7z x nginx.zip
+
+cmd "move nginx-%tag% c:\nginx"
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+env path="C:\nginx"
+setworkdir C:\nginx
+
+meta tag=tag

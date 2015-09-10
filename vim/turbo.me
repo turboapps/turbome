@@ -1,0 +1,70 @@
+#
+# VIM turbo.me file
+# https://github.com/turboapps/spoonme/tree/master/vim
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="VIM"
+meta namespace="vim"
+meta name="vim"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+cmd pip install requests --quiet
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/spoonme/master/tools/python/GetLastestSF.py
+
+cmd "python GetLastestSF.py --url=http://sourceforge.net/projects/cream/rss?path=/Vim -r=.*gvim.*exe"
+
+var url = last
+
+cmd "echo import re > getTag.py"
+cmd "echo print(re.findall('(\d*\.\d*\.\d*)','%url%')[0]) >> getTag.py"
+
+cmd python getTag.py
+var tag = last
+
+# Download
+cmd "wget -O vim.exe --no-check-certificate %url%"
+
+cmd "vim.exe /S "
+
+cmd "python -c ""print('%tag%'.split('.')[0] + '%tag%'.split('.')[1])"""
+var version = last
+  
+###################################
+# Environment Variables
+###################################
+
+env path="@PROGRAMFILESX86@\vim\vim" + version
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILESX86@\vim\vim" + version + "\gvim.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir C:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
