@@ -6,4 +6,4 @@ Version: 2.0.1
 
 To build: 
 
-	turbo build -n=anaconda3 /path/to/turbo.it
+	turbo build -n=anaconda3 /path/to/turbo.me

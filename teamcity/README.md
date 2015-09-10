@@ -6,4 +6,4 @@ The TeamCity server runs on http://localhost:8111/.
 
 To build: 
 
-    turbo build /path/to/turbo.it
+    turbo build /path/to/turbo.me

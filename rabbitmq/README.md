@@ -6,7 +6,7 @@ Version: 3.4.3
 
 To build: 
 
-	turbo build -n=rabbitmq /path/to/turbo.it
+	turbo build -n=rabbitmq /path/to/turbo.me
 
 It installs to `C:\rabbitmq-3.4.3`
 

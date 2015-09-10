@@ -6,4 +6,4 @@ Version: 7.34
 
 To build: 
 
-	turbo build -n=drupal /path/to/turbo.it
+	turbo build -n=drupal /path/to/turbo.me

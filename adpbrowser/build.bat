@@ -1,1 +1,1 @@
-turbo build --admin --overwrite turbo.it --mount=%~dp0config=@SYSDRIVE@\Config turbo.it
+turbo build --admin --overwrite turbo.me --mount=%~dp0config=@SYSDRIVE@\Config turbo.me

@@ -6,4 +6,4 @@ Version: 0.5.0
 
 To build: 
 
-	turbo build -n=vscode /path/to/turbo.it
+	turbo build -n=vscode /path/to/turbo.me
