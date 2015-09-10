@@ -1,0 +1,63 @@
+# FL Studio turbo.me file
+# https://github.com/turboapps/turbome/tree/master/flstudio
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="flstudio"
+meta namespace="flstudio"
+meta name="flstudio"
+
+###################################
+# Install settings
+###################################
+
+var flstudioDownloadUrl = "http://support.image-line.com/redirect/FLDemoDownload1"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Download the latest version
+cmd "wget --no-check-certificate --no-verbose ""%flstudioDownloadUrl%"""
+
+# Get tag from exe name
+cmd "python -c ""import glob; import re; inst = glob.glob('flstudio_*.exe')[0]; r = re.compile('flstudio_(\d*\.\d*\.\d*).exe'); m = r.match(inst); print(m.group(0, 1))"""
+var res = last
+
+cmd "python -c ""print(%res%[0])"""
+var name = last
+
+cmd "python -c ""print(%res%[1])"""
+var tag = last
+
+cmd "python -c ""print('%tag%'.split('.')[0])"""
+var major = last
+
+# Install
+cmd "%name% /S"
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\Image-Line\FL Studio " + major + "\fl.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=tag
