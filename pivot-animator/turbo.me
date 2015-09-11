@@ -1,0 +1,64 @@
+# Pivot Animator turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Set metadata
+###################################
+
+meta title = "Pivot-Animator"
+meta namespace = "motus"
+meta name = "pivot-animator"
+
+###################################
+# Get build dependencies
+###################################
+
+using 7-zip,python:3.4.1,wget
+
+###################################
+# Download installer
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import urllib.request >> script.py
+ echo src = urllib.request.urlopen('http://pivotanimator.net/Download').read().decode('utf-8') >> script.py
+ echo url = re.findall('href="(.*zip)".*Alternative Installer.*', src)[0] >> script.py
+ echo zipfilename = re.findall('.*/(.*zip)', url)[0] >> script.py
+ echo version = re.findall('.*Pivot Animator ([\d\.]+) \(Stable Version\).*', src)[0] >> script.py
+ echo print([url, zipfilename, version]) >> script.py
+cmd python script.py
+var res = last
+cmd "python -c ""print(%res%[0])"""
+var url = last
+cmd "python -c ""print(%res%[1])"""
+var zipfilename = last
+cmd "python -c ""print(%res%[2])"""
+var version = last
+meta tag = version
+cmd "wget %url%"
+
+###################################
+# Install
+###################################
+
+cmd "7z x %zipfilename%"
+cmd "dir /B *.exe"
+var exefilename = last
+cmd "%exefilename% /VERYSILENT"
+startup file ("@PROGRAMFILES@\Pivot Animator\pivot.exe") when (host has architecture:x86)
+startup file ("@PROGRAMFILESX86@\Pivot Animator\pivot.exe") when (host has architecture:x64)
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
