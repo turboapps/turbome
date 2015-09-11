@@ -1,0 +1,66 @@
+# SketchUp turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+###################################
+# Set metadata
+###################################
+
+meta title = "SketchUp"
+meta namespace = "sketchup"
+meta name = "sketchup"
+
+###################################
+# Get build dependencies
+###################################
+
+using 7-zip,python:3.4.1,wget
+
+###################################
+# Download installer
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import urllib.request >> script.py
+ echo src = urllib.request.urlopen('http://www.sketchup.com/download/all').read().decode('utf-8') >> script.py
+ echo filename = 'SketchUpMake-en.exe' >> script.py
+ echo version = sorted(re.findall('.*SketchUp Make (\d{4})', src))[-1] >> script.py
+ echo url = re.findall('href="(.*/SketchUpMake-en.exe)"', src)[0] >> script.py
+ echo print([url, filename, version]) >> script.py
+cmd python script.py
+var res = last
+cmd "python -c ""print(%res%[0])"""
+var url = last
+cmd "python -c ""print(%res%[1])"""
+var filename = last
+cmd "python -c ""print(%res%[2])"""
+var version = last
+meta tag = version
+cmd "wget -O %filename% %url%"
+
+###################################
+# Install
+###################################
+
+cmd "7z x %filename%"
+cmd "dir /B *.msi"
+var msifilename = last
+cmd "msiexec /i %msifilename% /qn /norestart"
+startup file ("@PROGRAMFILES@\SketchUp\SketchUp " + version + "\SketchUp.exe") when (host has architecture:x86)
+startup file ("@PROGRAMFILESX86@\SketchUp\SketchUp " + version + "\SketchUp.exe") when (host has architecture:x64)
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
