@@ -1,0 +1,67 @@
+# Eclipse IDE for Java Developers turbo.me file
+# https://github.com/turboapps/turbome/tree/master/eclipse
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="eclipse"
+meta namespace="eclipse"
+meta name="eclipse"
+
+###################################
+# Install settings
+###################################
+
+var eclipsePage = "https://www.eclipse.org/downloads/"
+var eclipseReleasePattern = "download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"
+var eclipseTagPattern = "\d+\.\d+\.\d+"
+
+###################################
+# Pull dependency images
+###################################
+
+layer jre
+using wget,python:3.4.1,7-zip
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+cmd "python -c ""import sys, requests, re; r = requests.get('%eclipsePage%'); print(re.findall('%eclipseReleasePattern%', r.text)[0] + (max(re.findall('%eclipseTagPattern%', r.text)),))"""
+var res = last
+
+cmd "python -c ""print(%res%[0])"""
+var codename = last
+
+cmd "python -c ""print(%res%[1])"""
+var release = last
+
+cmd "python -c ""print(%res%[2])"""
+var tag = last
+
+# Download and install last version
+cmd "wget -q -O eclipse.zip --no-check-certificate --no-verbose ""https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/%codename%/%release%/eclipse-java-%codename%-%release%-win32.zip&r=1"""
+cmd "7z x eclipse.zip -oc:\ | find /v ""ing  """
+
+# Set startup file
+startup file ("@SYSDRIVE@\eclipse\eclipse.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=tag
