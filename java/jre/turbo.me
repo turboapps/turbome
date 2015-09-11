@@ -15,6 +15,7 @@ cmd pip install requests --quiet
 
 workdir c:\
 cmd mkdir c:\Workspace
+workdir c:\Workspace
 
 batch
  echo import sys > getRelease.py
@@ -48,6 +49,8 @@ workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
 # this path contains symlinks and currenlty they are not properly supported in vm
 # so remove it 
 cmd rmdir c:\ProgramData\Oracle /s /q
