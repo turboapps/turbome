@@ -1,0 +1,64 @@
+# PhotoScape turbo.me file
+# https://github.com/turboapps/turbome/tree/master/photoscape
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="photoscape"
+meta namespace="photoscape"
+meta name="photoscape"
+
+###################################
+# Install settings
+###################################
+
+var downloadPage = "http://photoscape.org/link/link.php?version=web&topic=dl_cnet"
+var delayedDownloadUrlPattern = "http*:\/\/dw\.cbsi\.com\/redir\?ttag=download_now_button_click[\w\d\.\?=&%-]*"
+var directDownloadUrlPattern = "http*:\/\/software-files-a\.cnet\.com[\w\d\.\?=&%-/]*PhotoScape[\w\d\.\?=&%-/]*"
+var tagPattern = "Version:.*?(\d+\.\d+[\.\d]?)"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+cmd "python -c ""import sys, requests, re; r = requests.get('%downloadPage%'); delayedDownloadUrl = re.findall('%delayedDownloadUrlPattern%', r.text)[0]; version = re.findall('%tagPattern%', r.text, re.DOTALL)[0]; r = requests.get(delayedDownloadUrl); directDownloadUrl = re.findall('%directDownloadUrlPattern%', r.text)[0]; print((version, directDownloadUrl))"""
+var res = last
+
+cmd "python -c ""print(%res%[0])"""
+var tag = last
+
+cmd "python -c ""print(%res%[1])"""
+var url = last
+
+# Download and install last version
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""%url%"""
+cmd install.exe /S
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\PhotoScape\PhotoScape.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=tag
