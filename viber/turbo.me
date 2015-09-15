@@ -1,0 +1,67 @@
+# Viber turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Set metadata
+###################################
+
+meta title = "Viber"
+meta namespace = "viber"
+meta name = "viber"
+
+###################################
+# Get build dependencies
+###################################
+
+using python:3.4.1,wget
+
+###################################
+# Download installer
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import urllib.request >> script.py
+ echo src = urllib.request.urlopen('http://www.viber.com/en/products/windows').read().decode('utf-8') >> script.py
+ echo url = re.findall('href="(.*exe)"', src)[0] >> script.py
+ echo filename = re.findall('.*/(.*exe)', url)[0] >> script.py
+ echo src = urllib.request.urlopen('https://support.viber.com/customer/portal/articles/search?q=whats+new+in+viber+for+desktop').read().decode('utf-8') >> script.py
+ echo version = sorted(re.findall('.*Viber ([\d,\.]+) for Desktop.*', src))[-1] >> script.py
+ echo print([url, filename, version]) >> script.py
+cmd python script.py
+var res = last
+cmd "python -c ""print(%res%[0])"""
+var url = last
+cmd "python -c ""print(%res%[1])"""
+var filename = last
+cmd "python -c ""print(%res%[2])"""
+var version = last
+meta tag = version
+cmd "wget %url%"
+
+###################################
+# Install
+###################################
+
+# Viber starts up automatically even when installed with the /s flag
+# need to kill it after installation to unblock the console
+batch
+ start /b %filename% /s
+ timeout /t 60
+ taskkill /im viber.exe /f
+
+startup file ("@APPDATALOCAL@\Viber\Viber.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
