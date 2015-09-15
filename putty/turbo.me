@@ -1,0 +1,62 @@
+# PuTTY turbo.me file
+# https://github.com/turboapps/turbome/tree/master/putty
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="putty"
+meta namespace="putty"
+meta name="putty"
+
+###################################
+# Install settings
+###################################
+
+var page = "http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html"
+var pattern = "(https?:\/\/the\.earth\.li\/~sgtatham\/putty\/latest\/x86\/putty-(\d+\.\d+[\d\.]*)-installer\.exe)"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get the latest version tag
+cmd "python -c ""import sys, requests, re; r = requests.get('%page%'); print(re.findall('%pattern%', r.text)[0]);"""
+var res = last
+
+cmd "python -c ""print(%res%[0])"""
+var url = last
+
+cmd "python -c ""print(%res%[1])"""
+var tag = last
+
+# Download and install the latest version
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""%url%"""
+cmd install.exe /VERYSILENT
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\PuTTY\putty.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=tag
