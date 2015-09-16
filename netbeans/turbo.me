@@ -1,0 +1,68 @@
+# NetBeans IDE turbo.me file
+# https://github.com/turboapps/turbome/tree/master/netbeans
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="netbeans"
+meta namespace="oracle"
+meta name="netbeans"
+
+###################################
+# Install settings
+###################################
+
+# Install Java SE bundle by default
+# Other bundles: javaee, cpp, php, all
+cmd "if defined bundle (echo %bundle%) else (echo javase)"
+var bundle = last
+
+cmd "if defined bundle if not %bundle% == all (echo -%bundle%)"
+var postfix = last
+
+var page = "https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=" + bundle
+var pattern = "download\/(\d+\.\d+[\d\.]*)"
+
+###################################
+# Pull dependency images
+###################################
+
+layer jdk:8
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get the latest version tag
+cmd "python -c ""import sys, requests, re; r = requests.get('%page%'); print(re.findall('%pattern%', r.text)[0]);"""
+var tag = last
+var url = "http://download.netbeans.org/netbeans/" + tag + "/final/bundles/netbeans-" + tag + postfix + "-windows.exe"
+
+# Download and install the latest version
+echo "Downloading " + bundle + " bundle from " + url + "..."
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""%url%"""
+echo "Installing " + bundle + " bundle..."
+cmd install.exe --silent
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\NetBeans " + tag + "\bin\netbeans.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=tag
