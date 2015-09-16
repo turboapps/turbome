@@ -1,0 +1,64 @@
+# uTorrent turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Set metadata
+###################################
+
+meta title = "uTorrent"
+meta namespace = "BitTorrent"
+meta name = "uTorrent"
+
+###################################
+# Get build dependencies
+###################################
+
+using python:3.4.1,wget
+
+###################################
+# Download installer
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import urllib.request >> script.py
+ echo url = 'http://download.ap.bittorrent.com/track/stable/endpoint/utorrent/os/windows' >> script.py
+ echo filename = 'uTorrent.exe' >> script.py
+ echo src = urllib.request.urlopen('http://www.utorrent.com/downloads/win').read().decode('utf-8') >> script.py
+ echo version = re.findall('.*Torrent Stable\s*\(([\d\.]+) build \d+\).*', src)[0] >> script.py
+ echo print([url, filename, version]) >> script.py
+cmd python script.py
+var res = last
+cmd "python -c ""print(%res%[0])"""
+var url = last
+cmd "python -c ""print(%res%[1])"""
+var filename = last
+cmd "python -c ""print(%res%[2])"""
+var version = last
+meta tag = version
+cmd "wget %url% -O %filename%"
+
+###################################
+# Install
+###################################
+
+batch
+ start /b %filename% /S
+ timeout /t 60
+ taskkill /im %filename% /f
+ taskkill /fi "WINDOWTITLE eq Windows Security Alert"
+startup file ("@APPDATA@\uTorrent\uTorrent.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
