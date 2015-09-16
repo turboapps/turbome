@@ -1,0 +1,58 @@
+# KakaoTalk turbo.me file
+# https://github.com/turboapps/turbome/tree/master/kakaotalk
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="kakaotalk"
+meta namespace="kakao"
+meta name="kakaotalk"
+
+###################################
+# Install settings
+###################################
+
+var sigcheckUrl = "https://download.sysinternals.com/files/Sigcheck.zip"
+var url = "http://app.pc.kakao.com/talk/win32/KakaoTalk_Setup.exe"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,7-zip
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Download and install the latest version
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""%url%"""
+cmd install.exe /S
+
+# Get the latest version tag using sigcheck
+batch
+  wget -q -O sigcheck.zip --no-check-certificate --no-verbose "%sigcheckUrl%" && 7z x "sigcheck.zip"
+  echo @echo off > getv.bat
+  echo sigcheck.exe -q -n install.exe ^|^| exit /b 0 >> getv.bat
+  reg add "HKCU\Software\Sysinternals\Sigcheck" /v EulaAccepted /t REG_DWORD /d 1 /f
+
+cmd getv.bat
+var tag = last
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\Kakao\KakaoTalk\KakaoTalk.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+
+meta tag=tag
