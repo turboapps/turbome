@@ -1,0 +1,61 @@
+# CodeBlocks turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Set metadata
+###################################
+
+meta title = "Code::Blocks"
+meta namespace = "CodeBlocks"
+meta name = "codeblocks"
+
+###################################
+# Get build dependencies
+###################################
+
+using python:3.4.1,wget
+
+###################################
+# Download installer
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import urllib.request >> script.py
+ echo src = urllib.request.urlopen('http://www.codeblocks.org/downloads/binaries').read().decode('utf-8') >> script.py
+ echo filename = re.findall('(codeblocks-[\d\.]+mingw-setup.exe)', src)[0] >> script.py
+ echo version = re.findall('codeblocks-([\d\.]+)mingw-setup.exe', filename)[0] >> script.py
+ echo url = 'http://netix.dl.sourceforge.net/project/codeblocks/Binaries/'+version+'/Windows/'+filename >> script.py
+ echo print([url, filename, version]) >> script.py
+cmd py script.py
+var res = last
+cmd "py -c ""print(%res%[0])"""
+var url = last
+cmd "py -c ""print(%res%[1])"""
+var filename = last
+cmd "py -c ""print(%res%[2])"""
+var version = last
+meta tag = version
+cmd "wget %url%"
+
+###################################
+# Install
+###################################
+
+cmd "%filename% /S"
+startup file ("@PROGRAMFILES@\CodeBlocks\codeblocks.exe") when (host has architecture:x86)
+startup file ("@PROGRAMFILESX86@\CodeBlocks\codeblocks.exe") when (host has architecture:x64)
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
