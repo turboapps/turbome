@@ -39,6 +39,17 @@ using wget,python:3.4.1
 cmd "mkdir @SYSDRIVE@\Workspace"
 workdir @SYSDRIVE@\Workspace
 
+# Setup batch script to kill nbi-cleaner process after install if it hangs
+# NOTE: https://netbeans.org/bugzilla/show_bug.cgi?id=192129
+batch
+  echo @echo off > kill.bat
+  echo if "%%2"=="" (set t=5) else (set t=%%2) >> kill.bat
+  echo tasklist /fi "imagename eq %%1" ^| findstr : ^> nul >> kill.bat
+  echo if errorlevel 1 (for /f "tokens=2 delims=," %%%%i in ('tasklist /nh /fi "imagename eq %%1" /fo csv') do taskkill /f /pid %%%%~i ^> nul ^&^& goto end) >> kill.bat
+  echo @timeout /t %%t%% /nobreak ^> nul >> kill.bat
+  echo %%~n0 %%1 %%t%% >> kill.bat
+  echo :end >> kill.bat
+
 # Install "requests" module for python
 cmd "pip install requests --quiet"
 
@@ -48,10 +59,12 @@ var tag = last
 var url = "http://download.netbeans.org/netbeans/" + tag + "/final/bundles/netbeans-" + tag + postfix + "-windows.exe"
 
 # Download and install the latest version
-echo "Downloading " + bundle + " bundle from " + url + "..."
-cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""%url%"""
-echo "Installing " + bundle + " bundle..."
-cmd install.exe --silent
+batch
+  echo Downloading %bundle% bundle from %url%...
+  wget -q -O install.exe --no-check-certificate --no-verbose "%url%"
+  start /b cmd /c kill.bat nbi-cleaner* 30
+  echo Installing...
+  install.exe --silent
 
 # Set startup file
 startup file ("@PROGRAMFILESX86@\NetBeans " + tag + "\bin\netbeans.exe")
