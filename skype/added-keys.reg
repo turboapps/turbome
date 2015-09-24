@@ -1,0 +1,26 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}]
+@="JScript Language"
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}\Implemented Categories]
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}\Implemented Categories\{F0B7A1A1-9847-11CF-8F20-00805F2CD064}]
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}\Implemented Categories\{F0B7A1A2-9847-11CF-8F20-00805F2CD064}]
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}\InprocServer32]
+@="C:\\Windows\\SysWOW64\\jscript9.dll"
+"ThreadingModel"="Both"
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}\OLEScript]
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{16d51579-a30b-4c8b-a276-0ff4dc41e755}\ProgID]
+@="JScript"
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{842a1268-6e6a-465c-868f-8bc445b9828f}]
+@="JScript Language"
+
+[HKEY_LOCAL_MACHINE\software\classes\wow6432node\clsid\{842a1268-6e6a-465c-868f-8bc445b9828f}\InprocServer32]
+@="C:\\Windows\\SysWOW64\\jscript9.dll"
+"ThreadingModel"="Both"
