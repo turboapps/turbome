@@ -19,6 +19,9 @@ workdir c:\Workspace
 cmd wget --no-check-certificate --no-verbose -O SkypeSetup.msi http://www.skype.com/go/getskype-msi
 cmd "SkypeSetup.msi INSTALLDIR=C:\Skype /qn"
 
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/skype/added-keys.reg
+cmd reg import added-keys.reg
+
 batch
  echo from win32com.client import Dispatch > getTag.py
  echo parser = Dispatch("Scripting.FileSystemObject") >> getTag.py
