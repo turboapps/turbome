@@ -32,7 +32,9 @@ cmd pip install requests --quiet
 batch
   echo import requests >> getVersion.py
   echo import re >> getVersion.py
-  echo r = requests.get('http://junit.org/') >> getVersion.py
+  echo host = 'http://junit.org/' >> getVersion.py
+  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getVersion.py
+  echo r = requests.get(host , headers=headers, timeout=10) >> getVersion.py
   echo print(re.findall('ReleaseNotes(\d*\.\d*\.*\d*)\.md', r.text)[0]) >> getVersion.py
 
 cmd python getVersion.py

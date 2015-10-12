@@ -22,9 +22,6 @@ var bundle = last
 cmd "if defined bundle if not %bundle% == all (echo -%bundle%)"
 var postfix = last
 
-var page = "https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=" + bundle
-var pattern = "download\/(\d+\.\d+[\d\.]*)"
-
 ###################################
 # Pull dependency images
 ###################################
@@ -54,7 +51,16 @@ batch
 cmd "pip install requests --quiet"
 
 # Get the latest version tag
-cmd "python -c ""import sys, requests, re; r = requests.get('%page%'); print(re.findall('%pattern%', r.text)[0]);"""
+batch
+ echo import sys > getTag.py
+ echo import requests >> getTag.py
+ echo import re >> getTag.py
+ echo host = "https://netbeans.org/downloads/start.html?platform=windows&lang=en&option=" >> getTag.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getTag.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getTag.py
+ echo print(re.findall('download\/(\d+\.\d+[\d\.]*)', r.text )[0])  >> getTag.py
+
+cmd python getTag.py
 var tag = last
 var url = "http://download.netbeans.org/netbeans/" + tag + "/final/bundles/netbeans-" + tag + postfix + "-windows.exe"
 

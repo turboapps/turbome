@@ -34,7 +34,16 @@ workdir @SYSDRIVE@\Workspace
 cmd "pip install requests --quiet"
 
 # Get the latest version tag and download url
-cmd "python -c ""import sys, requests, re; r = requests.get('%page%'); print(re.findall('%pattern%', r.text)[0]);"""
+batch
+ echo import sys > getTag.py
+ echo import requests >> getTag.py
+ echo import re >> getTag.py
+ echo host = 'https://inkscape.org/en/download/windows/' >> getTag.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getTag.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getTag.py
+ echo print(re.findall('(https?:\/\/inkscape\.org\/en\/gallery\/item\/\d+\/Inkscape-(\d+\.\d+[\d\.]*)[-\d]*\.exe)', r.text )[0]) >> getTag.py
+
+cmd "python getTag.py"
 var res = last
 
 cmd "python -c ""print(%res%[0])"""

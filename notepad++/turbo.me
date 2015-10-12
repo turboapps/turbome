@@ -20,7 +20,9 @@ batch
  echo import sys > getUrl.py
  echo import requests >> getUrl.py
  echo import re >> getUrl.py
- echo r = requests.get('http://notepad-plus-plus.org/download/') >> getUrl.py
+ echo host = "http://notepad-plus-plus.org/download/" >> getUrl.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getUrl.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getUrl.py
  echo print(re.findall('a href="(.*[Ii]nstaller\.exe)"', r.text)[0]) >> getUrl.py
 
 cmd python getUrl.py

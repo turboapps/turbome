@@ -20,7 +20,9 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo r = requests.get('http://rubyinstaller.org/downloads/') >> getRelease.py
+ echo host = "http://rubyinstaller.org/downloads/" >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
  echo data = list(re.findall('^<a href="(.*exe.*)"^>Ruby (\d*\.\d*\.\d*)', r.text)[0]) >> getRelease.py
  echo directory = 'Ruby'+data[1].split('.')[0]+data[1].split('.')[1] >> getRelease.py
  echo print(data + [directory]) >> getRelease.py

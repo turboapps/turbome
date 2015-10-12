@@ -34,14 +34,14 @@ workdir C:\php
 batch
   echo import requests >> getVersion.py
   echo import re >> getVersion.py
-  echo r = requests.get('http://windows.php.net/download/') >> getVersion.py
+  echo host = "http://windows.php.net/download/" >> getVersion.py
+  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getVersion.py
+  echo r = requests.get(host , headers=headers, timeout=10) >> getVersion.py
   echo print(list(re.findall(' href=^"(.*php-(\d*\.\d*\.\d*)-Win32-VC11-x86.zip)', r.text )[0])) >> getVersion.py
 
 cmd python getVersion.py
 
 var data = last
-
-
 
 cmd "python -c ""print(%data%[0])"""
 

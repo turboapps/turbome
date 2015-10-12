@@ -39,7 +39,9 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo r = requests.get('http://jdk9.java.net/download/') >> getRelease.py
+ echo host = 'http://jdk9.java.net/download/' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
  echo version = list(re.findall('win32JREj^"\).href = ^"http://www.java.net/download/jdk9/archive/(.*?\d*)/.*.exe', r.text)) >> getRelease.py
  echo url = [re.findall('win32JREj"\).href = "(http.*.exe)', r.text)[0]] >> getRelease.py
  echo print(version + url) >> getRelease.py

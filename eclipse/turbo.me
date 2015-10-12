@@ -9,14 +9,6 @@ meta namespace="eclipse"
 meta name="eclipse"
 
 ###################################
-# Install settings
-###################################
-
-var eclipsePage = "https://www.eclipse.org/downloads/"
-var eclipseReleasePattern = "download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"
-var eclipseTagPattern = "\d+\.\d+\.\d+"
-
-###################################
 # Pull dependency images
 ###################################
 
@@ -34,7 +26,18 @@ workdir @SYSDRIVE@\Workspace
 cmd "pip install requests --quiet"
 
 # Get last version tag
-cmd "python -c ""import sys, requests, re; r = requests.get('%eclipsePage%'); print(re.findall('%eclipseReleasePattern%', r.text)[0] + (max(re.findall('%eclipseTagPattern%', r.text)),))"""
+
+# Fetch version
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'https://www.eclipse.org/downloads/' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(re.findall('"download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"', r.text)[0] + (max(re.findall('\d+\.\d+\.\d+', r.text)),)) >> getRelease.py
+ 
+cmd python getRelease.py
 var res = last
 
 cmd "python -c ""print(%res%[0])"""

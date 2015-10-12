@@ -34,7 +34,17 @@ workdir @SYSDRIVE@\Workspace
 cmd "pip install requests --quiet"
 
 # Get the latest version tag
-cmd "python -c ""import sys, requests, re; r = requests.get('%page%'); print(re.findall('%pattern%', r.text)[0]);"""
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = "http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(re.findall('(https?:\/\/the\.earth\.li\/~sgtatham\/putty\/latest\/x86\/putty-(\d+\.\d+[\d\.]*)-installer\.exe)', r.text )[0]) >> getRelease.py
+
+cmd python getRelease.py
+
 var res = last
 
 cmd "python -c ""print(%res%[0])"""

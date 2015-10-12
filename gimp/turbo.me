@@ -33,8 +33,17 @@ workdir @SYSDRIVE@\Workspace
 # Install "requests" module for python
 cmd "pip install requests --quiet"
 
-# Get last version tag
-cmd "python -c ""import sys, requests, re; r = requests.get('%gimpPage%'); print(re.findall('%gimpTagPattern%', r.text)[0])"""
+batch
+ echo import sys > getTag.py
+ echo import requests >> getTag.py
+ echo import re >> getTag.py
+ echo host = 'http://www.gimp.org/downloads/' >> getTag.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getTag.py
+ echo r = requests.get(host , headers=headers, timeout=10) >>  getTag.py
+ echo print(re.findall('http:\/\/download\.gimp\.org\/pub\/gimp\/v([0-9\.]+)\/windows\/gimp-(\d*\.\d*\.\d*)-setup(.*).exe', r.text )[0]) >> getTag.py
+
+cmd python getTag.py
+
 var res = last
 
 cmd "python -c ""print(%res%[0].split('.')[0])"""

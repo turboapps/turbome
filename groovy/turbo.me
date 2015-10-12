@@ -29,7 +29,9 @@ batch
  echo import sys > getTag.py
  echo import requests >> getTag.py
  echo import re >> getTag.py
- echo r = requests.get('http://www.groovy-lang.org/download.html') >> getTag.py
+ echo host = 'http://www.groovy-lang.org/download.html' >> getTag.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getTag.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getTag.py
  echo print(re.findall('(\d*\.\d*\.\d*) distributions', r.text )[0]) >> getTag.py
 
 cmd python getTag.py

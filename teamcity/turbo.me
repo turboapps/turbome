@@ -35,7 +35,17 @@ workdir @SYSDRIVE@\Workspace
 cmd "pip install requests --quiet"
 
 # Get last version tag
-cmd "py -c ""import sys, requests, re; r = requests.get('%teamcityPage%'); print(re.findall('%teamcityTagPattern%', r.text)[0])"""
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = "https://www.jetbrains.com/teamcity/download/download_thanks.jsp" >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(re.findall('https://download.jetbrains.com/teamcity/TeamCity-(\d*\.\d*\.\d*).exe', r.text )[0]) >> getRelease.py
+
+cmd python getRelease.py
+
 var tag = last
 
 # Download and install last version

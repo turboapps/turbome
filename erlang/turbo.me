@@ -29,7 +29,9 @@ workdir c:\Workspace
 batch
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo r = requests.get('http://www.erlang.org/download.html') >> getRelease.py
+ echo host = 'http://www.erlang.org/download.html' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
  echo print(list(re.findall('(/download/.*?(\d*\.\d*\.*\d*).exe)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py

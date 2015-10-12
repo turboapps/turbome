@@ -21,7 +21,9 @@ batch
  echo import sys > getNewestVersion.py
  echo import requests >> getNewestVersion.py
  echo import re >> getNewestVersion.py
- echo r = requests.get('http://www.opera.com/download/guide/?os=windows^&list=all') >> getNewestVersion.py
+ echo host = "http://www.opera.com/download/guide/?os=windows^&list=all" >> getNewestVersion.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getNewestVersion.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getNewestVersion.py
  echo print(re.findall('\d+\.\d+\.\d+\.\d+', r.text)[0]) >> getNewestVersion.py
 
 cmd python getNewestVersion.py

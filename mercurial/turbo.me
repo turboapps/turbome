@@ -32,7 +32,9 @@ batch
  echo import sys > getTag.py
  echo import requests >> getTag.py
  echo import re >> getTag.py
- echo r = requests.get('http://mercurial.selenic.com/wiki/Download') >> getTag.py
+ echo host = 'http://mercurial.selenic.com/wiki/Download' >> getTag.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getTag.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getTag.py
  echo print(re.findall('Mercurial-(\d?\.\d?\.\d*\.*\d*)\s*\(32-bit exe\)', r.text )[0])  >> getTag.py
 
 cmd python getTag.py

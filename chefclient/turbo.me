@@ -29,8 +29,10 @@ batch
   echo import sys > get_tag_url.py
   echo import requests >> get_tag_url.py
   echo import json >> get_tag_url.py
-  echo from bs4 import BeautifulSoup >> get_tag_url.py
-  echo page = requests.get('https://downloads.chef.io/chef-client/windows/') >> get_tag_url.py
+  echo from bs4 import BeautifulSoup >> get_tag_url.py 
+  echo host = 'https://downloads.chef.io/chef-client/windows/' >> get_tag_url.py
+  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> get_tag_url.py
+  echo page = requests.get(host , headers=headers, timeout=10) >> get_tag_url.py
   echo soup = BeautifulSoup(page.text, 'html.parser') >> get_tag_url.py
   echo os_table = soup.select('section.os-tab-content')[0] >> get_tag_url.py
   echo last_version = json.loads(os_table['oc-init-version-list'])[0] >> get_tag_url.py
