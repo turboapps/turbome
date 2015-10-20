@@ -1,0 +1,11 @@
+meta title="High Quality GIF"
+meta description="Builds GIF using custom palette generated for a whole video stream"
+meta name="hqgif"
+meta namespace="turbo"
+
+layer ffmpeg/ffmpeg:2015.10.13
+cmd copy c:\temp\hqgif.bat c:\ffmpeg\hqgif.bat
+
+meta tag=dateiso
+meta version="%DATE%"
+startup file ("c:\ffmpeg\hqgif.bat")
