@@ -11,10 +11,9 @@ meta name="firefox-nightly"
 
 using python:3.4.1,wget,7-zip
 
-workdir c:\
-
-cmd mkdir c:\Workspace & cd c:\Workspace
-cmd "pip install requests --quiet"
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+cmd pip install requests --quiet
 
 batch
  echo import sys > GetLatestUrl.py
@@ -40,6 +39,9 @@ batch cmd
  wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
  rmdir c:\Workspace /s /q
  rmdir c:\wget /s /q
+ rmdir c:\Python34 /s /q
+
+workdir c:\
 
 meta tag=dateiso
 meta website="%DOWNLOAD_URL%"
