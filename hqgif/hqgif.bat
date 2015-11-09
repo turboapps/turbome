@@ -3,8 +3,14 @@
 set FrameRate=%1
 set InputPattern=%2
 set OutputFile=%3
+set Scale="-1:-1"
+
+if NOT "%4"=="" (
+	set Scale=%4
+)
+
 set Encoder="c:\ffmpeg\ffmpeg.exe"
-set FfmpgFilters="scale=-1:-1:flags=lanczos"
+set FfmpgFilters="scale=%SCALE%:flags=lanczos"
 
 :GETPALETTEFILE
 for /f "skip=1" %%x in ('wmic os get localdatetime') do if not defined wmicdate set wmicdate=%%x
