@@ -33,7 +33,7 @@ cmd mkdir c:\NuGet
 cmd wget --no-check-certificate --no-verbose -O C:\NuGet\nuget.exe http://nuget.org/nuget.exe
 
 # Get version number
-cmd echo ^(Get-Item "C:\NuGet\nuget.exe" ^).VersionInfo.ProductVersion >> GetVersion.ps1
+cmd "echo (Get-Item 'C:\NuGet\nuget.exe' ).VersionInfo.ProductVersion >> GetVersion.ps1"
 cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
 var version = last
 
