@@ -55,6 +55,18 @@ cmd "7z x %zipfilename% -o@SYSDRIVE@\"
 startup file ("@SYSDRIVE@\Audacity\audacity.exe")
 
 ###################################
+# Config
+###################################
+workdir @APPDATA@
+cmd mkdir Audacity
+workdir @APPDATA@\Audacity
+batch
+ echo PrefsVersion=1.1.1r1 > audacity.cfg
+ echo WantAssociateFiles=0 >> audacity.cfg
+ echo [GUI] >> audacity.cfg
+ echo ShowSplashScreen=0 >> audacity.cfg
+
+###################################
 # Clean up
 ###################################
 
