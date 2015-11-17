@@ -21,17 +21,24 @@ using python:3.4.1,wget
 # Download installer
 ###################################
 
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
 cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
+
 batch
  echo import sys > script.py
  echo import re >> script.py
- echo import urllib.request >> script.py
- echo src = urllib.request.urlopen('https://filezilla-project.org/download.php?show_all=1').read().decode('utf-8') >> script.py
- echo filename = re.findall('a href=".*/(.*_win32-setup.exe).*"', src)[0] >> script.py
+ echo import requests >> script.py
+ echo host = "https://filezilla-project.org/download.php?show_all=1" >> script.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> script.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> script.py
+ echo filename = re.findall('a href=".*/(.*_win32-setup.exe).*"', r.text)[0] >> script.py
  echo version = re.findall('FileZilla_(.*)_win32-setup.exe', filename)[0] >> script.py
  echo url = 'http://downloads.sourceforge.net/project/filezilla/FileZilla_Client/'+version+'/'+filename >> script.py
  echo print([url, filename, version]) >> script.py
+ 
 cmd python script.py
 var res = last
 cmd "python -c ""print(%res%[0])"""
