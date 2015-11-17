@@ -3,3 +3,91 @@
 ### Application installs under AppData\Roaming\Spotify (--startup-file="@APPDATA@\Spotify\Spotify.exe")
 ### Rename SpotifyWebHelper.exe in the same directory as Spotify.exe
 ### Use flag --enable=HttpUrlPassthrough
+
+#
+# Sptotify spotify.me file
+# https://github.com/turboapps/turbome/tree/master/spotify
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="spotify"
+meta namespace="spotify"
+meta name="spotify"
+
+###################################
+# Pull dependency images
+###################################
+
+layer dotnet:4.0.3
+using gnu/wget,powershell
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir c:\
+cmd mkdir c:\Spotify
+
+# Download
+cmd wget --no-check-certificate --no-verbose -O C:\Spotify\SpotifyFullSetup.exe http://download.spotify.com/SpotifyFullSetup.exe
+
+###################################
+# Run bat script which installs Spotify, renames exe and kills all Spotify tasks. Replace UNC
+###################################
+
+#cmd START \\SERVERNAME\Share\test.bat WAIT
+
+cmd "echo (C:\spotify\SpotifyFullSetup.exe /s) > Install.bat"
+cmd "echo (cd %appdata%\Spotify\) >> Install.bat"
+cmd "echo (ren SpotifyWebHelper.exe SpotifyWebHelper.exe_) >> Install.bat"
+cmd "echo (Timeout /t 10) >> Install.bat"
+cmd "echo (TASKKILL /F /IM Spotify.exe /T) >> Install.bat"
+cmd "echo (Timeout /t 5) >> Install.bat"
+cmd "echo (EXIT) >> Install.bat"
+
+cmd START Install.bat WAIT
+
+# Get version number
+cmd "echo (Get-Item 'C:\Spotify\SpotifyFullSetup.exe' ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var version = last
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\Spotify"
+
+
+###################################
+# Clean up
+###################################
+
+cmd rmdir c:\wget /s /q
+cmd del GetVersion.ps1
+cmd del Install.bat
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Spotify /s /q"
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+###################################
+# Startup File
+###################################
+
+# Set startup file
+startup file ("@APPDATA@\Spotify\Spotify.exe")
+
+#startup file ("cmd","/k echo spotify version: ", version)
