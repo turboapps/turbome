@@ -1,2 +1,83 @@
 ### Download installer LineInst.exe from http://cdn.line-apps.com/client/win/new/LineInst.exe
 ### Use flag --enable=HttpUrlPassthrough
+
+#
+#  line.me file
+# https://github.com/turboapps/turbome/tree/master/line
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+###################################
+# Meta tags
+###################################
+
+meta title="line"
+meta namespace="line"
+meta name="line"
+
+###################################
+# Pull dependency images
+###################################
+
+layer dotnet:4.0.3
+using gnu/wget,powershell
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir c:\
+cmd mkdir c:\line
+
+# Download
+cmd wget --no-check-certificate --no-verbose -O C:\line\LineInst.exe http://cdn.line-apps.com/client/win/new/LineInst.exe
+
+###################################
+# Run bat script which installs line, renames exe and kills all line tasks. Replace UNC
+###################################
+
+cmd START C:\line\LineInst.exe /s
+
+# Get version number
+cmd "echo (Get-Item 'C:\line\LineInst.exe' ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var version = last
+
+
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\line"
+
+
+###################################
+# Clean up
+###################################
+
+cmd rmdir c:\wget /s /q
+cmd del GetVersion.ps1
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\line /s /q"
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+###################################
+# Startup File
+###################################
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\LINE\LINE.exe")
+
+#startup file ("cmd","/k echo line version: ", version)
