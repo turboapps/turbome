@@ -55,7 +55,9 @@ cmd "echo (EXIT) >> Install.bat"
 cmd START Install.bat WAIT
 
 # Get version number
-cmd "echo (Get-Item 'C:\Spotify\SpotifyFullSetup.exe' ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd "echo $appdata=get-content env:AppData >> GetVersion.ps1"
+cmd "echo $Spotify=$appdata + '\Spotify\Spotify.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Spotify ).VersionInfo.ProductVersion >> GetVersion.ps1"
 cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
 var version = last
 
