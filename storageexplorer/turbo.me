@@ -1,0 +1,83 @@
+#
+# Microsoft Azure Storage Explorer turbo.me file
+# https://github.com/turboapps/turbome/tree/master/storageexplorer
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Microsoft Azure Storage Explorer"
+meta namespace="microsoft"
+meta name="storageexplorer"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,powershell,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import requests >> script.py
+ echo host = "http://storageexplorer.com/" >> script.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> script.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> script.py
+ echo print(re.findall('href="(http.*?)".*for Windows', r.text )[0]) >> script.py
+
+cmd python script.py
+var url = last
+
+# Download and install
+cmd "wget --no-check-certificate --no-verbose %url%"
+
+cmd StorageExplorer.exe /VERYSILENT
+
+# Get version number
+cmd "echo (Get-Item 'C:\Workspace\StorageExplorer.exe' ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var version = last
+
+
+###################################
+# Environment Variables
+###################################
+
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
+env path=""
+env pathext=""
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+
+###################################
+# Startup File
+###################################
+
+# Set startup file
+startup file ("@PROGRAMFILESX86@\Microsoft Azure Storage Explorer\StorageExplorer.exe")
