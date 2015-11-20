@@ -22,7 +22,6 @@ meta name="line"
 # Pull dependency images
 ###################################
 
-layer dotnet:4.0.3
 using gnu/wget,powershell
 
 
@@ -48,14 +47,9 @@ cmd "echo (Get-Item 'C:\line\LineInst.exe' ).VersionInfo.ProductVersion >> GetVe
 cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
 var version = last
 
-
-
-
 ###################################
 # Environment Variables
 ###################################
-
-env path="c:\line"
 
 
 ###################################
@@ -73,11 +67,10 @@ cmd "rmdir @SYSDRIVE@\line /s /q"
 
 meta tag=version
 meta version=version
+
 ###################################
 # Startup File
 ###################################
 
 # Set startup file
 startup file ("@PROGRAMFILESX86@\LINE\LINE.exe")
-
-#startup file ("cmd","/k echo line version: ", version)
