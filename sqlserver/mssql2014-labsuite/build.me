@@ -1,0 +1,14 @@
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# This TurboScript creates a base image to setup sqlserver/mssql2014-labsuite
+
+# Image meta
+meta namespace="sqlserver"
+meta name="mssql2014-seed"
+meta tag="test"
+
+layer sqlserver/sqlserver2014-express
+layer sqlserver/ssms2014
+
+startup file [("cmd.exe"),("C:\Windows\SysWOW64\mmc.exe", "/32", "C:\Windows\SysWOW64\SQLServerManager12.msc"),("ssms.exe")]

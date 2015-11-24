@@ -1,0 +1,25 @@
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# This TurboScript creates a SQL Lab Suite content image.
+
+# Image meta
+meta namespace="sqldemo"
+meta name="article"
+meta tag="1.0.test"
+
+# Article meta
+meta title="Article Name"
+meta description="Short description"
+meta publisher="Author"
+meta website="Link to the article"
+meta version="1.0.dateiso"
+
+# Script
+var script = 1
+var databasedir = 2
+
+copy script "C:\sql-content\script.sql"
+copy databasedir "C:\sql-content\"
+
+startup file ("cmd.exe", "/k", "echo", "It is a SQL Lab Suite content image intended to run with sqlserver/mssql2014-labsuite. Close the shell window and try 'turbo new <image-name>,sqlserver/mssql2014-labsuite'")
