@@ -2,9 +2,7 @@ meta title="Firefox Beta"
 meta namespace="mozilla"
 meta name="firefox-beta"
 
-using wget,python:3.4.1
-
-cmd pip install requests --quiet
+using wget,powershell
 
 cmd  mkdir c:\Workspace
 workdir c:\Workspace
@@ -14,22 +12,15 @@ batch cmd
  echo InstallDirectoryPath=c:\FirefoxBeta\ >> install.ini
  echo MaintenanceService=false >> install.ini
 
-batch
- echo import sys > getTag.py
- echo import requests >> getTag.py
- echo import re >> getTag.py
- echo host = 'http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest-beta/win32/en-US' >> getTag.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getTag.py
- echo r = requests.get(host , headers=headers, timeout=10) >>  getTag.py
- echo print(re.findall('Firefox\sSetup\s(.*)\.exe', r.text )[0]) >> getTag.py
-
-cmd python getTag.py
-var tag = last
-
-var url = "http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest-beta/win32/en-US/Firefox%20Setup%20" + tag + ".exe"
+var url = "https://download.mozilla.org/?product=firefox-beta-latest&os=win&lang=en-US"
 
 cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
 cmd "firefox.exe /INI=c:\Workspace\install.ini"
+
+cmd "echo $Firefox='c:\FirefoxBeta\firefox.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Firefox ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var tag = last
 
 batch
  cd c:\FirefoxBeta
@@ -43,7 +34,6 @@ workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
 
 meta tag=tag
 
