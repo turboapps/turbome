@@ -1,0 +1,74 @@
+# Atom turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+###################################
+# Meta tags
+###################################
+
+meta title="Atom"
+meta namespace="atom"
+meta name="atom"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,powershell
+
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+# Download
+cmd wget --no-check-certificate --no-verbose -O atom.exe https://atom.io/download/windows
+
+###################################
+# Run bat script which installs line, renames exe and kills all line tasks. Replace UNC
+###################################
+
+cmd start atom.exe
+
+# cmd "echo $appdata=get-content env:AppData >> GetVersion.ps1"
+# cmd "echo $Atom=$appdata + '\atom\atom.exe' >> GetVersion.ps1"
+cmd "echo $Atom='c:\workspace\atom.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Atom ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var version = last
+
+###################################
+# Environment Variables
+###################################
+
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+
+env path=""
+env pathext=""
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+
+###################################
+# Startup File
+###################################
+
+# Set startup file
+startup file ("@APPDATALOCAL@\atom\atom-" + version + "\atom.exe")
