@@ -39,7 +39,7 @@ function CheckRuntimeRequirements()
     }
     Catch
     {
-        throw "Turbo is not installed on host machine. "
+        throw "Error: Turbo is not installed on host machine. "
     }
 
     # TODO: check .Net and PowerShell version
@@ -71,7 +71,7 @@ function Build($config)
             & $TurboCmd build --overwrite --name $config.OutputImage build.me script.sql DATA
             if($LASTEXITCODE -ne 0)
             {
-                throw "Build returned exit code: $LASTEXITCODE"
+                throw "Error: Build returned exit code $LASTEXITCODE"
             }
         }
         Finally
@@ -88,7 +88,7 @@ function Build($config)
 
 function Run($config)
 {
-    $result = Question 'Test Run' ("Would you like to run the {0} now?" -f $config.OutputImage) 0
+    $result = Question 'Run Image' 'Would you like to run the image now?' 0
     if(-not $result)
     {
         return
@@ -97,17 +97,38 @@ function Run($config)
     & $TurboCmd try ('{0},mssql2014-labsuite' -f $config.OutputImage)
 }
 
+function Push($config)
+{
+    $result = Question 'Push Image' 'Would you like to push the image to the Turbo hub?' 0
+    if(-not $result)
+    {
+        return
+    }
+
+    $remoteImageName = Read-Host -Prompt 'Provide the name of the remote image or press [Enter] if defaults are ok'
+    $pushParams = $config.OutputImage
+    if($remoteImageName)
+    {
+        $pushParams = -join $pushParams, ' ', $remoteImageName
+    }
+    & $TurboCmd push $pushParams
+    if($LASTEXITCODE -ne 0)
+    {
+        throw "Error: Push returned exit code $LASTEXITCODE"
+    }
+}
+
 $sqlFileExists = Test-Path $SqlFile
 if(-not $sqlFileExists)
 {
-    PrintFatal "Script file '$SqlFile' was not found"
+    PrintFatal "Error: Script file '$SqlFile' was not found"
     Exit -1
 }
 
 $databaseDirExists = Test-Path $DatabaseDir
 if(-not $databaseDirExists)
 {
-    PrintFatal "Database directory '$DatabaseDir' was not found"
+    PrintFatal "Error: Database directory '$DatabaseDir' was not found"
     Exit -1
 }
 
@@ -123,6 +144,7 @@ Try
     
     Build $config
     Run $config
+    Push $config
 }
 Catch
 {
