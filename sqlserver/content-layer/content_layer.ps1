@@ -11,12 +11,37 @@ param
 
 $TurboCmd = 'turbo.exe'
 
-function PrintFatal($errorMsg)
+<#
+Prints clean output from Turbo CMD filtering out empty strings, removing spinning progress marquee (\|/-) and duplicate lines
+#>
+$global:lastOutput = $null
+function Write-ProcessOutput
 {
-    Write-Host $errorMsg -ForegroundColor Red
+    param
+    (  
+        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [AllowEmptyString()]
+        [string]$Output
+    )
+    process
+    {
+        if(-not $Output)
+        {
+            return
+        }
+
+        $outputToUse = $Output -replace '[\\\/|\-]$', ''
+        if($global:lastOutput -eq $outputToUse)
+        {
+            return
+        }
+        
+        Set-Variable -Name 'lastOutput' -Value $outputToUse -Scope Global
+        Write-Host $outputToUse -ForegroundColor Gray 
+    }
 }
 
-function Question($caption, $question, $defaultChoice)
+function Ask-Question($caption, $question, $defaultChoice)
 {
     $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
     $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
@@ -31,7 +56,7 @@ function Question($caption, $question, $defaultChoice)
     }
 }
 
-function CheckRuntimeRequirements()
+function Check-RuntimeRequirements()
 {
     Try
     {
@@ -42,7 +67,8 @@ function CheckRuntimeRequirements()
         throw "Error: Turbo is not installed on host machine. "
     }
 
-    # TODO: check .Net and PowerShell version
+    # Not checking if .Net Framework is installed, because Turbo CMD requires.Net 4.0
+    # According to MSDN the script is not calling API higher than .Net 2.0
 }
 
 function Build($config)
@@ -65,10 +91,9 @@ function Build($config)
                 Get-ChildItem -Path $config.DatabaseDir -Filter $extension | Copy-Item -Destination $tempDatabaseDir
             }
 
-            $webClient = New-Object System.Net.WebClient
-            $webClient.DownloadFile('https://raw.githubusercontent.com/turboapps/turbome/master/sqlserver/content-layer/build.me', "$tempDir\build.me")
+            Invoke-WebRequest 'https://raw.githubusercontent.com/turboapps/turbome/master/sqlserver/content-layer/build.me' -OutFile "$tempDir\build.me"
 
-            & $TurboCmd build --overwrite --name $config.OutputImage build.me script.sql DATA
+            & $TurboCmd build --overwrite --name $config.OutputImage build.me script.sql DATA | Write-ProcessOutput
             if($LASTEXITCODE -ne 0)
             {
                 throw "Error: Build returned exit code $LASTEXITCODE"
@@ -88,30 +113,30 @@ function Build($config)
 
 function Run($config)
 {
-    $result = Question 'Run Image' 'Would you like to run the image now?' 0
+    $result = Ask-Question 'Run Image' 'Would you like to run the image now?' 0
     if(-not $result)
     {
         return
     }
 
-    & $TurboCmd try ('{0},mssql2014-labsuite' -f $config.OutputImage)
+    & $TurboCmd try ('{0},mssql2014-labsuite' -f $config.OutputImage) | Write-ProcessOutput
 }
 
 function Push($config)
 {
-    $result = Question 'Push Image' 'Would you like to push the image to the Turbo hub?' 0
+    $result = Ask-Question 'Push Image' 'Would you like to push the image to the Turbo hub?' 0
     if(-not $result)
     {
         return
     }
 
-    $remoteImageName = Read-Host -Prompt 'Provide the name of the remote image or press [Enter] if defaults are ok'
+    $remoteImageName = Read-Host -Prompt 'Provide name of the remote image or press [Enter] if defaults are ok'
     $pushParams = $config.OutputImage
     if($remoteImageName)
     {
         $pushParams = -join $pushParams, ' ', $remoteImageName
     }
-    & $TurboCmd push $pushParams
+    & $TurboCmd push $pushParams | Write-ProcessOutput
     if($LASTEXITCODE -ne 0)
     {
         throw "Error: Push returned exit code $LASTEXITCODE"
@@ -121,14 +146,14 @@ function Push($config)
 $sqlFileExists = Test-Path $SqlFile
 if(-not $sqlFileExists)
 {
-    PrintFatal "Error: Script file '$SqlFile' was not found"
+    Write-Error "Error: Script file '$SqlFile' was not found"
     Exit -1
 }
 
 $databaseDirExists = Test-Path $DatabaseDir
 if(-not $databaseDirExists)
 {
-    PrintFatal "Error: Database directory '$DatabaseDir' was not found"
+    Write-Error "Error: Database directory '$DatabaseDir' was not found"
     Exit -1
 }
 
@@ -136,11 +161,11 @@ $config = New-Object -TypeName PsObject -Property (@{
     'OutputImage' = $OutputImage;
     'SqlFile' = (Get-Item $SqlFile | % { $_.FullName });
     'DatabaseDir'= (Get-Item $DatabaseDir | % { $_.FullName });
-})  
+})
 
 Try
 {
-    CheckRuntimeRequirements
+    Check-RuntimeRequirements
     
     Build $config
     Run $config
@@ -148,7 +173,7 @@ Try
 }
 Catch
 {
-    PrintFatal $_.Exception.Message
-    PrintFatal $_.Exception.StackTrace
+    Write-Error $_.Exception.Message
+    Write-Error $_.Exception.StackTrace
     Exit -1
 }
