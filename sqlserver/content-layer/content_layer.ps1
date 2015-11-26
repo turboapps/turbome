@@ -9,9 +9,40 @@ param
     [string] $DatabaseDir
 )
 
+$TurboCmd = 'turbo.exe'
+
 function PrintFatal($errorMsg)
 {
     Write-Host $errorMsg -ForegroundColor Red
+}
+
+function Question($caption, $question, $defaultChoice)
+{
+    $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
+    $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
+    $choices = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+    $result = $host.ui.PromptForChoice($caption, $question, $choices, $defaultChoice) 
+
+    switch ($result)
+    {
+        0 { return $True }
+        1 { return $False }
+    }
+}
+
+function CheckRuntimeRequirements()
+{
+    Try
+    {
+        & $TurboCmd version | Out-Null
+    }
+    Catch
+    {
+        throw "Turbo is not installed on host machine. "
+    }
+
+    # TODO: check .Net and PowerShell version
 }
 
 function Build($config)
@@ -37,7 +68,11 @@ function Build($config)
             $webClient = New-Object System.Net.WebClient
             $webClient.DownloadFile('https://raw.githubusercontent.com/turboapps/turbome/master/sqlserver/content-layer/build.me', "$tempDir\build.me")
 
-            & "turbo.exe" build --overwrite --name $config.OutputImage build.me script.sql DATA
+            & $TurboCmd build --overwrite --name $config.OutputImage build.me script.sql DATA
+            if($LASTEXITCODE -ne 0)
+            {
+                throw "Build returned exit code: $LASTEXITCODE"
+            }
         }
         Finally
         {
@@ -49,6 +84,17 @@ function Build($config)
     {
         Set-Location $initialLocation
     }
+}
+
+function Run($config)
+{
+    $result = Question 'Test Run' ("Would you like to run the {0} now?" -f $config.OutputImage) 0
+    if(-not $result)
+    {
+        return
+    }
+
+    & $TurboCmd try ('{0},mssql2014-labsuite' -f $config.OutputImage)
 }
 
 $sqlFileExists = Test-Path $SqlFile
@@ -73,7 +119,10 @@ $config = New-Object -TypeName PsObject -Property (@{
 
 Try
 {
+    CheckRuntimeRequirements
+    
     Build $config
+    Run $config
 }
 Catch
 {
