@@ -59,7 +59,7 @@ Decline to push the content layer image.
 
 .EXAMPLE
 
-.\content_layer.ps1
+.\Build-ContentLayer.ps1
 
 
 Build an image with content layer in fully interactive mode. PowerShell script will ask to specify each required parameter. After successful build script will stop and ask for permissions to execute a test run and push the image.
@@ -67,7 +67,7 @@ Build an image with content layer in fully interactive mode. PowerShell script w
 
 .EXAMPLE 
 
-.\content_layer.ps1 -SqlFile '..\samples\WildcardSearches\Wildcard Searches.sql' -DatabaseDir '..\samples\WildcardSearches\DATA' -OutputImage 'demo-content' -DeclineRun -ConfirmPush -RemoteImage 'sqlservercentral/wildcard-searches'
+.\Build-ContentLayer.ps1 -SqlFile '..\samples\WildcardSearches\Wildcard Searches.sql' -DatabaseDir '..\samples\WildcardSearches\DATA' -OutputImage 'demo-content' -DeclineRun -ConfirmPush -RemoteImage 'sqlservercentral/wildcard-searches'
 
 Build a content layer image using 'Wildcard Searches.sql' script a sample database saved in 'DATA' directory. The output image will be saved in the local repository as 'demo-content'. After successful build PowerShell script will skip a test run and push the image to the Turbo Hub to 'wildcard-searches' repo in 'sqlservercentral' organization.
 
