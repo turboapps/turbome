@@ -1,0 +1,74 @@
+#
+# Libreoffice turbo.me file
+# https://github.com/turboapps/turbome/tree/master/libreoffice
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="Libreoffice"
+meta namespace="libreoffice"
+meta name="impress"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'https://www.libreoffice.org/download/libreoffice-fresh/' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py 
+ echo host = re.findall('(http://\S*?x86.msi)', r.text)[0] >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py 
+ echo print(list(re.findall('(http://\S*?stable\/(\d*\.*\d*\.*\d*)\/\S*?x86.msi)', r.text )[0])) >> getRelease.py
+
+# Get version tag and MSI installer URL
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var tag=last
+
+# Actually install MSI
+cmd msiexec /i %url% /passive /qn
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILESX86@\LibreOffice 5\program\simpress.exe")
+
+###################################
+# Environment Variables
+###################################
+
+env path="@PROGRAMFILESX86@\LibreOffice 5\program\"
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
