@@ -9,7 +9,7 @@ param
     [string] $DatabaseDir
 )
 
-$TurboCmd = 'turbo.exe'
+$TurboCmd = 'turbo'
 
 <#
 Prints clean output from Turbo CMD filtering out empty strings, removing spinning progress marquee (\|/-) and duplicate lines
@@ -38,6 +38,14 @@ function Write-ProcessOutput
         
         Set-Variable -Name 'lastOutput' -Value $outputToUse -Scope Global
         Write-Host $outputToUse -ForegroundColor Gray 
+    }
+}
+
+function Assert-ZeroExitCode($exitCode)
+{
+    if($exitCode -ne 0)
+    {
+        throw "Error: Process returned non-zero exit code: $exitCode"
     }
 }
 
@@ -92,17 +100,24 @@ function Build($config)
             }
 
             Invoke-WebRequest 'https://raw.githubusercontent.com/turboapps/turbome/master/sqlserver/content-layer/build.me' -OutFile "$tempDir\build.me"
-
+            
+            Write-Host "Executing: $TurboCmd build --overwrite --name $($config.OutputImage) build.me script.sql DATA"
             & $TurboCmd build --overwrite --name $config.OutputImage build.me script.sql DATA | Write-ProcessOutput
-            if($LASTEXITCODE -ne 0)
-            {
-                throw "Error: Build returned exit code $LASTEXITCODE"
-            }
+            Assert-ZeroExitCode $LASTEXITCODE
         }
         Finally
         {
             Set-Location $env:temp
-            Remove-Item -Recurse $tempDirName
+            
+            Try
+            {
+                Remove-Item -Recurse $tempDirName
+            }
+            Catch
+            {
+                # Use Write-Warning when moving to PowerShell 3.0
+                Write-Host ("Failed to delete temp directory {0}: {1}" -f $tempDir.FullName, $_.Exception.Message) -ForegroundColor Yellow
+            }
         }
     }
     Finally
@@ -119,7 +134,8 @@ function Run($config)
         return
     }
 
-    & $TurboCmd try ('{0},mssql2014-labsuite' -f $config.OutputImage) | Write-ProcessOutput
+    Write-Host "Executing: $TurboCmd try $($config.OutputImage),mssql2014-labsuite"
+    & $TurboCmd try "$($config.OutputImage),mssql2014-labsuite" | Write-ProcessOutput
 }
 
 function Push($config)
@@ -136,11 +152,10 @@ function Push($config)
     {
         $pushParams = -join $pushParams, ' ', $remoteImageName
     }
+    
+    Write-Host "Executing: $TurboCmd push $pushParams"
     & $TurboCmd push $pushParams | Write-ProcessOutput
-    if($LASTEXITCODE -ne 0)
-    {
-        throw "Error: Push returned exit code $LASTEXITCODE"
-    }
+    Assert-ZeroExitCode $LASTEXITCODE
 }
 
 $sqlFileExists = Test-Path $SqlFile
