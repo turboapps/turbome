@@ -342,7 +342,7 @@ $config = New-Object -TypeName PsObject -Property (@{
     'SqlFile' = (Get-Item $SqlFile | % { $_.FullName });
     'DatabaseDir'= (Get-Item $DatabaseDir | % { $_.FullName });
     'ConfirmRun' = (Get-Decision $ConfirmRun $DeclineRun);
-    'ConfirmPush' = (Get-Decision $ConfirmPush $DeclinePush) -or $RemoteImage;
+    'ConfirmPush' = (Get-Decision $ConfirmPush $DeclinePush);
     'RemoteImage' = $RemoteImage;
 })
 
