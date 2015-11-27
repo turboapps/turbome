@@ -15,8 +15,8 @@ param
     [switch] $ConfirmPush,
     [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Decline image push")]
     [switch] $DeclinePush,
-    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Name of the image in the Turbo hub")]
-    [string] $RemoteImageName
+    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Name of the image in the Turbo Hub")]
+    [string] $RemoteImage
 )
 
 $TurboCmd = 'turbo'
@@ -156,23 +156,52 @@ function Run($config)
     }
 }
 
+function Get-RepoLink($image)
+{
+    if($image -notMatch "^((?<namespace>[^\s\/]+)\/)?(?<name>[^\s:]+)")
+    {
+        return $null
+    }
+
+    $name = $matches.name
+    $namespace = $matches.namespace
+    if(-not $namespace)
+    {
+        try
+        {
+            $loginLine = & $TurboCmd login | Select-String -Pattern "^[^\s]+\s+logged" | Select-Object -First 1
+            if($loginLine -match "^(\S+)")
+            {
+                $namespace = $matches[0]
+            }
+        }
+        catch { }
+    }
+    if(-not $namespace)
+    {
+        return $null  
+    }
+
+    return "https://turbo.net/hub/$namespace/$name"
+}
+
 function Push($config)
 {
-    $remoteImageName = $config.RemoteImageName
+    $remoteImage = $config.RemoteImage
 
     $executePush = $config.ConfirmPush
     if(Should-Ask $executePush)
     {
-        $executePush = Ask-Question 'Push Image' 'Would you like to push the image to the Turbo hub?' 0
+        $executePush = Ask-Question 'Push Image' 'Would you like to push the image to the Turbo Hub?' 0
 
         if(-not $executePush)
         {
             return
         }
 
-        if(-not $remoteImageName)
+        if(-not $remoteImage)
         {
-            $remoteImageName = Read-Host -Prompt 'Provide name of the remote image or press [Enter] if defaults are ok'
+            $remoteImage = Read-Host -Prompt 'Provide name of the remote image or press [Enter] if defaults are ok'
         }
     }
     elseif(-not $executePush)
@@ -181,14 +210,24 @@ function Push($config)
     }
 
     $pushParams = $config.OutputImage
-    if($remoteImageName)
+    if($remoteImage)
     {
-        $pushParams = -join $pushParams, ($remoteImageName.Trim())
+        $pushParams = -join $pushParams, ($remoteImage.Trim())
     }
     
     Write-Host "Executing: $TurboCmd push $pushParams"
     & $TurboCmd push $pushParams | Write-ProcessOutput
     Assert-ZeroExitCode $LASTEXITCODE
+
+    if(-not $remoteImage)
+    {
+        $remoteImage = $config.OutputImage
+    }
+    $repoLink = Get-RepoLink $remoteImage
+    if($repoLink)
+    {
+        Write-Host "You may visit repo page $repoLink in Turbo Hub and update image metadata"
+    }
 }
 
 $sqlFileExists = Test-Path $SqlFile
@@ -218,8 +257,8 @@ $config = New-Object -TypeName PsObject -Property (@{
     'SqlFile' = (Get-Item $SqlFile | % { $_.FullName });
     'DatabaseDir'= (Get-Item $DatabaseDir | % { $_.FullName });
     'ConfirmRun' = (Get-Decision $ConfirmRun $DeclineRun);
-    'ConfirmPush' = (Get-Decision $ConfirmPush $DeclinePush) -or $RemoteImageName;
-    'RemoteImageName' = $RemoteImageName;
+    'ConfirmPush' = (Get-Decision $ConfirmPush $DeclinePush) -or $RemoteImage;
+    'RemoteImage' = $RemoteImage;
 })
 
 Try
