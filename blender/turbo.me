@@ -1,37 +1,57 @@
 #
-# Ghost turbo.me file
-# https://github.com/turboapps/turbome/tree/master/ghost
+# Blender turbo.me file
+# https://github.com/turboapps/turbome/tree/master/blender
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+meta title="Blender"
+meta namespace="blender"
+meta name="blender"
 
 ###################################
 # Pull dependency images
 ###################################
-layer clean
-using wget,7-zip
+
+using wget,python:3.4.1
 
 ###################################
 # Download and install
 ###################################
 
-# set working directory
-workdir c:\
+cmd mkdir c:\Workspace
+workdir c:\Workspace
 
-# Download zip
-cmd wget.exe http://mirror.cs.umn.edu/blender.org/release/Blender2.73/blender-2.73-windows32.zip
+# Install "requests" module for python
+cmd "pip install requests --quiet"
 
-# set working directory
-workdir @PROGRAMFILES@
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'https://www.blender.org/download/' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(list(re.findall('(http://\S*?-(\d*\.*\d*\.*\d*[a-z])-windows32.msi)', r.text )[0])) >> getRelease.py
 
-# extract to working folder
-cmd 7z x c:\blender-2.73-windows32.zip 
+# Get version tag and MSI installer URL
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var tag=last
+
+# Actually install MSI
+cmd msiexec /i %url% /passive /qn
 
 ###################################
 # Startup File
 ###################################
-startup file ("@PROGRAMFILES@\Blender-2.73-windows32\blender-app.exe")
+startup file ("@PROGRAMFILESX86@\Blender Foundation\Blender\blender.exe")
 
 ###################################
 # Environment Variables
@@ -42,4 +62,11 @@ startup file ("@PROGRAMFILES@\Blender-2.73-windows32\blender-app.exe")
 ###################################
 # Clean up
 ###################################
-cmd del C:\blender-2.73-windows32.zip /Q
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
