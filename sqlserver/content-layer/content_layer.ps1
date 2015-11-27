@@ -6,7 +6,17 @@ param
 	[Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Path to the SQL script")]
 	[string] $SqlFile,
     [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Path to the database directory")]
-    [string] $DatabaseDir
+    [string] $DatabaseDir,
+    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Confirm test run")]
+    [switch] $ConfirmRun,
+    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Decline test run")]
+    [switch] $DeclineRun,
+    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Confirm image push")]
+    [switch] $ConfirmPush,
+    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Decline image push")]
+    [switch] $DeclinePush,
+    [Parameter(Mandatory=$False,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Name of the image in the Turbo hub")]
+    [string] $RemoteImageName
 )
 
 $TurboCmd = 'turbo'
@@ -47,6 +57,11 @@ function Assert-ZeroExitCode($exitCode)
     {
         throw "Error: Process returned non-zero exit code: $exitCode"
     }
+}
+
+function Should-Ask($decision)
+{
+    return $decision -eq $null
 }
 
 function Ask-Question($caption, $question, $defaultChoice)
@@ -128,29 +143,47 @@ function Build($config)
 
 function Run($config)
 {
-    $result = Ask-Question 'Run Image' 'Would you like to run the image now?' 0
-    if(-not $result)
+    $executeRun = $config.ConfirmRun
+    if($executeRun -eq $null)
     {
-        return
+        $executeRun = Ask-Question 'Run Image' 'Would you like to run the image now?' 0
     }
-
-    Write-Host "Executing: $TurboCmd try $($config.OutputImage),mssql2014-labsuite"
-    & $TurboCmd try "$($config.OutputImage),mssql2014-labsuite" | Write-ProcessOutput
+    
+    if($executeRun)
+    {
+        Write-Host "Executing: $TurboCmd try $($config.OutputImage),mssql2014-labsuite"
+        & $TurboCmd try "$($config.OutputImage),mssql2014-labsuite" | Write-ProcessOutput
+    }
 }
 
 function Push($config)
 {
-    $result = Ask-Question 'Push Image' 'Would you like to push the image to the Turbo hub?' 0
-    if(-not $result)
+    $remoteImageName = $config.RemoteImageName
+
+    $executePush = $config.ConfirmPush
+    if(Should-Ask $executePush)
+    {
+        $executePush = Ask-Question 'Push Image' 'Would you like to push the image to the Turbo hub?' 0
+
+        if(-not $executePush)
+        {
+            return
+        }
+
+        if(-not $remoteImageName)
+        {
+            $remoteImageName = Read-Host -Prompt 'Provide name of the remote image or press [Enter] if defaults are ok'
+        }
+    }
+    elseif(-not $executePush)
     {
         return
     }
 
-    $remoteImageName = Read-Host -Prompt 'Provide name of the remote image or press [Enter] if defaults are ok'
     $pushParams = $config.OutputImage
     if($remoteImageName)
     {
-        $pushParams = -join $pushParams, ' ', $remoteImageName
+        $pushParams = -join $pushParams, ($remoteImageName.Trim())
     }
     
     Write-Host "Executing: $TurboCmd push $pushParams"
@@ -172,10 +205,21 @@ if(-not $databaseDirExists)
     Exit -1
 }
 
+function Get-Decision($confirm, $decline)
+{
+    $decision = $null
+    if($confirm.IsPresent) { $decision = $True }
+    if($decline.IsPresent) { $decision = $False }
+    return $decision
+}
+
 $config = New-Object -TypeName PsObject -Property (@{
     'OutputImage' = $OutputImage;
     'SqlFile' = (Get-Item $SqlFile | % { $_.FullName });
     'DatabaseDir'= (Get-Item $DatabaseDir | % { $_.FullName });
+    'ConfirmRun' = (Get-Decision $ConfirmRun $DeclineRun);
+    'ConfirmPush' = (Get-Decision $ConfirmPush $DeclinePush) -or $RemoteImageName;
+    'RemoteImageName' = $RemoteImageName;
 })
 
 Try
