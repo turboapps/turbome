@@ -41,7 +41,7 @@ batch
   echo import sys, requests, re >> getTag.py
   echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getTag.py
   echo r = requests.get("https://code.visualstudio.com/Updates", headers=headers, verify=False) >> getTag.py
-  echo print(re.findall("VS Code v([0-9.]+)", r.text)[0]) >> getTag.py
+  echo print(re.findall("<h1>v([0-9.]+)", r.text)[0]) >> getTag.py
 
 cmd python getTag.py
 var tag = last
