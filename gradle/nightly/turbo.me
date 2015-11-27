@@ -39,7 +39,7 @@ batch
   echo host = 'http://gradle.org/nightly' >> getUrl.py
   echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getUrl.py
   echo r = requests.get(host , headers=headers, timeout=10) >> getUrl.py
-  echo url = ''.join(list(re.findall('(https://.*-bin.zip)', r.text)[0])) >> getUrl.py
+  echo url = ''.join(list(re.findall('(https://\S*-bin.zip)', r.text)[0])) >> getUrl.py
   echo print(url) >> getUrl.py
 
 cmd python getUrl.py
