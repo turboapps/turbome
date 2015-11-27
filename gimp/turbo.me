@@ -40,7 +40,7 @@ batch
  echo host = 'http://www.gimp.org/downloads/' >> getTag.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getTag.py
  echo r = requests.get(host , headers=headers, timeout=10) >>  getTag.py
- echo print(re.findall('http:\/\/download\.gimp\.org\/pub\/gimp\/v([0-9\.]+)\/windows\/gimp-(\d*\.\d*\.\d*)-setup(.*).exe', r.text )[0]) >> getTag.py
+ echo print(re.findall('\/\/download\.gimp\.org\/pub\/gimp\/v([0-9\.]+)\/windows\/gimp-(\d*\.\d*\.\d*)-setup.exe', r.text )[0]) >> getTag.py
 
 cmd python getTag.py
 
@@ -55,11 +55,8 @@ var minor = last
 cmd "python -c ""print(%res%[1])"""
 var patch = last
 
-cmd "python -c ""print(%res%[2])"""
-var postfix = last
-
 # Download and install last version
-cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""http://download.gimp.org/pub/gimp/v%minor%/windows/gimp-%patch%-setup%postfix%.exe"""
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""http://download.gimp.org/pub/gimp/v%minor%/windows/gimp-%patch%-setup.exe"""
 cmd install.exe /VERYSILENT
 
 # Set startup file
