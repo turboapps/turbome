@@ -60,7 +60,7 @@ cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""http://downloa
 cmd install.exe /VERYSILENT
 
 # Set startup file
-startup file ("@PROGRAMFILESX86@\GIMP " + major + "\bin\gimp-" + minor + ".exe")
+startup file ("@PROGRAMFILES@\GIMP " + major + "\bin\gimp-" + minor + ".exe")
 
 ###################################
 # Clean up
