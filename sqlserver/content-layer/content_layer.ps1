@@ -1,4 +1,89 @@
-﻿[CmdletBinding()]
+﻿# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+<#
+
+.SYNOPSIS
+
+Script builds content layer images for SQL Server 2014 Lab Suite.
+
+
+.DESCRIPTION
+
+Script uses Turbo CLI to build a content layer image for SQL Server 2014 Lab Suite.
+
+Script requires providing paths to a SQL file and a directory with a detached database.
+
+After successful build the script will execute a test run using a temporary container and push the content layer image to the Turbo Hub. Both actions require user confirmation which can be given in an interactive mode during script execution or specified using command line switches.
+
+
+.PARAMETER OutputImage 
+
+Name of the output image with content layer
+
+
+.PARAMETER SqlFile
+
+Path to the SQL script
+
+
+.PARAMETER DatabaseDir
+
+Path to the database directory
+
+
+.PARAMETER RemoteImage
+
+Name of the image with content layer in the Turbo Hub
+
+
+.PARAMETER ConfirmRun
+
+Confirm to execute a test run.
+
+
+.PARAMETER DeclineRun
+
+Decline to execute a test run.
+
+
+.PARAMETER ConfirmPush
+
+Confirm to push the content layer image.
+
+
+.PARAMETER DeclinePush
+
+Decline to push the content layer image.
+
+
+.EXAMPLE
+
+.\content_layer.ps1
+
+
+Build an image with content layer in fully interactive mode. PowerShell script will ask to specify each required parameter. After successful build script will stop and ask for permissions to execute a test run and push the image.
+
+
+.EXAMPLE 
+
+.\content_layer.ps1 -SqlFile '..\samples\WildcardSearches\Wildcard Searches.sql' -DatabaseDir '..\samples\WildcardSearches\DATA' -OutputImage 'demo-content' -DeclineRun -ConfirmPush -RemoteImage 'sqlservercentral/wildcard-searches'
+
+Build a content layer image using 'Wildcard Searches.sql' script a sample database saved in 'DATA' directory. The output image will be saved in the local repository as 'demo-content'. After successful build PowerShell script will skip a test run and push the image to the Turbo Hub to 'wildcard-searches' repo in 'sqlservercentral' organization.
+
+
+.NOTES
+
+Script requires access to the Internet to download a TurboScript, pull mssql2014-labsuite image with SQL Server 2014 Lab Suite and push a content layer image to the Turbo Hub.
+Script invokes Turbo Plugin CLI commands, so Turbo Plugin must be installed on the host machine. The latest Turbo Plugin release can be downloaded from http://start.turbo.net/install.
+Script is compatible with PowerShell 2.0 and is not calling .Net API above .Net Framework 2.0.
+
+.Link
+
+https://github.com/turboapps/turbome/blob/sqlserver/powershell/sqlserver/README.md
+
+#>
+[CmdletBinding()]
 param
 (
 	[Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Name of the output image")]
