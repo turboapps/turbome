@@ -1,0 +1,66 @@
+# Greenshot turbo.me file
+# https://github.com/turboapps/turbome/tree/master/greenshot
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="Greenshot"
+meta namespace="greenshot"
+meta name="greenshot"
+
+###################################
+# Install settings
+###################################
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+batch
+ echo import sys > getTag.py
+ echo import requests >> getTag.py
+ echo import re >> getTag.py
+ echo host = 'https://github.com/greenshot/greenshot/releases' >> getTag.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getTag.py
+ echo r = requests.get(host , headers=headers, timeout=10) >>  getTag.py
+ echo print(re.findall('(\d*\.\d*\.\d*\.\d*)', r.text )[0]) >> getTag.py
+
+cmd python getTag.py
+
+var tag = last
+
+# Download and install last version
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""https://github.com/greenshot/greenshot/releases/download/Greenshot-RELEASE-%tag%/Greenshot-INSTALLER-%tag%-RELEASE.exe"""
+
+batch
+ start /b install.exe /VERYSILENT
+ timeout /t 60
+ taskkill /im greenshot.exe /f
+ 
+# Set startup file
+startup file ("@PROGRAMFILES@\Greenshot\greenshot.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=tag
