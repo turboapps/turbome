@@ -1,0 +1,76 @@
+# GeoGebra turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Set metadata
+###################################
+
+meta title="GeoGebra"
+meta namespace="geogebra"
+meta name="geogebra"
+
+###################################
+# Get build dependencies
+###################################
+
+layer jre
+using wget,python:3.4.1
+
+###################################
+# Download installer
+###################################
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+
+var url = "http://download.geogebra.org/installers/?os=win"
+
+cmd "wget --no-check-certificate --no-verbose ""%url%"""
+cmd "dir > output.txt"
+
+batch
+  echo import re >> getVersion.py
+  echo f = open('output.txt', 'r') >> getVersion.py
+  echo t = f.read() >> getVersion.py
+  echo print([re.findall("(Geo\S*.exe)", t)[0], '.'.join(re.findall("-(\d*)-(\d*)-(\d*)-(\d*)", t)[0]), '.'.join(re.findall("-(\d*)-(\d*)", t)[0])]) >> getVersion.py
+
+cmd python getVersion.py
+var res = last
+
+cmd "python -c ""print(%res%[0])"""
+var filename = last
+
+cmd "python -c ""print(%res%[1])"""
+var tag = last
+
+cmd "python -c ""print(%res%[2])"""
+var ver = last
+
+###################################
+# Install
+###################################
+
+
+cmd """%filename%"" /S"
+
+batch
+ if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
+ cd "GeoGebra %ver%"
+ rmdir /s /q jre
+
+###################################
+# Clean up
+###################################
+
+ 
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir C:\python34 /s /q
+
+meta tag=tag
+
+startup file ("@PROGRAMFILESX86@\\GeoGebra " + ver + "\\geogebra.exe")
