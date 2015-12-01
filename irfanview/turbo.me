@@ -1,0 +1,77 @@
+#
+# IrfanView turbo.me file
+# https://github.com/turboapps/turbome/tree/master/irfanview
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="IrfanView"
+meta namespace="irfanview"
+meta name="irfanview"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'http://www.irfanview.com/main_history.htm' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo version = re.findall('Version\s(\d*\.\d*\.*\d*)', r.text)[0] >> getRelease.py
+ echo host = 'http://download.cnet.com/IrfanView/' >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo url = re.findall('(http://\S*.exe)', r.text)[0] >> getRelease.py
+ echo print([url, version]) >> getRelease.py
+ 
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var tag=last
+
+cmd "wget -O installer.exe ""%url%"""
+
+# Actually install MSI
+cmd "installer.exe /silent /desktop=1 /thumbs=1 /group=1 /allusers=1 /assoc=1"
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILESX86@\IrfanView\i_view32.exe")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag

@@ -1,0 +1,73 @@
+#
+# foobar2000 turbo.me file
+# https://github.com/turboapps/turbome/tree/master/foobar2000
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="foobar2000"
+meta namespace="foobar2000"
+meta name="foobar2000"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'http://www.foobar2000.org/download' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(list(re.findall('getfile/(\S*v(\d*\.\d*\.\d*).exe)', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var tag=last
+
+cmd "wget --no-check-certificate -O installer.exe http://www.foobar2000.org/files/%url%"
+
+# Actually install MSI
+cmd installer.exe /S
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILESX86@\foobar2000\foobar2000.exe")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+cmd rmdir c:\Python34 /s /q
+
+meta tag=tag
