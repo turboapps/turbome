@@ -9,11 +9,11 @@ meta title="vuze"
 meta namespace="vuze"
 meta name="vuze"
 
-
 ###################################
 # Pull dependency images
 ###################################
 
+layer jre
 using wget,python:3.4.1
 
 ###################################
@@ -25,6 +25,9 @@ workdir c:\Workspace
 
 # Install "requests" module for python
 cmd "pip install requests --quiet"
+
+# Install "bencode" module for python
+cmd "pip install bencodepy --quiet"
 
 # Get last version tag
 batch
@@ -55,6 +58,22 @@ batch
 	installer.exe -q
 	timeout /t 60
 	taskkill /im Azureus.exe /f
+
+# Disable autoupdate script
+batch
+	echo import bencodepy > removeAutoupdate.py
+	echo config = bencodepy.decode_from_file("azureus.config") >> removeAutoupdate.py
+	echo config[b'update.autodownload'] = 0 >> removeAutoupdate.py
+	echo config[b'update.opendialog'] = 0 >> removeAutoupdate.py
+	echo config[b'update.periodic'] = 0 >> removeAutoupdate.py
+	echo config[b'update.start'] = 0 >> removeAutoupdate.py
+	echo with open("azureus.config", 'wb') as config_file: >> removeAutoupdate.py
+	echo  config_file.write(bencodepy.encode(config)) >> removeAutoupdate.py
+
+# Disable autoupdate
+batch
+	cd %USERPROFILE%\AppData\Roaming\Azureus
+	python c:\Workspace\removeAutoupdate.py
 
 ###################################
 # Startup File
