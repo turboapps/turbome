@@ -36,14 +36,19 @@ cmd pip install requests --quiet
 batch
   echo import requests >> getUrl.py
   echo import re >> getUrl.py
-  echo host = 'http://gradle.org/downloads/' >> getUrl.py
+  echo host = 'http://gradle.org/gradle-download/' >> getUrl.py
   echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getUrl.py
   echo r = requests.get(host , headers=headers, timeout=10) >> getUrl.py
-  echo url = ''.join(list(re.findall('(https://.*?-bin.zip)', r.text)[0])) >> getUrl.py
-  echo print(url) >> getUrl.py
+  echo print(list(re.findall('(https://\S*?(\d*\.*\d*\.*\d*)-bin.zip)', r.text )[0])) >> getUrl.py
 
 cmd python getUrl.py
-var url = last
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var version=last
 
 # Download
 
@@ -51,18 +56,6 @@ cmd "wget --no-check-certificate --no-verbose -O gradle.zip %url%"
 
 # Unpack
 cmd 7z x gradle.zip -oc:\gradle
-
-# Get version
-batch
-  echo import requests >> getVersion.py
-  echo import re >> getVersion.py
-  echo host = 'http://gradle.org' >> getVersion.py
-  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getVersion.py
-  echo r = requests.get(host , headers=headers, timeout=10) >> getVersion.py
-  echo version = ''.join(list(re.findall('Download Gradle (\d.\d)', r.text)[0])) >> getVersion.py
-  echo print(version) >> getVersion.py
-cmd python getVersion.py
-var version = last
 
 
 ###################################
