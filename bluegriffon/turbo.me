@@ -58,7 +58,18 @@ cmd "wget --no-check-certificate --no-verbose -O installer.exe %url%"
 # Install
 cmd installer.exe /verysilent /nocancel
 
+# Turn off auto-updates
+batch
+    echo with open('c:\\Program Files (x86)\\BlueGriffon\\defaults\\pref\\bluegriffon-prefs.js', 'r+') as pref: >> noUpdates.py
+    echo     settings = pref.read() >> noUpdates.py
+    echo     for key in ["extensions.update.autoUpdateDefault", "extensions.update.enabled", "bluegriffon.updates.check.enabled"]: >> noUpdates.py
+    echo         settings = settings.replace('\"{0}\", true'.format(key), '\"{0}\", false'.format(key)) >> noUpdates.py
+    echo     pref.seek(0) >> noUpdates.py
+    echo     pref.write(settings) >> noUpdates.py
+    echo     pref.truncate() >> noUpdates.py
 
+cmd python noUpdates.py
+    
 ###################################
 # Clean up
 ###################################
