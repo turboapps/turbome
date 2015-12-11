@@ -1,0 +1,100 @@
+#
+# Vuze turbo.me file
+# https://github.com/turboapps/turbome/tree/master/vuze
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="vuze"
+meta namespace="vuze"
+meta name="vuze"
+
+###################################
+# Pull dependency images
+###################################
+
+layer jre
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Install "bencode" module for python
+cmd "pip install bencodepy --quiet"
+
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'http://wiki.vuze.com/' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(list(re.findall('(Vuze ((\d*)\.(\d*)\.(\d*)\.(\d*)))', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [2] + %res% [3] + %res% [4] + %res% [5])"""
+var ver=last
+
+cmd "python -c ""print( 'http://sourceforge.net/projects/azureus/files/vuze/Vuze_' + '%ver%' + '/Vuze_' + '%ver%' + '_Installer32.exe/download' )"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var tag=last
+
+cmd "wget -O installer.exe %url%"
+
+# Actually install MSI
+batch
+	installer.exe -q
+	timeout /t 60
+	taskkill /im Azureus.exe /f
+
+# Disable autoupdate script
+batch
+	echo import bencodepy > removeAutoupdate.py
+	echo config = bencodepy.decode_from_file("azureus.config") >> removeAutoupdate.py
+	echo config[b'update.autodownload'] = 0 >> removeAutoupdate.py
+	echo config[b'update.opendialog'] = 0 >> removeAutoupdate.py
+	echo config[b'update.periodic'] = 0 >> removeAutoupdate.py
+	echo config[b'update.start'] = 0 >> removeAutoupdate.py
+	echo with open("azureus.config", 'wb') as config_file: >> removeAutoupdate.py
+	echo  config_file.write(bencodepy.encode(config)) >> removeAutoupdate.py
+
+# Disable autoupdate
+batch
+	cd %USERPROFILE%\AppData\Roaming\Azureus
+	python c:\Workspace\removeAutoupdate.py
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILESX86@\Vuze\Azureus.exe")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+batch
+	rmdir c:\Workspace /s /q
+	rmdir c:\wget /s /q
+	rmdir c:\Python34 /s /q
+
+meta tag=tag
