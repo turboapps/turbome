@@ -1,0 +1,73 @@
+#
+# DropBox turbo.me file
+# https://github.com/turboapps/turbome/tree/master/dropbox
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="dropbox"
+meta namespace="dropbox"
+meta name="dropbox"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Download file
+cmd "wget ""https://www.dropbox.com/download?full=1&plat=win"" --no-check-certificate"
+
+# Get version
+batch
+	echo import glob > getRelease.py
+	echo import re >> getRelease.py
+	echo file = glob.glob('Dropbox * Offline Installer.exe')[0] >> getRelease.py
+	echo version = re.findall('Dropbox (.*) Offline Installer\.exe', file)[0] >> getRelease.py
+	echo print(version) >> getRelease.py
+
+cmd "python getRelease.py"
+var version=last
+meta tag=version
+
+# Actually install MSI
+batch
+	echo "Dropbox %version% Offline Installer.exe" /S > install.bat
+	echo exit >> install.bat
+	start install.bat
+	timeout /t 600
+	taskkill /F /IM DropboxUpdate.exe /T
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILESX86@\Dropbox\Client\Dropbox.exe")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+batch
+	rmdir c:\Workspace /s /q
+	rmdir c:\wget /s /q
+	rmdir c:\Python34 /s /q
+	# remove last DropboxUpdate.exe process
+	taskkill /F /IM DropboxUpdate.exe /T
