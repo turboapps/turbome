@@ -34,7 +34,7 @@ batch
  echo import re >> getRelease.py
  echo host = 'https://www.eclipse.org/downloads/' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=100) >> getRelease.py
  echo print(re.findall('"download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"', r.text)[0] + (max(re.findall('\d+\.\d+\.\d+', r.text)),)) >> getRelease.py
  
 cmd python getRelease.py
