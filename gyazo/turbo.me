@@ -58,6 +58,7 @@ batch
 	installer.exe /verysilent /norestart /suppressmsgboxes
 	taskkill /im GyStation.exe /t /f
 
+enable httpUrlPassthrough
 
 ###################################
 # Clean up
@@ -81,4 +82,4 @@ meta tag=version
 # Startup File
 ###################################
 
-startup file ("@PROGRAMFILESX86@\Gyazo\Gyazowin.exe")
+startup file [("@PROGRAMFILESX86@\Gyazo\Gyazowin.exe"), ("@PROGRAMFILESX86@\Gyazo\GyStation.exe")]
