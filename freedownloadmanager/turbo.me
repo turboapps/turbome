@@ -1,0 +1,80 @@
+#
+# Freedownloadmanager turbo.me file
+# https://github.com/turboapps/turbome/tree/master/freedownloadmanager
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="freedownloadmanager"
+meta namespace="freedownloadmanager"
+meta name="freedownloadmanager"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget,python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = 'http://www.freedownloadmanager.org/download.htm' >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(list(re.findall('(Current stable version: FDM ver. (\d*\.\d*\.\d*) build (\d*))', r.text )[0])) >> getRelease.py
+
+cmd python getRelease.py
+var res=last
+
+var url="http://dn2.freedownloadmanager.org/fdminst.exe"
+
+cmd "python -c ""print( %res% [1] + '.' + %res% [2])"""
+var tag=last
+
+# Install MSI
+batch
+ wget -O installer.exe %url%
+ installer.exe /SILENT
+
+# Disable autoupdate
+batch
+ echo Windows Registry Editor Version 5.00 > disable.reg
+ echo [HKEY_CURRENT_USER\SOFTWARE\FreeDownloadManager.ORG\Free Download Manager\Settings\Update] >> disable.reg
+ echo "AutoUpdateType"=dword:00000002 >> disable.reg
+ reg import disable.reg
+
+###################################
+# Startup File
+###################################
+startup file ("@PROGRAMFILESX86@\Free Download Manager\fdm.exe")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+batch
+ rmdir c:\Workspace /s /q
+ rmdir c:\wget /s /q
+ rmdir c:\Python34 /s /q
+
+meta tag=tag
