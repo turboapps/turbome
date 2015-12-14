@@ -1,0 +1,95 @@
+#
+# BlueGriffon turbo.me file
+# https://github.com/turboapps/turbome/tree/master/bluegriffon
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="BlueGriffon"
+meta namespace="bluegriffon"
+meta name="bluegriffon"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd pip install requests --quiet
+
+# Get download url and version
+batch
+    echo import requests >> getRelease.py
+    echo import re >> getRelease.py
+    echo host = 'http://bluegriffon.org/freshmeat' >> getRelease.py
+    echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+    echo r = requests.get(host , headers=headers, timeout=10, verify=False) >> getRelease.py
+    echo tag = max(re.findall('(?:\d+\.)+\d+(?=\/)', r.text)) >> getRelease.py
+    echo url = '{0}/{1}/bluegriffon-{1}.exe'.format(host,tag) >> getRelease.py
+    echo print((url, tag)) >> getRelease.py
+
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var version=last
+
+# Download
+cmd "wget --no-check-certificate --no-verbose -O installer.exe %url%"
+
+# Install
+cmd installer.exe /verysilent /nocancel
+
+# Turn off auto-updates
+batch
+    echo with open('c:\\Program Files (x86)\\BlueGriffon\\defaults\\pref\\bluegriffon-prefs.js', 'r+') as pref: >> noUpdates.py
+    echo     settings = pref.read() >> noUpdates.py
+    echo     for key in ["extensions.update.autoUpdateDefault", "extensions.update.enabled", "bluegriffon.updates.check.enabled"]: >> noUpdates.py
+    echo         settings = settings.replace('\"{0}\", true'.format(key), '\"{0}\", false'.format(key)) >> noUpdates.py
+    echo     pref.seek(0) >> noUpdates.py
+    echo     pref.write(settings) >> noUpdates.py
+    echo     pref.truncate() >> noUpdates.py
+
+cmd python noUpdates.py
+    
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\wget /s /q
+cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILESX86@\BlueGriffon\bluegriffon.exe")
