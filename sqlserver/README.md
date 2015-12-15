@@ -129,7 +129,7 @@ PS C:\demo>
 
 The image was pushed to the `simpledemo` repository in `sqlservercentral` organization with tag `1:0`.
 
-Finally, you may follow the hyperlink printed by the script output to visit the repository page in the Turbo Hub. 
+Finally, you may follow the hyperlink printed in the script output to visit the repository page in the Turbo Hub. 
 
 ### Batch mode
 
