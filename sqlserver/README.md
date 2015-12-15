@@ -2,19 +2,22 @@
 Content image provides content specific to the article for which the image is being created.
 Typically this is a SQL script and a sample database, but could also other resources.
 This document describes how to create a content image using a PowerShell script.
+For example content images visit [SQL Server Central](https://turbo.net/hub/sqlservercentral) repository in the Turbo Hub.
 
 ## Before you start
 * Create a sample SQL Server database, detach it and copy to a separate directory
 * Prepare a SQL script which should be executed in the demo
 * Download `Build-ContentLayer.ps1` PowerShell script available on [GitHub](https://github.com/turboapps/turbome/blob/master/sqlserver/content-layer/Build-ContentLayer.ps1)
-* Enable execution of PowerShell scripts. If execution of PowerShell scripts is disabled on your machine open PowerShell console as administrator and run Cmdlet `Set-ExecutionPolicy RemoteSigned`. RemoteSigned policy means that downloaded scripts must come from a trusted publisher. For more information about execution policies refer to Set-ExecutionPolicy Cmdlet documentation.
+* Enable execution of PowerShell scripts on the host machine. If execution of PowerShell scripts is disabled, open PowerShell console as administrator and run `Set-ExecutionPolicy RemoteSigned` Cmdlet.
+RemoteSigned policy prohibits running downloaded scripts unless they come from a trusted publisher.
+For more information about execution policies refer to [Set-ExecutionPolicy Cmdlet](https://technet.microsoft.com/en-us/library/ee176961.aspx) documentation.
 
 Tutorial section assumes that commands presented below are executed in the `C:\demo` working directory which contains 3 elements:
-* `DATA` - directory with sample database files
-* `script.sql` - SQL script with demo commands
+* `DATA` - directory with a sample database
+* `script.sql` - SQL script to run the demo
 * `Build-ContentLayer.ps1` - the PowerShell script downloaded before
 
-Example
+### Example
 ```
 c:\demo>dir
  Volume in drive C has no label.
@@ -34,7 +37,7 @@ c:\demo>dir
 
 ## Tutorial
 
-Open PowerShell console in `c:\demo` working directory
+* Open PowerShell console in `c:\demo` working directory
 
 ```
 c:\demo>powershell
@@ -44,7 +47,12 @@ Copyright (C) 2014 Microsoft Corporation. All rights reserved.
 PS c:\demo>
 ```
 
-Run the PowerShell script to build an image with content layer in fully interactive mode. PowerShell script will ask to specify each required parameter. After successful build of the image, the script will stop and ask for permissions to execute a test run and push the image.
+* Run the PowerShell script to build an image with content layer.
+
+The script will be executed in a fully interactive mode.
+If a parameter is required, the script will stop and print a question asking a user to provide it.
+The script can also be run in a batch mode without interruptions.
+An example of such run is presented at the end of this section.
 
 ```
 PS c:\demo> .\Build-ContentLayer.ps1
@@ -69,6 +77,18 @@ Commit complete
 Output image: simpledemo
 Removed intermediate container 07d24bb9c6314fcb8a497ee57b1ad57d
 ```
+
+The script built a content layer image using `script.sql` file and a sample database from `DATA` directory. The output image was saved in the local repository as `simpledemo`.
+
+* Execute a test run.
+
+After a successful build of the image, the script will stop and ask for permissions to perform a test run.
+This step is optional and provided to enable final validation of the image.
+The content layer will be executed in a container with the mssql2014-labsuite image which provides SQL Server 2014 Express and SQL Server Management Studio 2014.
+The sample database will be automatically attached to the SQL Server instance during bootstrap.
+Then the SQL Server Management Studio will be launched. The SQL script provided by the content layer will be opened in the current query window.
+To complete the test run close the SQL Server Management Studio.
+
 ```
 Run Image
 Would you like to run the image now?
@@ -82,6 +102,12 @@ Using image mssql2014-labsuite:3 from local
 Running new container 0fe37b34 with visibility private
 Process exited with status 0
 ```
+
+* Publish the image to the Turbo Hub.
+
+After a test run, the PowerShell script will stop and ask for permissions to push the content layer to the remote repository.
+This step is optional. If a push is performed, the image will be available to run from the website.
+
 ```
 Push Image
 Would you like to push the image to the Turbo Hub?
@@ -89,23 +115,27 @@ Would you like to push the image to the Turbo Hub?
 Provide name of the remote image or press [Enter] if defaults are ok: sqlservercentral/simpledemo:1.0
 ```
 ```
-Executing: turbo push SimpleDemo sqlservercentral/simpledemo:1.0
+Executing: turbo push simpledemo sqlservercentral/simpledemo:1.0
 Using image simpledemo from local
-Pushing image SimpleDemo to sqlservercentral/simpledemo:1 (0%)
-Pushing image SimpleDemo to sqlservercentral/simpledemo:1 (0%; 0.00B of 64.2KB)
-Pushing image SimpleDemo to sqlservercentral/simpledemo:1 (8%; 5.28KB of 64.2KB)
-Pushing image SimpleDemo to sqlservercentral/simpledemo:1
+Pushing image simpledemo to sqlservercentral/simpledemo:1 (0%)
+Pushing image simpledemo to sqlservercentral/simpledemo:1 (0%; 0.00B of 64.2KB)
+Pushing image simpledemo to sqlservercentral/simpledemo:1 (8%; 5.28KB of 64.2KB)
+Pushing image simpledemo to sqlservercentral/simpledemo:1
 Push complete
 Image is public
 You may visit repo page https://turbo.net/hub/sqlservercentral/simpledemo in Turbo Hub and update image metadata
 PS C:\demo>
 ```
 
-The script built a content layer image using `script.sql` file and a sample database from `DATA` directory. The output image was saved in the local repository as `simpledemo`. After successful build the PowerShell script executed a test run.
+The image was pushed to the `simpledemo` repository in `sqlservercentral` organization with tag `1:0`.
 
-As soon as SQL Management Studio was closed the script asked if the image should have been published to the Turbo Hub. Finally, image was pushed to the `simpledemo` repository in `sqlservercentral` organization with tag `1:0`.
+Finally, you may follow the hyperlink printed by the script output to visit the repository page in the Turbo Hub. 
 
-The PowerShell script can also be executed in non-interactive mode by passing required parameters in command line.
+### Batch mode
+
+The PowerShell script allows to pass required parameters in a command line. If a parameter is specified beforehand, the script will not stop execution and ask to provide it.
+
+The example below builds a content layer image and pushes it to a remote repository without performing a test run.
 
 ```
 PS C:\demo> .\Build-ContentLayer.ps1 -SqlFile script.sql -DatabaseDir DATA -OutputImage simpledemo -DeclineRun -ConfirmPush -RemoteImage 'sqlservercentral/simpledemo:2.0'
@@ -134,3 +164,22 @@ Image is public
 You may visit repo page https://turbo.net/hub/sqlservercentral/simpledemo in Turbo Hub and update image metadata
 PS C:\demo>
 ```
+
+For more information about command line syntax use `Get-Help` Cmdlet.
+
+```
+PS C:\demo> Get-Help .\Build-ContentLayer.ps1
+
+NAME
+    C:\demo\Build-ContentLayer.ps1
+
+SYNOPSIS
+    Script builds content layer images for SQL Server 2014 Lab Suite.
+
+
+SYNTAX
+    C:\demo\Build-ContentLayer.ps1 [-OutputImage] <String> [-SqlFile] <String>
+    [-DatabaseDir] <String> [-ConfirmRun] [-DeclineRun] [-ConfirmPush]
+    [-DeclinePush] [[-RemoteImage] <String>] [<CommonParameters>]
+```
+
