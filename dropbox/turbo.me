@@ -48,6 +48,11 @@ batch
 	timeout /t 600
 	taskkill /F /IM DropboxUpdate.exe /T
 
+workdir @PROGRAMFILESX86@
+batch
+	taskkill /F /IM DropboxUpdate.exe /T
+	del Dropbox\Update\DropboxUpdate.exe /Q
+
 ###################################
 # Startup File
 ###################################
@@ -70,4 +75,5 @@ batch
 	rmdir c:\wget /s /q
 	rmdir c:\Python34 /s /q
 	# remove last DropboxUpdate.exe process
-	taskkill /F /IM DropboxUpdate.exe /T
+	# taskkill /F /IM DropboxUpdate.exe /T
+		
