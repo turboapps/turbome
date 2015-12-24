@@ -1,0 +1,75 @@
+#
+# [Project name] turbo.me file
+# https://github.com/turboapps/turbome/tree/master/[path_to_turbo.me]
+#
+# Created with Turbo CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title=""
+meta namespace=""
+meta name=""
+meta tag=""
+
+###################################
+# Pull dependency images
+###################################
+
+# layer clean
+# using wget, 7-zip
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+# workdir C:\
+
+# Download
+# Example: using wget
+ 
+# cmd wget --no-check-certificate --no-verbose -O Setup.exe http://notepad-plus-plus.org/download/
+
+# Download
+# Example: fosshub requires a dynamically generated link
+
+# cmd "wget.exe -qO- --referer=http://www.fosshub.com/ConEmu.html http://www.fosshub.com/genLink/ConEmu/ConEmuPack.151222.7z > downloadlink.txt"
+# cmd wget.exe -i downloadlink.txt
+
+# Install
+
+# cmd 7z x -oconemu ConEmuPack.151222.7z
+
+###################################
+# Environment Variables
+###################################
+
+# Example: 
+
+# env path="@SYSDRIVE@\conemu"
+
+
+###################################
+# Clean up
+###################################
+
+# cmd del C:\ConEmuPack.151222.7z /Q
+# cmd del C:\downloadlink.txt /Q
+
+
+###################################
+# Startup File
+###################################
+
+# Example 1: console message:
+# startup file ("cmd","/k echo Project version: ", version)
+# 
+# Example 2: run app
+# startup file 
+# startup file ("c:\Notepad++\notepad")
+# startup file ("@SYSDRIVE@\conemu\ConEmu.exe")
