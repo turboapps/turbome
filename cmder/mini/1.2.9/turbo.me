@@ -1,0 +1,57 @@
+#
+# cmder turbo.me file
+# https://github.com/turboapps/turbome/tree/master/cmder
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="cmder"
+meta namespace="cmder"
+meta name="cmder-mini"
+meta tag="1.2.9"
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using wget, 7-zip
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir C:\
+
+# Download
+cmd wget.exe --no-check-certificate -O cmder.zip https://github.com/bliker/cmder/releases/download/v1.2.9/cmder_mini.zip
+
+# Install
+cmd 7z x -ocmder cmder.zip 
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="@SYSDRIVE@\cmder"
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@SYSDRIVE@\cmder\cmder.exe")
+
+
+###################################
+# Clean up
+###################################
+
+cmd del C:\cmder.zip /Q
