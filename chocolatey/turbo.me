@@ -17,7 +17,8 @@ meta name="chocolatey"
 # Pull dependency images
 ###################################
 
-layer microsoft/dotnet:4.0.3
+using microsoft/dotnet:4.5.2
+using microsoft/powershell:3.0
 using python/python:3.4.1
 
 ###################################
@@ -30,7 +31,7 @@ workdir c:\Workspace
 
 cmd "@powershell -NoProfile -ExecutionPolicy unrestricted -Command ""(iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1"" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
 
-# Update chocolatey
+# Force chocolatey update
 batch
   chocolatey update -y
   echo 1
@@ -44,12 +45,6 @@ batch
 
 cmd python getVersion.py
 var version = last
-
-###################################
-# Environment Variables
-###################################
-
-# not needed
 
 
 ###################################
@@ -67,10 +62,3 @@ cmd rmdir C:\python34 /s /q
 
 meta tag=version
 meta version=version
-
-
-###################################
-# Startup File
-###################################
-
-# startup file ("cmd","/k echo Chocolatey version: ", version)
