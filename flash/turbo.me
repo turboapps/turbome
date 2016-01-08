@@ -34,14 +34,15 @@ workdir c:\Workspace
 # Get version
 cmd pip install requests --quiet
 
+# Extract the latest Adobe Flash Player version for Win and Mac
 batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo host = 'http://www.adobe.com/support/flashplayer/downloads.html' >> getRelease.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getRelease.py
+ echo host = "http://www.adobe.com/support/flashplayer/downloads.html" >> getRelease.py
+ echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >>  getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(re.findall('(\d*\.\d*.\d*\.\d*) \(Win and Mac\)', r.text)[0]) >> getRelease.py
+ echo print(re.findall("(\d+\.\d+.\d+\.\d+)\s+\(Win(?:\s+\w*)?\s+and\s+Mac\)", r.text)[0]) >> getRelease.py
 
 cmd python getRelease.py
 
@@ -51,7 +52,7 @@ cmd "python -c ""print('%tag%'.split('.')[0])"""
 var version = last
 
 # Download
-cmd "wget -O setup.msi --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_%version%_plugin.msi"
+cmd "wget -O setup.msi --no-verbose --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_%version%_plugin.msi"
 
 # Install
 cmd "setup.msi /qn"
