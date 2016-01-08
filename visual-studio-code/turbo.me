@@ -14,6 +14,7 @@ meta name = "vscode"
 
 using wget,python:3.4.1,7-zip
 cmd pip install requests --quiet
+cmd pip install pypiwin32 --quiet
 
 ###################################
 # Download and install
@@ -27,7 +28,7 @@ workdir @SYSDRIVE@\Workspace
 batch
   echo import sys, requests, re >> getUrl.py
   echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getUrl.py
-  echo r = requests.get("https://code.visualstudio.com/Docs/", headers=headers, verify=False) >> getUrl.py
+  echo r = requests.get("https://code.visualstudio.com/Docs/", headers=headers, verify=False, timeout=10) >> getUrl.py
   echo print(re.findall("\'winzip\':\s\'(https?:\/\/go\.microsoft\.com\/fwlink\/\?LinkID=\d+)\'", r.text)[0]) >> getUrl.py
 
 cmd python getUrl.py
@@ -38,10 +39,11 @@ cmd "7z x vscode.zip -o@SYSDRIVE@\vscode | find /v ""ing  """
 
 # Get the latest version tag using sigcheck
 batch
-  echo import sys, requests, re >> getTag.py
-  echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getTag.py
-  echo r = requests.get("https://code.visualstudio.com/Updates", headers=headers, verify=False) >> getTag.py
-  echo print(re.findall("<h1>v([0-9.]+)", r.text)[0]) >> getTag.py
+  echo import win32api >> getTag.py
+  echo info = win32api.GetFileVersionInfo("C:\\vscode\\code.exe", "\\") >> getTag.py
+  echo ms = info["FileVersionMS"] >> getTag.py
+  echo ls = info["FileVersionLS"] >> getTag.py
+  echo print("{0}.{1}.{2}".format(win32api.HIWORD(ms), win32api.LOWORD (ms), win32api.HIWORD (ls))) >> getTag.py
 
 cmd python getTag.py
 var tag = last
