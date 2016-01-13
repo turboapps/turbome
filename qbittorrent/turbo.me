@@ -15,11 +15,15 @@ meta title="qBittorrent"
 meta namespace="qbittorrent"
 meta name="qbittorrent"
 
+
 ###################################
 # Pull dependency images
 ###################################
 
-using gnu/wget,python/python:3.4.1
+using gnu/wget
+
+# Required for qBittorrent search engine
+layer python/python:3.4.1
 
 
 ###################################
@@ -63,12 +67,12 @@ batch
 
 # Turn off update notification
 cmd mkdir %USERPROFILE%\AppData\Roaming\qBittorrent
-cmd cd %USERPROFILE%\AppData\Roaming\qBittorrent
 batch
-    echo "[Preferences]" >> qBittorrent.ini
-    echo "Advanced\updateCheck=false" >> qBittorrent.ini
+    cd %USERPROFILE%\AppData\Roaming\qBittorrent
+    echo [Preferences] >> qBittorrent.ini
+    echo Advanced\updateCheck=false >> qBittorrent.ini
 
-
+    
 ###################################
 # Clean up
 ###################################
@@ -77,7 +81,6 @@ workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir C:\wget /s /q
-cmd rmdir C:\python34 /s /q
 
 ###################################
 # Version
