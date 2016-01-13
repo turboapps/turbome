@@ -1,0 +1,93 @@
+#
+# qBittorrent turbo.me file
+# https://github.com/turboapps/turbome/tree/master/qbittorrent
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="qBittorrent"
+meta namespace="qbittorrent"
+meta name="qbittorrent"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd pip install requests --quiet
+
+# Get download url and version
+batch
+    echo import requests >> getRelease.py
+    echo import re >> getRelease.py
+    echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+    echo r = requests.get("http://www.qbittorrent.org/download.php" , headers=headers, timeout=10, verify=False) >> getRelease.py
+    echo tag = max(re.findall("(?<=qbittorrent\-)(?:\d+\.)+\d+(?=\/)", r.text)) >> getRelease.py
+    echo url = "http://sourceforge.net/projects/qbittorrent/files/qbittorrent-win32/qbittorrent-{0}/qbittorrent_{0}_setup.exe/download".format(tag) >> getRelease.py
+    echo print((url, tag)) >> getRelease.py
+
+cmd python getRelease.py
+var res=last
+
+cmd "python -c ""print( %res% [0])"""
+var url=last
+
+cmd "python -c ""print( %res% [1])"""
+var version=last
+
+# Download
+cmd "wget --no-verbose -O installer.exe %url%"
+
+# Install
+# Ignore installer exit code
+batch
+    installer.exe /S
+    exit /b 0
+
+# Turn off update notification
+cmd mkdir %USERPROFILE%\AppData\Roaming\qBittorrent
+cmd cd %USERPROFILE%\AppData\Roaming\qBittorrent
+batch
+    echo "[Preferences]" >> qBittorrent.ini
+    echo "Advanced\updateCheck=false" >> qBittorrent.ini
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\wget /s /q
+cmd rmdir C:\python34 /s /q
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILESX86@\qBittorrent\qbittorrent.exe")
