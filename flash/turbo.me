@@ -57,6 +57,11 @@ cmd "wget -O setup.msi --no-verbose --no-check-certificate http://download.macro
 # Install
 cmd "setup.msi /qn"
 
+# Disable protected mode - temporary workaround for Firefox hangs on pages containing Flash content
+batch
+    echo ProtectedMode=0 >> %SYSTEMROOT%\system32\macromed\flash\mms.cfg
+    echo ProtectedMode=0 >> %SYSTEMROOT%\syswow64\macromed\flash\mms.cfg
+
 
 ###################################
 # Environment Variables
