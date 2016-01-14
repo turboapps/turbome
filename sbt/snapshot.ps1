@@ -6,7 +6,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 $content = (Invoke-WebRequest -URI "http://www.scala-sbt.org/download.html").Content
-$content -match '"(?<downloadlink>.*?sbt\-\d+\.(?<version>\d+\.\d+\.\d+).msi)"' | Out-Null
+$content -match '"(?<downloadlink>.*?sbt\-(?<version>\d+\.\d+\.\d+\.\d+).msi)"' | Out-Null
 if (-not $Matches) {
     Write-Error "Failed to find SBT version"
     exit 1
