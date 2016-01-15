@@ -8,105 +8,12 @@
 # Installation for a single user
 Write-Host "Installing application"
 & msiexec /i "C:\vagrant\install\install.msi" /qn ALLUSERS="2" MSIINTSTALLPERUSER="1" | Out-Null
-# & msiexec /q /i "C:\vagrant\install\install.msi" | Out-Null
-
-#Write-Host "Turning off auto update and default browser check"
-#$SoftwarePoliciesPath = "Registry::HKLM\Software\Policies\Google"
-#$SoftwareWOWPoliciesPath = "Registry::HKLM\Software\Wow6432Node\Policies\Google"
-
-#function Create-PathIfNotExist($path)
-#{
-#    if(-not (Test-Path $path))
-#    {
-#        New-Item $path
-#    }   
-#}
-
-# Turn off check if Chrome should be default browser, deactive autoupdates
-#function Conifgure-Chrome($policyRoot)
-#{
-#    $UpdatePath = "$policyRoot\Update"
-#    $ChromePath = "$policyRoot\Chrome"
-#    
-#    Create-PathIfNotExist $policyRoot
-#    Create-PathIfNotExist $ChromePath
-#    Create-PathIfNotExist $UpdatePath
-    
-#    New-ItemProperty -Path $ChromePath -PropertyType DWORD -Name DefaultBrowserSettingEnabled -Value 0 -Force
-#    New-ItemProperty -Path $UpdatePath -PropertyType DWORD -Name AutoUpdateCheckPeriodMinutes -Value 0 -Force
-#    New-ItemProperty -Path $UpdatePath -PropertyType DWORD -Name DisableAutoUpdateChecksCheckboxValue -Value 1 -Force
-#    New-ItemProperty -Path $UpdatePath -PropertyType DWORD -Name "Update{8A69D345-D564-463C-AFF1-A69D9E530F96}" -Value 0 -Force
-#    New-ItemProperty -Path $UpdatePath -PropertyType DWORD -Name UpdateDefault -Value 0 -Force
-#}
-
-#Conifgure-Chrome $SoftwarePoliciesPath
-#Conifgure-Chrome $SoftwareWOWPoliciesPath
-
 
 # Chrome running for the first time may show 'Welcome Dialog' which imports settings from another browser.
 # Clicking 'Next' button in the dialog does not work in a container.
 # To prevent showing 'Welcome Dialog' in container runs, we launch Chrome for the first time before taking 'after' snapshot.
 # Chrome process has to be closed gracefully, otherwise crash notification may be presented in a container run.
-
-function Get-ProcessWithMainWindow($processName)
-{
-    Write-Host (Get-Process | Where-Object {$_.Name -eq $processName} | Select-Object MainWindowHandle)
-    return (Get-Process | Where-Object {$_.MainWindowTitle -ne '' -and $_.Name -eq $processName})
-}
-
-function Close-ProcessWithMainWindow($process)
-{
-    $counter = 0
-    while($counter -lt 10)
-    {
-        $counter += 1
-        try
-        {
-            $windowClosed = $process.CloseMainWindow()
-            if($windowClosed)
-            {
-                Sleep 1
-                $process.Refresh()
-                if($process.HasExited)
-                {
-                    return $true
-                }
-            }
-            else
-            {
-                Write-Warning "Failed to close ${process.Name} main window"
-            }
-        }
-        catch
-        {
-            # CloseMainWindow may fail if process exited
-            if($process.HasExited)
-            {
-                return $true
-            }
-        }
-    }
-   
-    Write-Error "Process ${process.Name} left running"
-    return $false
-}
-
-function Close-Eventually($processName)
-{
-    $counter = 0
-    while($counter -lt 10)
-    {
-        $counter += 1
-        Sleep 1
-        $process = Get-ProcessWithMainWindow $processName
-        if($process)
-        {
-            Write-Host "Found process " 
-            return Close-ProcessWithMainWindow $process
-        }
-    }
-    return $false
-}
+# Scheduled tasks are used to lauch Chrome with user interface from WinRM session.
 
 $StartChromeTask = 'Start Chrome'
 $CloseChromeTask = 'Close Chrome'
