@@ -108,6 +108,9 @@ function Close-Eventually($processName)
     return $false
 }
 
+$StartChromeTask = 'Start Chrome'
+$CloseChromeTask = 'Close Chrome'
+
 function Is-ScheduledTaskDefined ($taskName) {
     return Get-ScheduledTask | Where-Object {$_.TaskName -like $taskName}
 }
@@ -131,9 +134,6 @@ function Wait-ForScheduledTask ($taskName, $maxCount) {
         Write-Error "$taskName did not complete"
     }
 }
-
-$StartChromeTask = 'Start Chrome'
-$CloseChromeTask = 'Close Chrome'
 
 function Clean-ScheduledTasks()
 {
@@ -173,26 +173,29 @@ try
     }
     else
     {
-        throw 'Failed to launch Chrome'
+        Write-Error 'Failed to launch Chrome'
+        Exit 1
     }
     
     $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes("(Get-Process | Where-Object {`$_.Name -eq 'chrome' -and `$_.MainWindowTitle -ne ''}).CloseMainWindow()"))
     $taskAction = New-ScheduledTaskAction -Execute PowerShell.exe -Argument "-EncodedCommand $encodedCommand"
     Register-ScheduledTask -Action $taskAction -TaskName $CloseChromeTask | Out-Null
-    Start-ScheduledTask $CloseChromeTask
-    
-    Wait-ForScheduledTask $CloseChromeTask 60
     
     $counter = 0
     while(($counter -lt 10) -and $isChromeRunning)
     {
-        Sleep 1
+        Sleep 5
+        
+        Start-ScheduledTask $CloseChromeTask
+        Wait-ForScheduledTask $CloseChromeTask 60
+        
         $counter += 1
         $isChromeRunning = Is-ChromeRunning
     }
     if($isChromeRunning)
     {
-        throw 'Failed to close Chrome'
+        Write-Error 'Failed to close Chrome'
+        Exit 1
     } else {
         Write-Host 'Closed Chrome correctly'
     }
@@ -231,7 +234,7 @@ else
 }
 
 #
-# Set preferences
+# Overwrite default preferences
 #
 
 function Set-PreferenceProperty($filepath, $category, $property, $value)
@@ -252,6 +255,7 @@ function Set-PreferenceProperty($filepath, $category, $property, $value)
     return $true
 }
 
+Write-Host "Overwriting default preferences"
 
 $preferencesPath = "${env:USERPROFILE}\AppData\Local\Google\Chrome\User Data\Default\Preferences"
 
