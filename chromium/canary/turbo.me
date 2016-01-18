@@ -5,30 +5,66 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+###################################
+# Meta tags
+###################################
+
 meta title="Chromium Canary"
 meta namespace="google"
 meta name="chromium-canary"
 
+
+###################################
+# Pull dependency images
+###################################
+
 using clean,python:3.4.1,wget,7-zip
 
-workdir c:\
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install "requests" module for python
+cmd pip install requests --quiet
+
+cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/tools/python/GetChromiumUrl.py
+cmd python GetChromiumUrl.py
+var download_url = last
 
 batch cmd
-	mkdir c:\Workspace & cd c:\Workspace
-	wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/tools/python/GetChromiumUrl.py
-	pip install requests --quiet
-	python GetChromiumUrl.py > download_url.txt
-	set /p DOWNLOAD_URL=<download_url.txt
-	wget -O chrome-win32.zip --no-check-certificate --no-verbose "%DOWNLOAD_URL%"
+	wget -O chrome-win32.zip --no-check-certificate --no-verbose "%download_url%"
 	7z x chrome-win32.zip -y >nul
 	mkdir c:\Chromium
 	robocopy chrome-win32 c:\Chromium *.* /e /move >nul
-	cd c:\
-	rmdir c:\Workspace /s /q
-	rmdir c:\Python34 /s /q
-	rmdir c:\wget /s /q
+	exit /b 0
+    
+    
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir C:\wget /s /q
+cmd rmdir C:\python34 /s /q
+
+
+###################################
+# Version
+###################################
 	
 meta tag=dateiso
 meta website="%DOWNLOAD_URL%"
 meta version="%DATE%"
+
+
+###################################
+# Startup File
+###################################
+
 startup file ("c:\Chromium\chrome.exe")
