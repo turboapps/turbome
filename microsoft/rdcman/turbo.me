@@ -1,0 +1,68 @@
+#
+# Remote Desktop Connection Manager turbo.me file
+# https://github.com/turboapps/turbome/tree/master/microsoft/rdcman]
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Remote Desktop Connection Manager"
+meta namespace="microsoft"
+meta name="rdcman"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.1.19
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install
+cmd choco install rdcman --x86 --confirm
+
+# Get product version
+cmd powershell -command "Import-Module Turbo; Get-LatestChocoPackageVersion rdcman | Set-Content image.txt"
+cmd findstr "." image.txt
+var version = last
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+# cmd rmdir "%APPDATA%\Nuget" /s /q
+# cmd rmdir "%ProgramData%\chocolatey" /s /q
+# cmd rmdir "%LOCALAPPDATA%\Nuget" /s /q
+# cmd rmdir "%LOCALAPPDATA%\Temp" /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILESX86@\Microsoft\Remote Desktop Connection Manager\RDCMan.exe")
+

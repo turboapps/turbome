@@ -1,0 +1,64 @@
+#
+# TurboScript Build Tools turbo.me file
+# https://github.com/turboapps/turbome/tree/master/tools]
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="TurboScript Build Tools"
+meta namespace="turbo"
+meta name="turboscript-tools"
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer chocolatey/chocolatey:0.9.9.11
+layer python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# cmd pip install requests --quiet
+# cmd pip install pypiwin32 --quiet
+
+
+###################################
+# Environment Variables
+###################################
+
+env PSModulePath="C:\Windows\SysWOW64\WindowsPowerShell\v1.0\Modules\;C:\TurboBuildTools\PowerShell"
+
+
+###################################
+# Version
+###################################
+
+workdir c:\
+batch
+    mkdir C:\TurboBuildTools\PowerShell\Turbo
+    copy C:\Scripts\PowerShell\Turbo.psm1 C:\TurboBuildTools\PowerShell\Turbo
+
+###################################
+# Version
+###################################
+
+var version=1
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd.exe", "/k echo TurboScript Build Tools version:", version)
+
