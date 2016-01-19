@@ -5,6 +5,15 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+###################################
+# Meta tags
+###################################
+
+meta title="7-zip Console"
+meta namespace="7-zip"
+meta name="7-zip-console"
+meta tag="9.20"
+
 
 ###################################
 # Pull dependency images
@@ -39,7 +48,7 @@ env path="@PROGRAMFILESX86@\7-zip"
 # Startup File
 ###################################
 
-startup file ("@PROGRAMFILESX86@\7-zip\7zFM.exe")
+startup file ("cmd", "/k 7z.exe")
 
 
 ###################################
