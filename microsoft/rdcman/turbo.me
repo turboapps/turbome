@@ -20,7 +20,7 @@ meta name="rdcman"
 # Pull dependency images
 ###################################
 
-using turbo/turboscript-tools:2016.1.19
+using turbo/turboscript-tools:2016.1.20
 
 
 ###################################
@@ -45,12 +45,8 @@ var version = last
 ###################################
 
 workdir c:\
-
 cmd rmdir c:\Workspace /s /q
-# cmd rmdir "%APPDATA%\Nuget" /s /q
-# cmd rmdir "%ProgramData%\chocolatey" /s /q
-# cmd rmdir "%LOCALAPPDATA%\Nuget" /s /q
-# cmd rmdir "%LOCALAPPDATA%\Temp" /s /q
+cmd powershell -command "Import-Module Turbo; Remove-BuildTools"
 
 
 ###################################
