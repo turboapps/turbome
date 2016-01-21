@@ -20,7 +20,7 @@ meta name="rdcman"
 # Pull dependency images
 ###################################
 
-using turbo/turboscript-tools:2016.1.20
+using turbo/turboscript-tools:2016.1.21
 
 
 ###################################
@@ -35,7 +35,8 @@ workdir c:\Workspace
 cmd choco install rdcman --x86 --confirm
 
 # Get product version
-cmd powershell -command "Import-Module Turbo; Get-LatestChocoPackageVersion rdcman | Set-Content image.txt"
+cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
+cmd powershell -command ". .\Get-LatestChocoVersion.ps1; Get-LatestChocoVersion -Package rdcman" > image.txt
 cmd findstr "." image.txt
 var version = last
 
@@ -44,9 +45,11 @@ var version = last
 # Clean up
 ###################################
 
+cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+
 workdir c:\
 cmd rmdir c:\Workspace /s /q
-cmd powershell -command "Import-Module Turbo; Remove-BuildTools"
+cmd rmdir c:\TurboBuildTools /s /q
 
 
 ###################################
