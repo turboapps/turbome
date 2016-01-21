@@ -1,4 +1,9 @@
-﻿function Get-LatestChocoVersion
+﻿# Extract the latest version of Chocolatey package
+# 
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+function Get-LatestChocoVersion
 {
     [CmdletBinding()]
     param

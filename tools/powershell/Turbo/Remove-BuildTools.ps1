@@ -1,4 +1,11 @@
-﻿ function Remove-BuildTools
+﻿# Performs cleanup of a container created using turbo/turboscript-tools
+# Does not remove c:\TurboBuildTools which contains this script
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+ 
+ function Remove-BuildTools
  {
     process
     {

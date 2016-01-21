@@ -1,4 +1,9 @@
-﻿function Get-XPath($prefix, $segmentName, $path)
+﻿# Functions for XAPPL modifications
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+function Get-XPath($prefix, $segmentName, $path)
 {
     $xpath = $prefix
     $segments = $path.Split("\")
