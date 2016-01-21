@@ -69,6 +69,12 @@ function Remove-FileSystemDirectoryItems($xappl, $path)
     }
 }
 
+function Remove-FileSystemItems($xappl, $path)
+{
+    $xpath = Get-FileSystemXPath $path
+    $xappl.SelectNodes($xpath) | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
+}
+
 function Remove-RegistryItems($xappl, $path)
 {
     $xpath = Get-RegistryXPath $path
@@ -85,6 +91,7 @@ Export-ModuleMember -Function 'Get-LatestChocoVersion'
 Export-ModuleMember -Function 'Read-XAPPL'
 Export-ModuleMember -Function 'Remove-BuildTools'
 Export-ModuleMember -Function 'Remove-FileSystemDirectoryItems'
+Export-ModuleMember -Function 'Remove-FileSystemItems'
 Export-ModuleMember -Function 'Remove-RegistryItems'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
