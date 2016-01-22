@@ -1,0 +1,69 @@
+#
+# WebEx Player turbo.me file
+# https://github.com/turboapps/turbome/tree/master/webex/player]
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="WebEx Player"
+meta namespace="webex"
+meta name="webex-player"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.1.22
+using wget
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install
+cmd wget --quiet --no-check-certificate -O nbr2player.msi https://welcome.webex.com/client/wbxclient/nbr2player.msi
+cmd msiexec /i nbr2player.msi /quiet
+
+# Get product version
+cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
+cmd powershell -command ". .\Get-FileVersion.ps1; Get-FileVersion -Path nbr2player.msi -Source Comments" > image.txt
+cmd findstr "." image.txt
+var version = last
+
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+cmd rmdir c:\wget /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@APPDATACOMMON@\webex\WebEx\500\nbrplay.exe")
