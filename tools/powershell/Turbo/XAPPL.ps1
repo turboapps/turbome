@@ -86,12 +86,71 @@ function Disable-Services($xappl)
     $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.autoStart = "false" }
 }
 
+#    <StartupFile node="@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe" tag="" commandLine="https://signin.webex.com/collabs/#/meetings/joinbynumber" default="True" architecture="AnyCpu" />
+#    <StartupFile node="@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe" tag="join" commandLine="https://signin.webex.com/collabs/#/meetings/joinbynumber" architecture="AnyCpu" />
+#    <StartupFile node="@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe" tag="host" commandLine="https://signin.webex.com/collabs/auth?service=it&amp;from=hostmeeting" architecture="AnyCpu" />
+
+function Add-StartupFile
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+	    [XML] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $File,
+        [Parameter(Mandatory=$False)]
+        [string] $CommandLine = $null,
+        [Parameter(Mandatory=$False)]
+        [string] $Architecture = "AnyCpu",
+        [Parameter(Mandatory=$False)]
+        [string] $Name = $null,
+        [Parameter(Mandatory=$False)]
+        [switch] $Autostart = $False
+    )
+    process
+    {
+        $startupFileGroup = $xappl.SelectSingleNode('Configuration/StartupFiles')
+
+        $startupFile = $Xappl.CreateElement('StartupFile')
+        $startupFileGroup.AppendChild($startupFile) | Out-Null
+
+        function Add-Attribute($name, $value) {
+            $attribute = $Xappl.CreateAttribute($name)
+            $attribute.Value = $value
+            $startupFile.Attributes.Append($attribute) | Out-Null
+        }
+
+        Add-Attribute 'node' $File
+        Add-Attribute 'tag' $Name
+
+        if($CommandLine)
+        {
+            Add-Attribute 'commandLine' $CommandLine
+        }
+
+        if($AutoStart)
+        {
+            Add-Attribute 'default' 'True'
+        }
+
+        Add-Attribute 'architecture' $Architecture
+    }
+}
+
+function Remove-StartupFiles($xappl)
+{
+    $xappl.SelectNodes('Configuration/StartupFiles/*') | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
+}
+
+Export-ModuleMember -Function 'Add-StartupFile'
 Export-ModuleMember -Function 'Disable-Services'
 Export-ModuleMember -Function 'Get-LatestChocoVersion'
 Export-ModuleMember -Function 'Read-XAPPL'
 Export-ModuleMember -Function 'Remove-BuildTools'
 Export-ModuleMember -Function 'Remove-FileSystemDirectoryItems'
 Export-ModuleMember -Function 'Remove-FileSystemItems'
+Export-ModuleMember -Function 'Remove-StartupFiles'
 Export-ModuleMember -Function 'Remove-RegistryItems'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
