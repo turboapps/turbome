@@ -86,10 +86,6 @@ function Disable-Services($xappl)
     $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.autoStart = "false" }
 }
 
-#    <StartupFile node="@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe" tag="" commandLine="https://signin.webex.com/collabs/#/meetings/joinbynumber" default="True" architecture="AnyCpu" />
-#    <StartupFile node="@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe" tag="join" commandLine="https://signin.webex.com/collabs/#/meetings/joinbynumber" architecture="AnyCpu" />
-#    <StartupFile node="@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe" tag="host" commandLine="https://signin.webex.com/collabs/auth?service=it&amp;from=hostmeeting" architecture="AnyCpu" />
-
 function Add-StartupFile
 {
     [CmdletBinding()]
