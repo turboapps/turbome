@@ -22,6 +22,6 @@ function Get-LatestChocoVersion
         {
             throw "More than one version is available: $Package"
         }
-        Write-Host $versions
+        return $versions
     }
 }
