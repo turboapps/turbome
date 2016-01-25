@@ -18,7 +18,7 @@ meta name="chromium-canary"
 # Pull dependency images
 ###################################
 
-using clean,python:3.4.1,wget,7-zip
+using clean,wget,7-zip
 
 
 ###################################
@@ -28,15 +28,8 @@ using clean,python:3.4.1,wget,7-zip
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Install "requests" module for python
-cmd pip install requests --quiet
-
-cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/tools/python/GetChromiumUrl.py
-cmd python GetChromiumUrl.py
-var download_url = last
-
 batch cmd
-	wget -O chrome-win32.zip --no-check-certificate --no-verbose "%download_url%"
+	wget -O chrome-win32.zip --no-check-certificate --no-verbose https://download-chromium.appspot.com/dl/Win?type=snapshots
 	7z x chrome-win32.zip -y >nul
 	mkdir c:\Chromium
 	robocopy chrome-win32 c:\Chromium *.* /e /move >nul
@@ -51,7 +44,6 @@ workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir C:\wget /s /q
-cmd rmdir C:\python34 /s /q
 
 
 ###################################
@@ -59,7 +51,6 @@ cmd rmdir C:\python34 /s /q
 ###################################
 	
 meta tag=dateiso
-meta website="%DOWNLOAD_URL%"
 meta version="%DATE%"
 
 
