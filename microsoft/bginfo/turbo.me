@@ -1,0 +1,80 @@
+#
+# Remote Desktop Connection Manager turbo.me file
+# https://github.com/turboapps/turbome/tree/master/microsoft/bginfo]
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="BgInfo"
+meta namespace="microsoft"
+meta name="bginfo"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.1.26
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install
+batch cmd
+    wget -O bginfo.zip --quiet --no-check-certificate https://download.sysinternals.com/files/bginfo.zip
+    7z x bginfo.zip -y > nul
+    mkdir c:\Sysinternals
+    robocopy . c:\Sysinternals * /XF *.zip /NFL /NDL /NJH /NJS
+    exit /b 0
+    
+# Get product version
+batch cmd
+    copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
+    powershell -command ". .\Get-FileVersion.ps1; Get-FileVersion -Path .\Bginfo.exe" > image.txt
+cmd findstr "." image.txt
+var version = last
+
+# Accept EULA
+batch cmd
+    echo Set-Location HKCU: >> acceptEula.ps1
+    echo New-Item -Path .\Software\Sysinternals >> acceptEula.ps1
+    echo New-Item -Path .\Software\Sysinternals\BGInfo >> acceptEula.ps1
+    echo New-ItemProperty -Path .\Software\Sysinternals\BGInfo -Name EulaAccepted -PropertyType DWORD -Value 1 >> acceptEula.ps1
+    powershell -File acceptEula.ps1
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("c:\Sysinternals\Bginfo.exe")
+
