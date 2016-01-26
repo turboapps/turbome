@@ -29,19 +29,17 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 batch cmd
-	wget -O chrome-win32.zip --no-check-certificate --no-verbose https://download-chromium.appspot.com/dl/Win?type=snapshots
+	wget -O chrome-win32.zip --no-check-certificate --no-verbose https://download-chromium.appspot.com/dl/Win?type=continuous
 	7z x chrome-win32.zip -y >nul
 	mkdir c:\Chromium
 	robocopy chrome-win32 c:\Chromium *.* /e /move >nul
 	exit /b 0
-    
     
 ###################################
 # Clean up
 ###################################
 
 workdir c:\
-
 cmd rmdir c:\Workspace /s /q
 cmd rmdir C:\wget /s /q
 
