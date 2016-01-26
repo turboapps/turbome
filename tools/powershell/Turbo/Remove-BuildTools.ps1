@@ -9,8 +9,16 @@
  {
     process
     {
-        $pathsToDelete = @("${env:APPDATA}\Nuget", "${env:ProgramData}\chocolatey", "${env:LOCALAPPDATA}\Nuget", "C:\Python34") | Where-Object { Test-Path $_ } 
-        Foreach($path in $pathsToDelete)
+        $pathsToDelete = @(
+            "${env:APPDATA}\Nuget",
+            "${env:ProgramData}\chocolatey",
+            "${env:LOCALAPPDATA}\Temp\Chocolatey",
+            "${env:LOCALAPPDATA}\Nuget\Temp\Nuget",
+            "${env:LOCALAPPDATA}\Nuget",
+            "C:\Python34",
+            "C:\wget",
+            "C:\7-zip") 
+        Foreach($path in ($pathsToDelete | Where-Object { Test-Path $_ }))
         {
             Remove-Item $path -Recurse -Force 
         }

@@ -17,7 +17,6 @@ function Get-FileVersion
     {
         if($Source -like 'FileVersion')
         {
-            $tag = $Matches['version']
             $versionInfo = (Get-Item -Path $Path).VersionInfo
             return ("{0}.{1}.{2}.{3}" -f $versionInfo.FileMajorPart, 
                 $versionInfo.FileMinorPart, 

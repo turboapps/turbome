@@ -13,7 +13,7 @@ function Get-LatestChocoVersion
     )
     process
     {
-        $versions = (& choco list $Package | Where-Object {$_ -match "(?<version>\d+(:?\.\d+)+)"} | Select-Object -InputObject {$Matches['version']})
+        $versions = (& choco list $Package | Where-Object {$_ -match "^$Package\s+"} | Where-Object {$_ -match "(?<version>\d+(:?\.\d+)+)"} | Select-Object -InputObject {$Matches['version']})
         if(-not $versions)
         {
             throw "No versions available for package: $Package" 
