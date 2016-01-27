@@ -16,7 +16,8 @@ function Set-JsonPreference
 	    [string] $Property,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
         [AllowEmptyString()]
-	    [string] $Value
+        # Skipped type declaration to avoid unwanted conversions (example: $true should be a boolean, not a string value - "true")
+	    $Value
     )
     process
     {
