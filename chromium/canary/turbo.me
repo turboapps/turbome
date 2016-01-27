@@ -18,7 +18,7 @@ meta name="chromium-canary"
 # Pull dependency images
 ###################################
 
-using clean,wget,7-zip
+using turbo/turboscript-tools:2016.1.27
 
 
 ###################################
@@ -34,6 +34,23 @@ batch cmd
 	mkdir c:\Chromium
 	robocopy chrome-win32 c:\Chromium *.* /e /move >nul
 	exit /b 0
+
+# Perform first run to save preferences
+batch cmd
+    echo Start-Process c:\Chromium\chrome.exe >> firstRun.ps1
+    echo Sleep -Seconds 5
+    echo Import-Module Turbo >> firstRun.ps1
+    echo Close-MainWindow -ProcessName chrome >> firstRun.ps1
+    powershell -File firstRun.ps1
+
+# Edit preferences
+batch cmd
+    echo Import-Module Turbo >> editPreferences.ps1
+    echo Set-JsonPreference -Path "%LOCALAPPDATA%\Chromium\User Data\Default\Preferences" -Category 'browser' -Property 'check_default_browser' -Value false >> editPreferences.ps1
+    echo Set-JsonPreference -Path "%LOCALAPPDATA%\Chromium\User Data\Default\Preferences" -Category 'download' -Property 'prompt_for_download' -Value true >> editPreferences.ps1
+    echo Set-JsonPreference -Path "%LOCALAPPDATA%\Chromium\User Data\Default\Preferences" -Category 'download' -Property 'directory_upgrade' -Value true >> editPreferences.ps1
+    echo Set-JsonPreference -Path "%LOCALAPPDATA%\Chromium\User Data\Default\Preferences" -Category 'download' -Property 'extensions_to_open' -Value "" >> editPreferences.ps1
+    powershell -File editPreferences.ps1
     
 ###################################
 # Clean up
