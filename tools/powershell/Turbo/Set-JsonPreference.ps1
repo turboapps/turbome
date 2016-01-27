@@ -15,6 +15,7 @@ function Set-JsonPreference
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
 	    [string] $Property,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
+        [AllowEmptyString()]
 	    [string] $Value
     )
     process
@@ -31,7 +32,7 @@ function Set-JsonPreference
             $json | Add-Member -Name $category -Value @{ $Property = $Value } -MemberType NoteProperty
         }
 
-        ConvertTo-Json $json -Compress | Set-Content $filepath
+        ConvertTo-Json $json -Compress | Set-Content $Path
         return $true
     }
 }
