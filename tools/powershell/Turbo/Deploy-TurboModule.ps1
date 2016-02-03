@@ -26,7 +26,7 @@ function Deploy-TurboModule
             foreach($fileItem in $fileItems)
             {
                 $webClient.DownloadFile($fileItem.download_url, "$fullModulePath\$($fileItem.name)")
-                Write-Output -Verbose "Downloaded $($fileItem.name)"
+                Write-Verbose "Downloaded $($fileItem.name)"
             }
         }
         finally
