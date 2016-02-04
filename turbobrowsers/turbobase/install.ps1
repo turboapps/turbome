@@ -1,4 +1,11 @@
-﻿Write-Output 'Installing Firefox'
+﻿#
+# TurboBase install script
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/turbobase
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+Write-Output 'Installing Firefox'
 $iniConfig = @"
 [Install]
 
@@ -15,9 +22,12 @@ Write-Output 'Downloading preferences'
 $webClient = (New-Object System.Net.WebClient)
 $webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg", "$installDir\mozilla.cfg")
 $webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini", "$installDir\browser\override.ini")
-New-Item "$installDir\defaults" -ItemType Directory -ErrorAction 'silentlycontinue'
-New-Item "$installDir\defaults\preferences" -ItemType Directory -ErrorAction 'silentlycontinue'
-$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js", "$installDir\defaults\preferences\local-settings.js")
+
+$defaultsDir = "$installDir\browser\defaults"
+$preferencesDir = "$defaultsDir\preferences"
+New-Item $defaultsDir -ItemType Directory -ErrorAction 'silentlycontinue'
+New-Item $preferencesDir -ItemType Directory -ErrorAction 'silentlycontinue'
+$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js", "$preferencesDir\local-settings.js")
 
 Write-Output 'Getting product version'
 $webClient.DownloadFile(
