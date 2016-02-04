@@ -119,6 +119,29 @@ function Remove-RegistryItems($xappl, $path)
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null } 
 }
 
+function Set-RegistryValue
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+	    [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$True,Position=3)]
+        [string] $Key,
+        [Parameter(Mandatory=$True,Position=4)]
+        [AllowEmptyString()]
+        [string] $Value
+    )
+    process
+    {
+        $propertyXPath = Get-RegistryXPath($path)
+        $valueXPath = "$propertyXPath/Value[@name=`"$Key`"]"
+        $xappl.SelectNodes($valueXPath) | ForEach-Object { $_.value = $Value }
+    }
+}
+
 function Disable-Services($xappl)
 {
     $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.autoStart = "false" }
@@ -367,6 +390,7 @@ Export-ModuleMember -Function 'Remove-Layer'
 Export-ModuleMember -Function 'Remove-StartupFiles'
 Export-ModuleMember -Function 'Remove-RegistryItems'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
+Export-ModuleMember -Function 'Set-RegistryValue'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
 Export-ModuleMember -Function 'Save-XAPPL'
 
