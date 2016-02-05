@@ -20,14 +20,7 @@ $installDir="${env:ProgramFiles(x86)}\Mozilla Firefox"
 
 Write-Output 'Downloading preferences'
 $webClient = (New-Object System.Net.WebClient)
-$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg", "$installDir\mozilla.cfg")
 $webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini", "$installDir\browser\override.ini")
-
-$defaultsDir = "$installDir\browser\defaults"
-$preferencesDir = "$defaultsDir\preferences"
-New-Item $defaultsDir -ItemType Directory -ErrorAction 'silentlycontinue'
-New-Item $preferencesDir -ItemType Directory -ErrorAction 'silentlycontinue'
-$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js", "$preferencesDir\local-settings.js")
 
 Write-Output 'Getting product version'
 $webClient.DownloadFile(
