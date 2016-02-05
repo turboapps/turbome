@@ -24,6 +24,11 @@ function Update-AdBlock
         $downloadLink = $Matches[0]
         $pluginFileName = $Matches['filename']
 
+        if (-not (Test-Path $DownloadDir))
+        {
+            New-Item -Path $DownloadDir -ItemType Directory | Out-Null
+        }
+
         # Remove existing AdBlock Plugin from cck2 configuration
         Get-ChildItem $DownloadDir -Filter "adblock_plus*.xpi" | Remove-Item
 
