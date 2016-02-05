@@ -57,10 +57,12 @@ var patch = last
 
 # Download and install last version
 cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""http://download.gimp.org/pub/gimp/v%minor%/windows/gimp-%patch%-setup.exe"""
-cmd install.exe /VERYSILENT
+var gimpDir = "c:\Gimp " + major
+cmd "mkdir ""%gimpDir%"""
+cmd "install.exe /32 /DIR=""%gimpDir%"" /VERYSILENT"
 
 # Set startup file
-startup file ("@PROGRAMFILES@\GIMP " + major + "\bin\gimp-" + minor + ".exe")
+startup file (gimpDir + "\bin\gimp-" + minor + ".exe")
 
 ###################################
 # Clean up
