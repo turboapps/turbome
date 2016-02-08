@@ -48,14 +48,26 @@ cmd "wget -O installer.exe %url%"
 # Actually install MSI
 # see CLNT-5275 for a bug report
 # installer works properly but returns 2 instead of 0
-batch
-	installer.exe /S
-	exit 0
+batch cmd
+ mkdir C:\mIRC
+ installer.exe /S /D=C:\mIRC
+ exit 0
 
+# Start a new container with a full trial period
+workdir c:\mIRC
+batch cmd
+ echo @echo off > startup.bat
+ echo cd c:\mIRC >> startup.bat
+ echo IF EXIST firstlaunch GOTO nextlaunch >> startup.bat
+ echo copy NUL firstlaunch ^>NUL >> startup.bat
+ echo copy /b c:\mIRC\mirc.exe +,, ^>NUL >> startup.bat
+ echo :nextlaunch >> startup.bat
+ echo start mirc.exe %* >> startup.bat
+    
 ###################################
 # Startup File
 ###################################
-startup file ("@PROGRAMFILESX86@\mIRC\mIRC.exe")
+startup file ("cmd.exe", "/c", "c:\mIRC\startup.bat")
 
 ###################################
 # Environment Variables
