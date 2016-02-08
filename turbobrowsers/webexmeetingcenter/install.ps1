@@ -1,6 +1,6 @@
 #
 # Cisco WebEx Meeting Center install script
-# https://github.com/turboapps/turbome/tree/master/webex/meetingcenter
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/webexmeetingcenter
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
