@@ -23,7 +23,7 @@ Remove-FileSystemDirectoryItems $xappl '@SYSDRIVE@'
  
  
 Remove-StartupFiles $xappl 
-$slackExe = '@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe' 
+$slackExe = '@APPDATALOCAL@\slack\app-1.2.7\slack.exe' 
 Add-StartupFile $xappl -File $slackExe -CommandLine '@APPDATALOCAL@\slack\app-1.2.7\slack.exe'
 
  
