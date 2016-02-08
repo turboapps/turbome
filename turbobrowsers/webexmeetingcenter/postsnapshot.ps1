@@ -1,6 +1,6 @@
 #
 # Cisco WebEx Meeting Center post-snapshot script
-# https://github.com/turboapps/turbome/tree/master/webex/meetingcenter
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/webexmeetingcenter
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,11 @@ Remove-FileSystemItems $xappl '@APPDATALOCAL@\NuGet'
 Remove-FileSystemItems $xappl '@APPDATALOCALLOW@\Microsoft'
 Remove-FileSystemItems $xappl '@SYSTEM@\CodeIntegrity'
 Remove-FileSystemDirectoryItems $xappl '@SYSDRIVE@'
+
+Import-Files $xappl -SourceDir '.\Resources\Files' -SnapshotDir '.\output\Files' | Out-Null
+
+$firefoxInstallDir = '.\output\Files\Default\@PROGRAMFILESX86@\Mozilla Firefox'
+Update-AdBlock -DownloadDir "$firefoxInstallDir\cck2\resources\addons" -ConfigPath "$firefoxInstallDir\cck2.cfg"
 
 Remove-StartupFiles $xappl
 $firefoxExe = '@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe'
