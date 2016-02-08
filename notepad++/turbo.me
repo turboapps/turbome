@@ -9,21 +9,20 @@ meta title="Notepad++"
 meta namespace="npp"
 meta name="notepadplusplus"
 
-using wget,python:3.4.1
-
-cmd pip install requests --quiet
+using turbo/turboscript-tools:2016.2.4
 
 cmd mkdir c:\Workspace
 workdir c:\Workspace
-
+ 
 batch
- echo import sys > getUrl.py
+ echo from bs4 import BeautifulSoup > getUrl.py
  echo import requests >> getUrl.py
- echo import re >> getUrl.py
- echo host = "http://notepad-plus-plus.org/download/" >> getUrl.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getUrl.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getUrl.py
- echo print(re.findall('a href="(.*[Ii]nstaller\.exe)"', r.text)[0]) >> getUrl.py
+ echo parser = 'html.parser' >> getUrl.py
+ echo host = 'https://notepad-plus-plus.org' >> getUrl.py
+ echo content = requests.get("{0}/download".format(host)).text >> getUrl.py
+ echo soup = BeautifulSoup(content, parser) >> getUrl.py
+ echo links = [downloadLink.get('href') for downloadLink in soup.find_all("a", recursive=True) if downloadLink.get('href').startswith('/repository')] >> getUrl.py
+ echo print(host + links[0]) >> getUrl.py
 
 cmd python getUrl.py
 
@@ -35,15 +34,15 @@ cmd "echo print(re.findall('npp.(.*)\.[Ii]nstaller.exe','%url%')[0]) >> getTag.p
 cmd python getTag.py
 var tag = last
 
-cmd "wget --no-check-certificate --no-verbose https://notepad-plus-plus.org/%url%"
+cmd "wget --no-check-certificate -O installer.exe %url%"
+cmd "installer.exe /S /D=C:\Notepad++"
 
-cmd "npp.%tag%.Installer.exe /S /D=C:\Notepad++"
+cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
+cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
 
 workdir c:\
-
 cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 cmd rmdir c:\Notepad++\updater /s /q 
 
 meta tag=tag
