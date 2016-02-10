@@ -1,60 +1,76 @@
-### Use Chocolatey and PowerShell
-### Application installs under Program Files (x86)\instedit.com\InstEd\InstEd.exe (--startup-file="C:\Program Files (x86)\instedit.com\InstEd\InstEd.exe")
+### Use Chocolatey and PowerShell 
+### Application installs under Program Files (x86)\instedit.com\InstEd\InstEd.exe (--
 
+startup-file="C:\Program Files (x86)\instedit.com\InstEd\InstEd.exe") 
 
-#
-# Insted turbo.me file
-# https://github.com/turboapps/turbome/tree/master/insted
-#
+ 
+# 
+# Insted turbo.me file 
+# https://github.com/turboapps/turbome/tree/master/insted 
+# 
 
+ 
+################################### 
+# Meta tags 
+################################### 
 
-###################################
-# Meta tags
-###################################
+ 
+meta title="insted" 
+meta namespace="insted" 
+meta name="insted" 
 
-meta title="insted"
-meta namespace="insted"
-meta name="insted"
+ 
+################################### 
+# Pull dependency images 
+################################### 
 
-###################################
-# Pull dependency images
-###################################
+ 
+using gnu/wget,powershell,chocolatey 
+ 
+ 
+################################### 
+# Run InstEd install using Chocolatey and retrieve version 
+################################### 
 
-using gnu/wget,powershell,chocolatey
+ 
+#cmd START \\SERVERNAME\Share\test.bat WAIT 
+ 
+ 
+cmd choco install insted -y
+ 
+ 
+# Get version number 
+cmd "echo $InstEd='C:\Program Files (x86)\instedit.com\InstEd\InstEd.exe' >> 
 
-###################################
-# Run InstEd install using Chocolatey and retrieve version
-###################################
+GetVersion.ps1"
+cmd "echo (Get-Item $InstEd ).VersionInfo.ProductVersion >> GetVersion.ps1" 
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1 
+var version = last 
 
-#cmd START \\SERVERNAME\Share\test.bat WAIT
+ 
+################################### 
+# Clean up 
+################################### 
 
-cmd choco install insted
+ 
+cmd rmdir c:\wget /s /q 
+cmd del GetVersion.ps1 
 
-# Get version number
-cmd "echo $pfiles86=get-content env:ProgramFiles(x86) >> GetVersion.ps1"
-cmd "echo $InstEd=$pfiles86 + '\instedit.com\InstEd\InstEd.exe' >> GetVersion.ps1"
-cmd "echo (Get-Item $InstEd ).VersionInfo.ProductVersion >> GetVersion.ps1"
-cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
-var version = last
+ 
+################################### 
+# Version 
+################################### 
 
-###################################
-# Clean up
-###################################
+ 
+meta tag=version 
+meta version=version 
 
-cmd rmdir c:\wget /s /q
-cmd del GetVersion.ps1
+################################### 
+# Startup File 
+################################### 
 
-###################################
-# Version
-###################################
+ 
+# Set startup file 
+startup file ("C:\Program Files (x86)\instedit.com\InstEd\InstEd.exe") 
+ 
 
-meta tag=version
-meta version=version
-###################################
-# Startup File
-###################################
-
-# Set startup file
-startup file ("C:\Program Files (x86)\instedit.com\InstEd\InstEd.exe")
-
-#startup file ("cmd","/k echo insted version: ", version)
