@@ -51,6 +51,10 @@ var tag=last
 # Actually install MSI
 cmd msiexec /i %url% /passive /qn
 
+# Turn off OpenGL
+cmd wget --no-check-certificate --quiet -O turnoff-opengl.reg https://raw.githubusercontent.com/turboapps/turbome/master/libreoffice/shared/turnoff-opengl.reg
+cmd regedit.exe /S turnoff-opengl.reg
+
 ###################################
 # Startup File
 ###################################
