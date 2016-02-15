@@ -52,7 +52,7 @@ var tag=last
 cmd msiexec /i %url% /passive /qn
 
 # Turn off OpenGL
-cmd wget --no-check-certificate --quiet -O turnoff-opengl.reg https://raw.githubusercontent.com/turboapps/turbome/APPQ-1996/libreoffice/shared/turnoff-opengl.reg
+cmd wget --no-check-certificate --quiet -O turnoff-opengl.reg https://raw.githubusercontent.com/turboapps/turbome/master/libreoffice/shared/turnoff-opengl.reg
 cmd regedit.exe /S turnoff-opengl.reg
 
 
