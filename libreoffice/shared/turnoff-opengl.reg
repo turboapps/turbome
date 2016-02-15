@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Policies\LibreOffice]
+
+[HKEY_CURRENT_USER\Software\Policies\LibreOffice\org.openoffice.Office.Common]
+
+[HKEY_CURRENT_USER\Software\Policies\LibreOffice\org.openoffice.Office.Common\VCL]
+
+[HKEY_CURRENT_USER\Software\Policies\LibreOffice\org.openoffice.Office.Common\VCL\ForceOpenGL]
+"Value"="false"
+"Final"=dword:00000001
+
+[HKEY_CURRENT_USER\Software\Policies\LibreOffice\org.openoffice.Office.Common\VCL\UseOpenGL]
+"Value"="false"
+"Final"=dword:00000001
