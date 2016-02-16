@@ -1,0 +1,61 @@
+#
+# .NET Core CLR x86 turbo.me file
+# https://github.com/turboapps/turbome/tree/master/dotnet/core-clr/x86
+#
+# Created with Turbo CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title=".NET Core CLR x86"
+meta namespace="microsoft"
+meta name="core-clr-x86"
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install DNVM tool
+cmd powershell -NoProfile -ExecutionPolicy unrestricted -Command "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
+
+# Install Core CLR
+cmd dnvm install -Runtime coreclr latest -Architecture x86 -Unstable -Persistent
+
+# Get product version
+cmd dnvm list > version.data
+cmd powershell -command "(Get-Content version.data) | Select-String -Pattern \d[^\s]+ | ForEach-Object {$_.Matches.value}  | Select -First 1"
+var version=last
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+
+startup file ("cmd", "/k echo .NET Core CLR x86 version: ", version)
+
