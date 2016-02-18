@@ -46,7 +46,7 @@ startup file ("@SYSDRIVE@\Audacity\audacity.exe")
 
 batch cmd
     copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
-    powershell -command ". .\Get-FileVersion.ps1; Get-FileVersion -Path C:\Audacity\audacity.exe" > image.txt
+    powershell -NoProfile -ExecutionPolicy ByPass -command ". .\Get-FileVersion.ps1; Get-FileVersion -Path C:\Audacity\audacity.exe" > image.txt
 cmd findstr "." image.txt
 var version = last
 meta tag = version
@@ -70,7 +70,7 @@ batch
 # Clean up
 ###################################
 
-cmd powershell -command ". C:\Workspace\Remove-BuildTools.ps1; Remove-BuildTools"
+cmd powershell -NoProfile -ExecutionPolicy ByPass -command ". C:\Workspace\Remove-BuildTools.ps1; Remove-BuildTools"
 
 workdir @SYSDRIVE@\
 cmd rmdir @SYSDRIVE@\Workspace /s /q
