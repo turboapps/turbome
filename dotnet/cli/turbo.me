@@ -35,7 +35,7 @@ cmd installer.exe /silent
 
 # Get product version
 cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
-cmd powershell -command ". .\Get-FileVersion.ps1; Get-FileVersion -Path installer.exe" > image.txt
+cmd powershell -NoProfile -ExecutionPolicy Bypass -command ". .\Get-FileVersion.ps1; Get-FileVersion -Path installer.exe" > image.txt
 cmd findstr "." image.txt
 var version = last
 
@@ -50,7 +50,7 @@ env path="@ProgramFiles@\dotnet\bin"
 # Clean up
 ###################################
 
-cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+cmd powershell -NoProfile -ExecutionPolicy Bypass -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
 
 workdir c:\
 
