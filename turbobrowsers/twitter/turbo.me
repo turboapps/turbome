@@ -40,10 +40,6 @@ batch cmd
 # Update AdBlock plugin
 cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
 cmd powershell -command ". .\Update-AdBlock.ps1; Update-AdBlock -DownloadDir ""%PROGRAMFILES(X86)%\Mozilla Firefox\cck2\resources\addons"" -ConfigPath ""%PROGRAMFILES(X86)%\Mozilla Firefox\cck2.cfg"""
-
-# Get version
-cmd powershell -command ". .\Get-NextTag.ps1; Get-NextTag ""turbobrowsers/twitter"""
-var version=last
     
 ###################################
 # Clean up
@@ -60,5 +56,4 @@ cmd rmdir c:\TurboBuildTools /s /q
 # Version
 ###################################
 
-meta tag=version
-
+# Image version should be specified in the build configuration
