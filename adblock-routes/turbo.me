@@ -1,0 +1,38 @@
+#
+# Adblock-Routes turbo.me file
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/adblockroutes
+#
+# Created with Turbo CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title = "Block Ad Networks"
+meta namespace="turbobrowsers"
+meta name="adblock-routes"
+meta tag="3"
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+
+
+###################################
+# Version
+###################################
+
+# tag should be set in Jenkins build template
+
+
+###################################
+# Startup File
+###################################
+
+
+startup file ("cmd","/k echo This is a dependency and should not be launched by itself")
