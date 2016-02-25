@@ -1,6 +1,6 @@
 #
 # Twitter turbo.me file
-# https://github.com/turboapps/turbome/tree/master/turbobrowsers/twitter]
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/firefox]
 #
 # Created with Turbo CMD version 1.4.2242.0
 #
@@ -11,17 +11,18 @@
 # Meta tags
 ###################################
 
-meta title="Firefox"
+meta title="Turbo Firefox"
 meta namespace="turbobrowsers"
-meta name="firefox"
+meta name="turbo-firefox"
 
 
 ###################################
 # Pull dependency images
 ###################################
 
-using turbo/turboscript-tools:2016.2.4
-layer turbobrowsers/turbobase
+using turbo/turboscript-tools:2016.2.25
+layer mozilla/firefox
+
 
 ###################################
 # Download and install
@@ -31,21 +32,27 @@ layer turbobrowsers/turbobase
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Copy snapshot files
-batch cmd
-    robocopy "C:\Snapshot\@APPDATA@" "%APPDATA%" * /E /NFL /NDL /NJH /NJS
-    robocopy "C:\Snapshot\@PROGRAMFILESX86@" "%PROGRAMFILES(X86)%" * /E /NFL /NDL /NJH /NJS
-    exit /B 0
+# Install uBlock Origin plugin
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Install-FirefoxPlugin -DownloadDir . -PluginName ublock-origin -PluginId uBlock0@raymondhill.net"
 
-# Update AdBlock plugin
-cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
-cmd powershell -command ". .\Update-AdBlock.ps1; Update-AdBlock -DownloadDir ""%PROGRAMFILES(X86)%\Mozilla Firefox\cck2\resources\addons"" -ConfigPath ""%PROGRAMFILES(X86)%\Mozilla Firefox\cck2.cfg"""
+# Get product version
+cmd "echo $dir = (${env:ProgramFiles(x86)}, ${env:ProgramFiles} -ne $null)[0] > GetVersion.ps1" 
+cmd "echo $Firefox=$dir + '\Mozilla Firefox\firefox.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Firefox ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1
+var version = last
+
+# Create Firefox Profile
+batch cmd
+    cd "C:\Program Files (x86)\Mozilla Firefox"
+    firefox.exe -CreateProfile Turbo
+    
     
 ###################################
 # Clean up
 ###################################
 
-cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
 
 workdir c:\
 cmd rmdir c:\Workspace /s /q
@@ -56,4 +63,4 @@ cmd rmdir c:\TurboBuildTools /s /q
 # Version
 ###################################
 
-# Image version should be specified in the build configuration
+meta tag=version
