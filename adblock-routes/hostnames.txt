@@ -934,7 +934,6 @@ amung.us
 an.tacoda.net
 anahtars.com
 analytics.adpost.org
-analytics.google.com
 analytics.live.com
 analytics.yahoo.com
 anm.intelli-direct.com
@@ -1471,7 +1470,6 @@ go-rank.de
 goingplatinum.com
 gold.weborama.fr
 goldstats.com
-google-analytics.com
 googleadservices.com
 googlesyndication.com
 gostats.com
@@ -2385,7 +2383,6 @@ woopra.com
 worldwide-cash.net
 wtlive.com
 www-banner.chat.ru
-www-google-analytics.l.google.com
 www.banner-link.com.br
 www.dnps.com
 www.kaplanindex.com

@@ -14,7 +14,7 @@
 meta title = "Block Ad Networks"
 meta namespace="turbobrowsers"
 meta name="adblock-routes"
-meta tag="3"
+
 
 ###################################
 # Pull dependency images
@@ -27,7 +27,8 @@ layer clean
 # Version
 ###################################
 
-# tag should be set in Jenkins build template
+var version = year + "." + month + "." + day
+meta tag = version
 
 
 ###################################
