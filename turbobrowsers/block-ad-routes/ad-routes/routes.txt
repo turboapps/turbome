@@ -2585,4 +2585,12 @@
 54.231.18.164
 68.142.93.254
 68.142.93.133
+; uBitTorrent
 apps.bittorrent.com
+; Skype
+*.msads.net
+*.advertising.com
+*.adnxs.com
+*.ipromote.com
+*.rad.msn.com
+a.config.skype.com
