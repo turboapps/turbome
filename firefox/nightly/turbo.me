@@ -43,8 +43,8 @@ batch cmd
 
 workdir c:\
 
-meta tag=dateiso
 meta website="%DOWNLOAD_URL%"
-meta version="%DATE%"
+var version = year + "." + month + "." + day 
+meta tag = version
 
 startup file ("c:\FirefoxNightly\firefox.exe")
