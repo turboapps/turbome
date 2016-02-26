@@ -1,0 +1,86 @@
+### Download ControlUpConsole.exe from https://ctrlupfeeu01.controlup.com/Downloads/ControlUpConsole.zip
+### Use flag --enable=HttpUrlPassthrough
+
+#
+# ControlUpConsole turbo.me file
+# https://github.com/turboapps/turbome/tree/master/controlup/controlupconsole
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="controlupconsole"
+meta namespace="controlup"
+meta name="controlupconsole"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,powershell,7-zip-console
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+workdir c:\
+cmd mkdir c:\ControlUpConsole
+
+# Download
+cmd wget --no-check-certificate --no-verbose -O C:\ControlUpConsole\ControlUpConsole.zip https://ctrlupfeeu01.controlup.com/Downloads/ControlUpConsole.zip
+
+###################################
+# Unzip the Console into the working directory
+###################################
+
+cmd "7z e ControlUpConsole.zip -oC:\ControlUpConsole"
+
+# Get version number
+cmd "echo $appdata=get-content env:AppData >> GetVersion.ps1"
+cmd "echo $Spotify=$appdata + '\Spotify\Spotify.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Spotify ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var version = last
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\ControlUpConsole"
+
+###################################
+# Enable HttpUrlPassthrough
+###################################
+
+enable HttpUrlPassthrough
+
+###################################
+# Clean up
+###################################
+
+cmd rmdir c:\wget /s /q
+cmd del GetVersion.ps1
+cmd del Install.bat
+cmd del ControlUpConsole.zip
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+###################################
+# Startup File
+###################################
+
+# Set startup file
+startup file ("C:\ControlUpConsole\ControlUpConsole.exe")
+
+#startup file ("cmd","/k echo spotify version: ", version)
