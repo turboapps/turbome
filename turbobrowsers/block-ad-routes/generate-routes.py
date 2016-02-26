@@ -30,8 +30,8 @@ def setup_logger(args):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Resolves server hostnames to IP addresses')
-    parser.add_argument('--input-file', type=str, default='input.txt', help='List of server host names')
-    parser.add_argument('--output-file', type=str, default='output.txt', help='List if ip addresses')
+    parser.add_argument('--input-file', type=str, default='hosts.txt', help='List of server host names')
+    parser.add_argument('--output-file', type=str, default='routes.txt', help='List if ip addresses')
     parser.add_argument('--log-file', type=str, default='log.log', help='Log file')
     parser.add_argument('--max-retry', type=str, default=2, help='Max retry')
 
@@ -49,26 +49,36 @@ def resolve_host(host, max_retry):
 
 
 def resolve_hosts(hosts, pool_size):
-    addresses = []
+    addresses = set()
     with concurrent.futures.ThreadPoolExecutor(max_workers=pool_size) as executor:
         future_to_address = {executor.submit(resolve_host, host, args.max_retry): host for host in hosts}
         for future in concurrent.futures.as_completed(future_to_address):
             host = future_to_address[future]
             try:
-                result = future.result()
-                if result:
-                    addresses.extend(result)
+                host_addresses = future.result()
+                if host_addresses:
+                    for address in host_addresses:
+                        addresses.add(address)
                 else:
                     logging.error('Failed to resolve hostname [%s].', host)
             except Exception as ex:
                 logging.error('Failed to resolve host [%s]: %s', host, ex)
-    addresses_to_use = sorted(addresses, key=lambda record: record[0] if record else "")
+    addresses_to_use = sorted(list(addresses), key=lambda record: record[0] if record else "")
     return addresses_to_use
 
 
 def get_hosts(args):
-    with open(args.input_file, 'r') as input_file:
-        return [line.strip() for line in input_file]
+    WWW_PREFIX = 'www.'
+    result = []
+    with open(args.input_file, 'r') as input_file:    
+        for line in input_file:
+            host = line.strip()
+            result.append(host)
+            if host.startswith(WWW_PREFIX):
+                result.append(host.replace(WWW_PREFIX, ''))
+            else:
+                result.append(WWW_PREFIX + host)
+    return result
 
 
 def save(addresses, args):
