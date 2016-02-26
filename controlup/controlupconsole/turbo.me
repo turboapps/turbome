@@ -38,7 +38,7 @@ cmd wget --no-check-certificate --no-verbose -O C:\ControlUpConsole\ControlUpCon
 # Unzip the Console into the working directory
 ###################################
 
-cmd "7z e ControlUpConsole.zip -oC:\ControlUpConsole"
+cmd "7z e C:\ControlUpConsole\ControlUpConsole.zip -oC:\ControlUpConsole"
 
 # Get version number
 cmd "echo $appdata=get-content env:AppData >> GetVersion.ps1"
@@ -83,4 +83,3 @@ meta version=version
 # Set startup file
 startup file ("C:\ControlUpConsole\ControlUpConsole.exe")
 
-#startup file ("cmd","/k echo spotify version: ", version)
