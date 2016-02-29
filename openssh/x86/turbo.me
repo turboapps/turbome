@@ -1,0 +1,88 @@
+#
+# OpenSSH turbo.me file
+# https://github.com/turboapps/turbome/tree/master/openssh/x86]
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="OpenSSH x86"
+meta namespace="openssh"
+meta name="openssh-x86"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.2.25
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Get download link and version
+batch cmd
+    echo import requests >> getDownloadLink.py
+    echo import re >> getDownloadLink.py
+    echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getDownloadLink.py
+    echo release = requests.get('https://api.github.com/repos/PowerShell/Win32-OpenSSH/releases/latest' , headers=headers, timeout=10).json() >> getDownloadLink.py
+    echo tag_name = release['tag_name'].replace('_', '.') >> getDownloadLink.py
+    echo download_url = release['assets'][0]['browser_download_url'] >> getDownloadLink.py
+    echo print([download_url,tag_name]) >> getDownloadLink.py
+
+cmd python getDownloadLink.py
+var res = last
+
+cmd "python -c ""print(%res%[0])"""
+var url = last
+
+cmd "python -c ""print(%res%[1])"""
+var version = last
+    
+# Download and unpack
+batch cmd
+    wget --no-verbose --no-check-certificate -O openssh.zip %url%
+    7z x openssh.zip -oc:\ > nul
+
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -NoProfile -ExecutionPolicy ByPass -Command "Import-Module Turbo; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Environment Variables
+###################################
+
+env path="@SYSDRIVE@\OpenSSH-Win32"
+
+
+###################################
+# Startup File
+###################################
+
+startup file (cmd.exe, "/k echo OpenSSH (x86) version: " + version)
