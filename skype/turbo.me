@@ -5,14 +5,29 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+###################################
+# Meta tags
+###################################
+
 meta title="Skype"
 meta namespace="microsoft"
 meta name="skype"
 
+
+###################################
+# Pull dependency images
+###################################
+
 using wget,python:3.4.1
+
+
+###################################
+# Download and install
+###################################
 
 cmd pip install pypiwin32 --quiet
 
+# Set working directory
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
@@ -22,6 +37,7 @@ cmd "SkypeSetup.msi INSTALLDIR=C:\Skype /qn"
 cmd wget --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/skype/added-keys.reg
 cmd reg import added-keys.reg
 
+# Get version
 batch
  echo from win32com.client import Dispatch > getTag.py
  echo parser = Dispatch("Scripting.FileSystemObject") >> getTag.py
@@ -30,12 +46,36 @@ batch
 cmd python getTag.py
 var tag = last
 
+
+###################################
+# Clean up
+###################################
+
 workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
 cmd rmdir c:\python34 /s /q
 
+
+###################################
+# Routes
+###################################
+
+route block ip://*.msads.net
+route block ip://*.rad.msn.com
+route block ip://a.config.skype.com
+
+
+###################################
+# Version
+###################################
+
 meta tag=tag
+
+
+###################################
+# Startup File
+###################################
 
 startup file ("C:\Skype\Phone\Skype.exe")
