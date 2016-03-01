@@ -11,9 +11,9 @@
 # Meta tags
 ###################################
 
-meta title="OpenSSH x86"
+meta title="OpenSSH"
 meta namespace="openssh"
-meta name="openssh-x86"
+meta name="openssh"
 
 
 ###################################
@@ -37,7 +37,8 @@ batch cmd
     echo import re >> getDownloadLink.py
     echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getDownloadLink.py
     echo release = requests.get('https://api.github.com/repos/PowerShell/Win32-OpenSSH/releases/latest' , headers=headers, timeout=10).json() >> getDownloadLink.py
-    echo tag_name = release['tag_name'].replace('_', '.') >> getDownloadLink.py
+    echo month, day, year = release['tag_name'].split('_') >> getDownloadLink.py
+    echo tag_name = '.'.join([year, month, day]) >> getDownloadLink.py
     echo download_url = release['assets'][0]['browser_download_url'] >> getDownloadLink.py
     echo print([download_url,tag_name]) >> getDownloadLink.py
 
