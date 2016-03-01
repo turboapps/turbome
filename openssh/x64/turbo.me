@@ -55,6 +55,8 @@ batch cmd
     wget --no-verbose --no-check-certificate -O openssh.zip %url%
     7z x openssh.zip -oc:\ > nul
 
+workdir c:\OpenSSH-Win64
+cmd powershell -NoProfile -ExecutionPolicy ByPass .\install-sshlsa.ps1
 
 ###################################
 # Clean up
