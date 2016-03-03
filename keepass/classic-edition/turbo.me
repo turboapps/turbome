@@ -1,0 +1,91 @@
+#
+# KeePass Classic Edition turbo.me file
+# https://github.com/turboapps/turbome/tree/master/keepass/classic-edition/turbo.me
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="KeePass Classic Edition"
+meta name="keepass-classic"
+meta namespace="keepass"
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+using gnu/wget,7-zip/7-zip,python/python:3.4.1
+
+
+###################################
+# Download and install
+###################################
+
+# Install "requests" module for python
+cmd "pip install requests --quiet"
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Prepare python script to get the download link, version, and file name
+batch
+ echo import sys > script.py
+ echo import re >> script.py
+ echo import requests >> script.py
+ echo host = "http://keepass.info/download.html" >> script.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> script.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> script.py
+ echo filename = re.findall('a href=".*/(KeePass-1.*.zip).*"', r.text)[0] >> script.py
+ echo version = re.findall('KeePass-1(.*).zip', filename)[0] >> script.py
+ echo version = "1" + version >> script.py
+ echo url = 'http://sourceforge.net/projects/keepass/files/KeePass%%201.x/'+version+'/'+filename >> script.py
+ echo print([url, filename, version]) >> script.py
+
+# Run script and assign variables for the download link, version, and file name
+cmd "python script.py"
+var res = last
+cmd "python -c ""print(%res%[0])"""
+var url = last
+cmd "python -c ""print(%res%[1])"""
+var filename = last
+cmd "python -c ""print(%res%[2])"""
+var version = last
+meta tag = version
+
+# Download application zip file
+cmd "wget --no-check-certificate -O %filename% %url%"
+
+# Extract the application zip file
+cmd "mkdir C:\KeePass"
+cmd "7z.exe x %filename% -oC:\KeePass"
+
+
+###################################
+# Configuration
+###################################
+
+# Turn off updates
+workdir @SYSDRIVE@\KeePass
+cmd "wget --no-check-certificate https://raw.githubusercontent.com/turboapps/turbome/master/keepass/classic-edition/KeePass.ini"
+
+# Working directory
+setworkdir @SYSDRIVE@\KeePass
+
+# Start up file
+startup file ("@SYSDRIVE@\KeePass\KeePass.exe")
+
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+cmd rmdir @SYSDRIVE@\Python34 /s /q
