@@ -74,10 +74,10 @@ cmd "7z.exe x %filename% -oC:\KeePass"
 workdir @SYSDRIVE@\KeePass
 cmd "wget --no-check-certificate https://raw.githubusercontent.com/turboapps/turbome/master/keepass/config/KeePass.config.xml"
 
-# Working directory
+# Set working directory
 setworkdir @SYSDRIVE@\KeePass
 
-# Start up file
+# Set startup file
 startup file ("@SYSDRIVE@\KeePass\KeePass.exe")
 
 

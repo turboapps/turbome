@@ -72,12 +72,12 @@ cmd "7z.exe x %filename% -oC:\KeePass"
 
 # Turn off updates
 workdir @SYSDRIVE@\KeePass
-cmd "wget --no-check-certificate https://raw.githubusercontent.com/turboapps/turbome/master/keepass/classic-edition/KeePass.ini"
+cmd "wget --no-check-certificate https://raw.githubusercontent.com/turboapps/turbome/master/keepass/classic-edition/config/KeePass.ini"
 
-# Working directory
+# Set working directory
 setworkdir @SYSDRIVE@\KeePass
 
-# Start up file
+# Set startup file
 startup file ("@SYSDRIVE@\KeePass\KeePass.exe")
 
 
