@@ -70,7 +70,7 @@ def write_routes(host_list, output_file_path):
             print(line, file=output_file)
 
         write_line('[settings]')
-        write_line('DoNotPreResolveHostNames=true')
+        write_line('PreResolveHostNames=false')
         write_line('')
         write_line('[ip-block]')
         for host in host_list:
