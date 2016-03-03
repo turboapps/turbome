@@ -1,0 +1,54 @@
+#
+# Firefox base turbo.me file
+# https://github.com/turboapps/turbome/tree/master/firefox
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Firefox image without extra plugins preconfigured for enterprise:
+# * Maintenance service turned off
+# * Do not submit crash reports
+# * Disable default browser check
+# * Disable auto updates
+# See https://github.com/turboapps/turbome/tree/firefox/config/ for more details.
+
+meta title="Firefox"
+meta namespace="mozilla"
+meta name="firefox-base"
+
+using wget,powershell
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+batch cmd
+ echo [Install] > install.ini
+ echo MaintenanceService=false >> install.ini
+
+var url = "https://download.mozilla.org/?product=firefox-latest&os=win&lang=en-US"
+
+cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
+cmd "firefox.exe /INI=c:\Workspace\install.ini"
+
+cmd "echo $dir = (${env:ProgramFiles(x86)}, ${env:ProgramFiles} -ne $null)[0] >> GetVersion.ps1" 
+cmd "echo $Firefox=$dir + '\Mozilla Firefox\firefox.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Firefox ).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var tag = last
+
+batch
+ if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
+ cd "Mozilla Firefox"
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg
+ cd browser
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini
+ mkdir defaults\preferences & cd defaults\preferences
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
+
+workdir c:\
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+meta tag=tag
+
+startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe")
