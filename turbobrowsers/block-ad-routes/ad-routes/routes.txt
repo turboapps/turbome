@@ -1,5 +1,5 @@
 [settings]
-DoNotPreResolveHostNames=true
+PreResolveHostNames=false
 
 [ip-block]
 *.000007.ru
