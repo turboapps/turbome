@@ -1,5 +1,0 @@
-*.akamai.net
-any.edge.bing.com
-blogger.l.google.com
-www.google.com
-www.nytimes.com
