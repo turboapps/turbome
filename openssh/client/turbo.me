@@ -1,0 +1,70 @@
+#
+# OpenSSH Client turbo.me file
+# https://github.com/turboapps/turbome/tree/master/openssh/client]
+#
+# Created with Turbo CMD version 1.4.2603.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="OpenSSH Client"
+meta namespace="openssh"
+meta name="openssh-client"
+
+###################################
+# Pull dependency images
+###################################
+
+var version = year + "." + month + "." + day
+var opensshLayer = "openssh/openssh"
+layer opensshLayer
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Copy client's private key
+cmd copy c:\temp\id_rsa c:\id_rsa
+
+batch cmd
+    cd %homepath%
+    mkdir .ssh
+    echo localhost > .ssh\known_hosts
+    echo 127.0.0.1 >> .ssh\known_hosts
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\OpenSSH-Win32"
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd.exe", "/k echo Issue command: ssh -i id_rsa %USERNAME%@localhost (passphrase: 123456)")

@@ -1,0 +1,82 @@
+#
+# OpenSSH Daemon turbo.me file
+# https://github.com/turboapps/turbome/tree/master/openssh/daemon]
+#
+# Created with Turbo CMD version 1.4.2603.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="OpenSSH Daemon"
+meta namespace="openssh"
+meta name="openssh-daemon"
+
+###################################
+# Pull dependency images
+###################################
+
+var version = year + "." + month + "." + day
+var opensshLayer = "openssh/openssh"
+layer opensshLayer
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Install SSH daemon
+batch cmd
+    cd "C:\OpenSSH-Win32"
+    ssh-keygen.exe -A
+    powershell -NoProfile -ExecutionPolicy Unrestricted -File install-sshlsa.ps1
+    sshd.exe install
+    powershell -NoProfile -Command "Set-Service sshd -StartupType Automatic"
+    copy c:\temp\sshd_config sshd_config /Y
+
+# Add client's private key
+batch cmd
+    cd "%homepath%"
+    mkdir .ssh
+    copy c:\temp\id_rsa.pub ".ssh\authorized_keys"
+
+# Bootstrap file
+batch cmd
+    cd "C:\OpenSSH-Win32"
+    echo cd C:\OpenSSH-Win32 > start.bat
+    echo sshd.exe -d >> start.bat
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\OpenSSH-Win32"
+
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd.exe", "/k C:\OpenSSH-Win32\start.bat")
