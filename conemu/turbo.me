@@ -1,0 +1,73 @@
+#
+# conemu turbo.me file
+# https://github.com/turboapps/turbome/tree/master/conemu
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="ConEmu"
+meta namespace="conemu"
+meta name="conemu"
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.2.25
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download
+cmd wget.exe --no-check-certificate --quiet -O ConEmuPack.7z https://sourceforge.net/projects/conemu/files/latest/download 
+
+# Install
+cmd 7z x -oC:\conemu ConEmuPack.7z > nul
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Get-FileVersion c:\conemu\ConEmu.exe"
+var version = last
+
+# Disable fast config dialog on the first run
+cmd copy c:\temp\config\ConEmu.xml c:\conemu\ConEmu.xml
+
+###################################
+# Environment Variables
+###################################
+
+env path="@SYSDRIVE@\conemu"
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
+###################################
+# Startup File
+###################################
+
+# todo: set startup file based on the architecure of the host
+# 64bit systems can default to ConEmu64.exe
+# startup file ("@SYSDRIVE@\conemu\ConEmu64.exe")
+startup file ("@SYSDRIVE@\conemu\ConEmu.exe")
