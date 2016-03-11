@@ -27,10 +27,10 @@ Remove-FileSystemItems $xappl '@APPDATALOCALLOW@\Microsoft'
 Remove-FileSystemItems $xappl '@SYSTEM@\CodeIntegrity'
 Remove-FileSystemDirectoryItems $xappl '@SYSDRIVE@'
 
-Import-Files $xappl -SourceDir '.\Resources\Files' -SnapshotDir '.\output\Files' | Out-Null
-
-$firefoxInstallDir = '.\output\Files\Default\@PROGRAMFILESX86@\Mozilla Firefox'
+$firefoxInstallDir = '.\Resources\Files\Default\@PROGRAMFILESX86@\Mozilla Firefox'
 Update-AdBlock -DownloadDir "$firefoxInstallDir\cck2\resources\addons" -ConfigPath "$firefoxInstallDir\cck2.cfg"
+
+Import-Files $xappl -SourceDir '.\Resources\Files\Default' -SnapshotDir '.\output\Files' | Out-Null
 
 Remove-StartupFiles $xappl
 $firefoxExe = '@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe'
