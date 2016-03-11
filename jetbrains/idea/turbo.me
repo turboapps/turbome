@@ -53,7 +53,14 @@ var exePath = installDir + "\bin\idea.exe"
 cmd powershell -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
 var version = last
 
-# TODO: fail if major version is not 15
+batch cmd
+    echo $productVersion = [version] "%version%" > versionContract.ps1
+    echo $maxVersion = [version] '16.0.0' >> versionContract.ps1
+    echo if($productVersion -ge $maxVersion) { >> versionContract.ps1
+    echo     Write-Error 'Script is not compatible with IntelliJ IDEA other than 15.X' >> versionContract.ps1
+    echo     Exit 1 >> versionContract.ps1
+    echo } >> versionContract.ps1
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File versionContract.ps1
 
 batch cmd
     cd "%homepath%"
