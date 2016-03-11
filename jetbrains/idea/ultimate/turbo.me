@@ -1,6 +1,6 @@
 #
-# IntelliJ IDEA Community turbo.me file
-# https://github.com/turboapps/turbome/tree/master/intellij]
+# IntelliJ IDEA Ultimate turbo.me file
+# https://github.com/turboapps/turbome/tree/master/intellij/ultimate
 #
 # Created with Turbo CMD version 1.4.1085.0
 #
@@ -11,9 +11,9 @@
 # Meta tags
 ###################################
 
-meta title="IntelliJ IDEA Community"
+meta title="IntelliJ IDEA Ultimate"
 meta namespace="jetbrains"
-meta name="intellij"
+meta name="intellij-ultimate"
 
 ###################################
 # Pull dependency images
@@ -33,10 +33,10 @@ workdir c:\Workspace
 batch cmd
     echo import requests > getLink.py
     echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getLink.py
-    echo response = requests.get("https://data.services.jetbrains.com/products/releases?code=IIC&latest=true&type=release", headers=headers, timeout=10) >> getLink.py
+    echo response = requests.get("https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&type=release", headers=headers, timeout=10) >> getLink.py
     echo response.raise_for_status() >> getLink.py
     echo json = response.json() >> getLink.py
-    echo print(json['IIC'][0]['downloads']['windows']['link']) >> getLink.py
+    echo print(json['IIU'][0]['downloads']['windows']['link']) >> getLink.py
 cmd python getLink.py
 var url = last
 
@@ -58,7 +58,7 @@ batch cmd
     echo Write-Output $productVersion.Major >> versionContract.ps1
 cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File versionContract.ps1
 var versionMajor = last
-var conifgPath = ".IdeaIC" + versionMajor + "\config\options"
+var conifgPath = ".IntelliJIdea" + versionMajor + "\config\options"
 
 batch cmd
     cd "%homepath%"
