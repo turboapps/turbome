@@ -1,0 +1,83 @@
+#
+# Kitty turbo.me file
+# https://github.com/turboapps/turbome/tree/master/kitty
+#
+# Created with Turbo CMD version 1.4.2603.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="KiTTY"
+meta namespace="kitty"
+meta name="kitty"
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.2.25
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download
+cmd mkdir c:\kitty
+var exePath = "c:\kitty\kitty_portable.exe"
+
+cmd wget --quiet -Olink.txt http://www.fosshub.com/genLink/KiTTY/kitty_portable.exe
+cmd findstr "." link.txt
+var url = last
+cmd wget --quiet --no-check-certificate -O%exePath% "%url%"
+
+# Get product version
+cmd powershell -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
+var version = last
+
+# Perform first launch
+batch cmd
+    start c:\kitty\kitty_portable.exe
+    timeout /T 5
+    taskkill /IM kitty_portable.exe
+    timeout /T 5
+    taskkill /IM kitty_portable.exe
+
+###################################
+# Environment Variables
+###################################
+
+env path="c:\kitty"
+
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file (exePath)
