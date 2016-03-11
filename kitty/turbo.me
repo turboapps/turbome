@@ -43,13 +43,8 @@ cmd wget --quiet --no-check-certificate -O%exePath% "%url%"
 cmd powershell -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
 var version = last
 
-# Perform first launch
-batch cmd
-    start c:\kitty\kitty_portable.exe
-    timeout /T 5
-    taskkill /IM kitty_portable.exe
-    timeout /T 5
-    taskkill /IM kitty_portable.exe
+# Otherwise KiTTY will show error message: "Error: Unable to create default session settings file into directory C:\kitty\sessions"
+cmd mkdir c:\kitty\sessions
 
 ###################################
 # Environment Variables
