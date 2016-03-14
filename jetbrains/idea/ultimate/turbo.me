@@ -1,0 +1,89 @@
+#
+# IntelliJ IDEA Ultimate turbo.me file
+# https://github.com/turboapps/turbome/tree/master/intellij/ultimate
+#
+# Created with Turbo CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="IntelliJ IDEA Ultimate"
+meta namespace="jetbrains"
+meta name="intellij-ultimate"
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.2.25
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download
+batch cmd
+    echo import requests > getLink.py
+    echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getLink.py
+    echo response = requests.get("https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&type=release", headers=headers, timeout=10) >> getLink.py
+    echo response.raise_for_status() >> getLink.py
+    echo json = response.json() >> getLink.py
+    echo print(json['IIU'][0]['downloads']['windows']['link']) >> getLink.py
+cmd python getLink.py
+var url = last
+
+cmd "wget --no-check-certificate --quiet -Ointellij.exe ""%url%"""
+
+# Install
+cmd intellij.exe /S
+cmd dir "c:\Program Files (x86)\JetBrains" /b > image.txt
+cmd findstr "." image.txt 
+var installDir = "c:\Program Files (x86)\JetBrains\" + last 
+var exePath = installDir + "\bin\idea.exe"
+
+# Get product version
+cmd powershell -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
+var version = last
+
+batch cmd
+    echo $productVersion = [version] "%version%" > versionContract.ps1
+    echo Write-Output $productVersion.Major >> versionContract.ps1
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File versionContract.ps1
+var versionMajor = last
+var conifgPath = ".IntelliJIdea" + versionMajor + "\config\options"
+
+batch cmd
+    cd "%homepath%"
+    mkdir "%conifgPath%"
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+ 
+startup file (exePath)
