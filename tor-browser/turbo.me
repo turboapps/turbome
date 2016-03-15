@@ -57,6 +57,11 @@ cmd "wget --no-check-certificate %url%"
 cmd "%filename% /S /D=@SYSDRIVE@\TorBrowser"
 startup file ("@SYSDRIVE@\TorBrowser\Start Tor Browser.lnk")
 
+batch cmd
+    cd C:\TorBrowser\Browser\TorBrowser\Data\Browser\profile.default
+    echo user_pref("app.update.auto", false); >> prefs.js
+    echo user_pref("app.update.enabled", false); >> prefs.js
+
 ###################################
 # Clean up
 ###################################
