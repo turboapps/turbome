@@ -13,7 +13,7 @@ meta name="winscp"
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1
+using turbo/turboscript-tools:2016.2.25
 
 ###################################
 # Download and install
@@ -38,7 +38,7 @@ batch
 cmd python getRelease.py
 var res=last
 
-cmd "python -c ""print( 'http://winscp.net/download/winscp' + %res% [2] + %res% [3] + %res% [4] + 'setup.exe' )"""
+cmd "python -c ""print( 'https://winscp.net/download/winscp' + %res% [2] + %res% [3] + %res% [4] + 'setup.exe' )"""
 var url=last
 
 cmd "python -c ""print( %res% [1] )"""
@@ -46,7 +46,7 @@ var tag=last
 
 # Install MSI
 batch
- wget -O installer.exe %url%
+ wget --no-check-certificate -O installer.exe %url%
  installer.exe /SILENT
 
 # Disable autoupdated
@@ -73,11 +73,10 @@ startup file ("@PROGRAMFILESX86@\WinSCP\winSCP.exe")
 # Clean up
 ###################################
 
-workdir c:\
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
 
-batch
- rmdir c:\Workspace /s /q
- rmdir c:\wget /s /q
- rmdir c:\Python34 /s /q
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 meta tag=tag
