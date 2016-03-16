@@ -48,6 +48,11 @@ var tag=last
 # Actually install MSI
 cmd msiexec /i %url% /passive /qn
 
+# Install file associations
+batch cmd
+    cd "C:\Program Files (x86)\Blender Foundation\Blender"
+    blender.exe -r
+
 ###################################
 # Startup File
 ###################################
