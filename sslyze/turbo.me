@@ -69,7 +69,7 @@ env path="@SYSDRIVE@\sslyze"
 ###################################
 
 cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
-cmd powershell -ExecutionPolicy Unrestricted -Command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
 
 workdir c:\
 cmd rmdir c:\Workspace /s /q
@@ -87,5 +87,5 @@ meta tag=version
 # Startup File
 ###################################
 
-startup file("@SYSDRIVE@\sslyze\sslyze_cli.exe")
+startup file ("cmd", "/k sslyze_cli.exe --help")
 
