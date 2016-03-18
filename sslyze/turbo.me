@@ -56,13 +56,20 @@ batch cmd
     mkdir c:\sslyze
     7z x sslyze.zip -oc:\sslyze > nul
 
+    
+###################################
+# Environment Variables
+###################################
 
+env path="@SYSDRIVE@\sslyze"
+    
+    
 ###################################
 # Clean up
 ###################################
 
 cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
-cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+cmd powershell -ExecutionPolicy Unrestricted -Command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
 
 workdir c:\
 cmd rmdir c:\Workspace /s /q
