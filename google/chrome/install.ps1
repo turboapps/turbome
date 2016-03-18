@@ -176,6 +176,7 @@ Write-Host 'Register basic associations'
 #
 # Register basic file associations
 #
+$chromeValue = 'ChromeHTML'
 $extensionRegKey = "HKLM:\Software\Classes\{0}"
 $extensions = @('.htm', '.html', '.shtml', '.webp', '.xht', '.xhtml')
 foreach($extension in $extensions)
