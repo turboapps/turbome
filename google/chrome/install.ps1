@@ -62,7 +62,8 @@ function Is-ChromeRunning() {
 Clean-ScheduledTasks
 try
 {
-    $taskAction = New-ScheduledTaskAction -Execute 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+	$chromeExecutable = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+    $taskAction = New-ScheduledTaskAction -Execute $chromeExecutable
     Register-ScheduledTask -Action $taskAction -TaskName $StartChromeTask | Out-Null
     Start-ScheduledTask $StartChromeTask
     
@@ -170,3 +171,15 @@ Set-PreferenceProperty $preferencesPath 'browser' 'check_default_browser' $false
 Set-PreferenceProperty $preferencesPath 'download' 'prompt_for_download' $true | Out-Null
 Set-PreferenceProperty $preferencesPath 'download' 'directory_upgrade' $true | Out-Null
 Set-PreferenceProperty $preferencesPath 'download' 'extensions_to_open' "" | Out-Null
+
+Write-Host 'Register basic associations'
+#
+# Register basic file associations
+#
+$extensionRegKey = "HKLM:\Software\Classes\{0}"
+$extensions = @('.htm', '.html', '.shtml', '.webp', '.xht', '.xhtml')
+foreach($extension in $extensions)
+{
+	$key = $extensionRegKey -f $extension
+	Set-ItemProperty -path $key -name '(Default)' -value $chromeValue
+}
