@@ -9,7 +9,7 @@ meta title="Notepad++"
 meta namespace="npp"
 meta name="notepadplusplus"
 
-using turbo/turboscript-tools:2016.2.4
+using turbo/turboscript-tools:2016.3.17
 
 cmd mkdir c:\Workspace
 workdir c:\Workspace
@@ -19,7 +19,8 @@ batch
  echo import requests >> getUrl.py
  echo parser = 'html.parser' >> getUrl.py
  echo host = 'https://notepad-plus-plus.org' >> getUrl.py
- echo content = requests.get("{0}/download".format(host)).text >> getUrl.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getUrl.py
+ echo content = requests.get("{0}/download".format(host), timeout=10, headers=headers).text >> getUrl.py
  echo soup = BeautifulSoup(content, parser) >> getUrl.py
  echo links = [downloadLink.get('href') for downloadLink in soup.find_all("a", recursive=True) if downloadLink.get('href').startswith('/repository')] >> getUrl.py
  echo print(host + links[0]) >> getUrl.py
@@ -37,8 +38,7 @@ var tag = last
 cmd "wget --no-check-certificate -O installer.exe %url%"
 cmd "installer.exe /S /D=C:\Notepad++"
 
-cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
-cmd powershell -command ". .\Remove-BuildTools.ps1; Remove-BuildTools"
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
 
 workdir c:\
 cmd rmdir c:\Workspace /s /q
