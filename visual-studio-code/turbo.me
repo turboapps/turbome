@@ -12,9 +12,7 @@ meta name = "vscode"
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1,7-zip
-cmd pip install requests --quiet
-cmd pip install pypiwin32 --quiet
+using turbo/turboscript-tools:2016.3.17
 
 ###################################
 # Download and install
@@ -28,24 +26,19 @@ workdir @SYSDRIVE@\Workspace
 batch
   echo import sys, requests, re >> getUrl.py
   echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getUrl.py
-  echo r = requests.get("https://code.visualstudio.com/Docs/", headers=headers, verify=False, timeout=10) >> getUrl.py
-  echo print(re.findall("\'winzip\':\s\'(https?:\/\/go\.microsoft\.com\/fwlink\/\?LinkID=\d+)\'", r.text)[0]) >> getUrl.py
+  echo r = requests.get("https://code.visualstudio.com/Updates", headers=headers, verify=False, timeout=10) >> getUrl.py
+  echo print(re.findall("(https?:\/\/.*?VSCodeSetup-stable.exe)", r.text)[0]) >> getUrl.py
 
 cmd python getUrl.py
 var url = last
 
-cmd "wget -q -O vscode.zip --no-check-certificate --no-verbose ""%url%"""
-cmd "7z x vscode.zip -o@SYSDRIVE@\vscode | find /v ""ing  """
+cmd "wget -q -O VSCodeSetup.exe --no-check-certificate --no-verbose ""%url%"""
+batch cmd
+    VSCodeSetup.exe /verysilent /norestart /dir="c:\vscode"
+    timeout 10 /nobreak
+    taskkill /im Code.exe /t /f
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion c:\vscode\code.exe"
 
-# Get the latest version tag using sigcheck
-batch
-  echo import win32api >> getTag.py
-  echo info = win32api.GetFileVersionInfo("C:\\vscode\\code.exe", "\\") >> getTag.py
-  echo ms = info["FileVersionMS"] >> getTag.py
-  echo ls = info["FileVersionLS"] >> getTag.py
-  echo print("{0}.{1}.{2}".format(win32api.HIWORD(ms), win32api.LOWORD (ms), win32api.HIWORD (ls))) >> getTag.py
-
-cmd python getTag.py
 var tag = last
 meta tag = tag
 
@@ -57,6 +50,10 @@ startup file ("@SYSDRIVE@\vscode\code.exe")
 ###################################
 
 workdir @SYSDRIVE@
-cmd rmdir @SYSDRIVE@\wget /s /q
-cmd rmdir @SYSDRIVE@\Python34 /s /q
+
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+
 cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+env path=
