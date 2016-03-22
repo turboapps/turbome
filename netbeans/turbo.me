@@ -27,7 +27,7 @@ var postfix = last
 ###################################
 
 layer jdk:8
-using wget,python:3.4.1
+using turbo/turboscript-tools:2016.3.17
 
 ###################################
 # Download and install
@@ -46,9 +46,6 @@ batch
   echo @timeout /t %%t%% /nobreak ^> nul >> kill.bat
   echo %%~n0 %%1 %%t%% >> kill.bat
   echo :end >> kill.bat
-
-# Install "requests" module for python
-cmd "pip install requests --quiet"
 
 # Get the latest version tag
 batch
@@ -79,9 +76,10 @@ startup file ("@PROGRAMFILESX86@\NetBeans " + tag + "\bin\netbeans.exe")
 # Clean up
 ###################################
 
-workdir @SYSDRIVE@\
-cmd "rmdir @SYSDRIVE@\Workspace /s /q"
-cmd "rmdir @SYSDRIVE@\wget /s /q"
-cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 meta tag=tag

@@ -15,7 +15,7 @@ meta name="jenkins"
 # Pull dependency images
 ###################################
 
-using gnu/wget,python/python:3.4.1,7-zip
+using turbo/turboscript-tools:2016.3.17
 
 
 ###################################
@@ -68,11 +68,11 @@ env JENKINS_HOME="@PROGRAMFILESX86@\jenkins\"
 # Clean up
 ###################################
 
-workdir c:\
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
 
+workdir c:\
 cmd rmdir c:\Workspace /s /q
-cmd rmdir C:\wget /s /q
-cmd rmdir C:\python34 /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 
 ###################################

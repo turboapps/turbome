@@ -21,7 +21,7 @@ var pattern = "(https?:\/\/inkscape\.org\/en\/gallery\/item\/\d+\/Inkscape-(\d+\
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1
+using turbo/turboscript-tools:2016.3.17
 
 ###################################
 # Download and install
@@ -29,9 +29,6 @@ using wget,python:3.4.1
 
 cmd "mkdir @SYSDRIVE@\Workspace"
 workdir @SYSDRIVE@\Workspace
-
-# Install "requests" module for python
-cmd "pip install requests --quiet"
 
 # Get the latest version tag and download url
 batch
@@ -63,9 +60,10 @@ startup file ("@PROGRAMFILESX86@\Inkscape\inkscape.exe")
 # Clean up
 ###################################
 
-workdir @SYSDRIVE@\
-cmd "rmdir @SYSDRIVE@\Workspace /s /q"
-cmd "rmdir @SYSDRIVE@\wget /s /q"
-cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 meta tag=tag

@@ -9,11 +9,10 @@ meta title="Firefox Developer"
 meta namespace="mozilla"
 meta name="firefox-developer"
 
-using python:3.4.1,wget,7-zip
+using turbo/turboscript-tools:2016.3.17
 
 cmd mkdir c:\Workspace
 workdir c:\Workspace
-cmd pip install requests --quiet
 
 batch
  echo import sys > GetLatestUrl.py
@@ -38,10 +37,11 @@ batch cmd
  mkdir defaults\preferences & cd defaults\preferences
  wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
  rmdir c:\Workspace /s /q
- rmdir c:\wget /s /q
- rmdir c:\Python34 /s /q
-
+ 
 workdir c:\
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 meta website="%DOWNLOAD_URL%"
 var version = dateiso
