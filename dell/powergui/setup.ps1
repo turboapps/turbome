@@ -6,5 +6,5 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 Import-Module Turbo
-$version = (Get-NextTag "dell/powershellgui")
-"dell/powershellgui:$version" | Set-Content image.txt
+$version = (Get-NextTag "dell/powergui")
+"dell/powergui:$version" | Set-Content image.txt
