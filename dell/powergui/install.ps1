@@ -1,0 +1,9 @@
+#
+# Dell PowerGUI install script
+# https://github.com/turboapps/turbome/tree/master/dell/powergui
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Install PowerGUI
+& choco install powergui --x86 --confirm
