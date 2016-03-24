@@ -1,4 +1,4 @@
-# Build turbobrowsers/block-ad-routes image
+# Build turbobrowsers/block-adult-routes image
 # 
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0

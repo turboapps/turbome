@@ -7,7 +7,7 @@ import codecs
 import socket
 import re
 
-DOC = """ Builds routes file basing on uBlock Origin GitHub repo: https://github.com/gorhill/uBlock """
+DOC = """ Builds routes file. Supports ad and adult blockers """
 
 class FilePaths:
     def __init__(self, root_path):
@@ -45,11 +45,17 @@ class FilePaths:
     def ublock_filters(self):
         return os.path.join(self.root_path, 'assets\\ublock\\filters.txt')
 
+    @property
+    def rlwpx_free_fr_adult(self):
+        """http://rlwpx.free.fr/WPFF/hosts.htm"""
+        return os.path.join(self.root_path, 'rlwpx.free.fr\\Hosts.sex')
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description=DOC)
-    parser.add_argument('--repo-dir', type=str, default='c:\\s\\uBlock', help='uBlock Origin repo')
+    parser.add_argument('--repo-dir', type=str, default='c:\\s\\uBlock', help='Repo root dir')
     parser.add_argument('--output-file', type=str, default='routes.txt', help='Route file')
+    parser.add_argument('--mode', type=str, default='ad', help='Which list to build. Valid modes: ad, adult')
     return parser.parse_args()
 
 
@@ -64,7 +70,7 @@ def is_ip_address(address):
         return False
 
 
-def write_routes(host_list, output_file_path):
+def write_routes(host_list, output_file_path, use_wildcards):
     with open(output_file_path, 'w') as output_file:
         def write_line(line):
             print(line, file=output_file)
@@ -75,13 +81,15 @@ def write_routes(host_list, output_file_path):
         write_line('[ip-block]')
         for host in host_list:
             entry = host
-            if not is_ip_address(entry):
+            if use_wildcards and not is_ip_address(entry):
                 entry = '*.' + host
             write_line(entry)
+            if not use_wildcards:
+                write_line('www.' + host)
 
 
 def get_host_list(file_path):
-    first_column_pattern = re.compile('127\.0\.0\.1\s+')
+    first_column_pattern = re.compile('^(127\.0\.0\.1|::1)\s+')
 
     with open(file_path, 'r') as file:
         for line in file:
@@ -122,14 +130,17 @@ if __name__ == '__main__':
     file_paths = FilePaths(args.repo_dir)
 
     hosts = []
-    hosts.extend(get_easy_list_hosts(file_paths.easy_list))
-    hosts.extend(get_easy_list_hosts(file_paths.easy_list_privacy))
-    hosts.extend(get_easy_list_hosts(file_paths.ublock_filters))
-    hosts.extend(get_easy_list_hosts(file_paths.ublock_privacy))
-    hosts.extend(get_host_list(file_paths.pgl_yoyo))
-    hosts.extend(get_host_list(file_paths.malware_domains))
-    hosts.extend(get_host_list(file_paths.malware_domains_list))
+    if args.mode == 'adult':
+        hosts.extend(get_host_list(file_paths.rlwpx_free_fr_adult))
+    else:
+        hosts.extend(get_easy_list_hosts(file_paths.easy_list))
+        hosts.extend(get_easy_list_hosts(file_paths.easy_list_privacy))
+        hosts.extend(get_easy_list_hosts(file_paths.ublock_filters))
+        hosts.extend(get_easy_list_hosts(file_paths.ublock_privacy))
+        hosts.extend(get_host_list(file_paths.pgl_yoyo))
+        hosts.extend(get_host_list(file_paths.malware_domains))
+        hosts.extend(get_host_list(file_paths.malware_domains_list))
 
     hosts_to_use = sorted(list(set(hosts)))
     hosts_to_use.remove('localhost')
-    write_routes(hosts_to_use, args.output_file)
+    write_routes(hosts_to_use, args.output_file, args.mode not in ['adult'])
