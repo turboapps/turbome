@@ -8,7 +8,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 # Saves routes.txt, required to build block-ad-routes image, in the script directory.
-# TurboScript should be executed using run.bat script, which mounts the script directory mounted as c:\mount.
+# TurboScript should be executed using run.ps1 script, which mounts the parent of the script directory as c:\mount.
 
 ###################################
 # Pull dependency images
@@ -48,5 +48,5 @@ batch cmd
     7z x uBlock.zip -oc:\workspace\uBlock > nul
 
 # Build routes.txt file
-cmd python c:\mount\extract_routes.py --repo-dir c:\Workspace\uBlock\uBlock0.chromium
-cmd copy routes.txt c:\mount /Y
+cmd python c:\mount\extract_routes.py --repo-dir c:\Workspace\uBlock\uBlock0.chromium --mode ad
+cmd copy routes.txt c:\mount\ad-routes /Y

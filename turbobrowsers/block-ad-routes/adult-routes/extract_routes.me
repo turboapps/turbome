@@ -1,0 +1,30 @@
+#
+# Extract Routes turbo.me file
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/block-ad-routes/adult-routes
+#
+# Created with Turbo CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Saves routes.txt, required to build block-adult-routes image, in the script directory.
+# TurboScript should be executed using run.ps1 script, which mounts the parent of the script directory as c:\mount.
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.3.17
+
+cmd mkdir Workspace
+workdir c:\Workspace
+    
+# Download and unpack
+batch cmd
+    wget --no-verbose --no-check-certificate -O hosts.7z http://rlwpx.free.fr/WPFF/hsex.7z
+    mkdir c:\workspace\rlwpx.free.fr
+    7z x hosts.7z -oc:\workspace\rlwpx.free.fr > nul
+
+# Build routes.txt file
+cmd python c:\mount\extract_routes.py --repo-dir c:\Workspace --mode adult
+cmd copy routes.txt c:\mount\adult-routes /Y
