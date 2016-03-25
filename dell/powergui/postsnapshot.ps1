@@ -27,8 +27,6 @@ Remove-FileSystemItems $xappl '@APPDATALOCALLOW@\Microsoft'
 Remove-FileSystemItems $xappl '@SYSTEM@\CodeIntegrity'
 Remove-FileSystemDirectoryItems $xappl '@SYSDRIVE@'
 
-Import-Files $xappl -SourceDir '.\Resources\Files' -SnapshotDir '.\output\Files' | Out-Null
-
 $powerguiInstallDir = '.\output\Files\Default\@PROGRAMFILESX86@\PowerGUI'
 
 Remove-StartupFiles $xappl
@@ -41,6 +39,7 @@ Add-StartupFile $xappl -File $powerguiscriptx86Exe -Name 'ScriptEditor_x86'
 Add-StartupFile $xappl -File $powerguiadminExe -CommandLine '-AuthoringMode' -Name 'AdminConsoleAuthoring'
 Add-StartupFile $xappl -File $powerguiadminx86Exe -CommandLine '-AuthoringMode' -Name 'AdminConsoleAuthoringx86'
 Add-StartupFile $xappl -File $powerguiadminExe -Name 'AdminConsole'
-Add-StartupFile $xappl -File $powerguiadminx86Exe-Name 'AdminConsolex86'
+
+Add-StartupFile $xappl -File $powerguiadminx86Exe -Name 'AdminConsolex86'
 
 Save-XAPPL $xappl $XappPath
