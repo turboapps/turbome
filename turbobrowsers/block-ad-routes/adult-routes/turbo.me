@@ -1,0 +1,38 @@
+#
+# Adblock-Routes turbo.me file
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/block-ad-routes/adult-routes
+#
+# Created with Turbo CMD version 1.4.1085.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Block Adult Networks"
+meta namespace="turbobrowsers"
+meta name="block-ad-routes"
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer clean
+
+
+###################################
+# Version
+###################################
+
+var version = year + "." + month + "." + day
+meta tag = version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd","/k echo This is a dependency and should not be launched by itself")
