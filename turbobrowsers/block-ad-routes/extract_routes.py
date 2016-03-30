@@ -46,6 +46,10 @@ class FilePaths:
         return os.path.join(self.root_path, 'assets\\ublock\\filters.txt')
 
     @property
+    def ublock_unbreak(self):
+        return os.path.join(self.root_path, 'assets\\ublock\\unbreak.txt')
+
+    @property
     def rlwpx_free_fr_adult(self):
         """http://rlwpx.free.fr/WPFF/hosts.htm"""
         return os.path.join(self.root_path, 'rlwpx.free.fr\\Hosts.sex')
@@ -91,6 +95,8 @@ def write_routes(host_list, output_file_path, use_wildcards):
 def get_host_list(file_path):
     first_column_pattern = re.compile('^(127\.0\.0\.1|::1)\s+')
 
+    hosts = []
+    exceptions = []
     with open(file_path, 'r') as file:
         for line in file:
             line_to_use = line.strip()
@@ -99,7 +105,8 @@ def get_host_list(file_path):
             host = first_column_pattern.sub('', line_to_use)
             if not host:
                 continue
-            yield normalize_host(host)
+            hosts.append(normalize_host(host))
+    return (hosts, exceptions)
 
 
 def normalize_host(hostname):
@@ -109,7 +116,7 @@ def normalize_host(hostname):
 
 
 def get_easy_list_hosts(file_path):
-    forbidden_charsets = {'*', '/'}
+    forbidden_charsets = {'*', '/', ':'}
 
     def get_hostname(entry):
         if not entry.startswith('||') or not entry.endswith('^'):
@@ -117,12 +124,30 @@ def get_easy_list_hosts(file_path):
         if set(entry) & forbidden_charsets:
             return None
         return normalize_host(entry[2:-1])
+    
+    def get_exception_hostname(entry):
+        if not entry.startswith('@@||'):
+            return None
+        match = re.search('[/:^]', entry)
+        if not match:
+            return None
+        hostname = entry[4:match.start()]
+        if set(hostname) & forbidden_charsets:
+            return None
+        return normalize_host(hostname)
 
+    hosts = []
+    exceptions = []
     with codecs.open(file_path, mode='r', encoding='utf-8') as file:
         for line in file:
-            hostname = get_hostname(line.strip())
+            entry = line.strip()
+            hostname = get_hostname(entry)
             if hostname:
-                yield hostname
+                hosts.append(hostname)
+            exception = get_exception_hostname(entry)
+            if exception:
+                exceptions.append(exception)
+    return (hosts, exceptions)
 
 
 if __name__ == '__main__':
@@ -130,17 +155,36 @@ if __name__ == '__main__':
     file_paths = FilePaths(args.repo_dir)
 
     hosts = []
+    exceptions = ['localhost']
     if args.mode == 'adult':
-        hosts.extend(get_host_list(file_paths.rlwpx_free_fr_adult))
+        (new_hosts, new_exceptions) = get_host_list(file_paths.rlwpx_free_fr_adult)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
     else:
-        hosts.extend(get_easy_list_hosts(file_paths.easy_list))
-        hosts.extend(get_easy_list_hosts(file_paths.easy_list_privacy))
-        hosts.extend(get_easy_list_hosts(file_paths.ublock_filters))
-        hosts.extend(get_easy_list_hosts(file_paths.ublock_privacy))
-        hosts.extend(get_host_list(file_paths.pgl_yoyo))
-        hosts.extend(get_host_list(file_paths.malware_domains))
-        hosts.extend(get_host_list(file_paths.malware_domains_list))
+        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.easy_list)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.easy_list_privacy)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.ublock_filters)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.ublock_privacy)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.ublock_unbreak)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_host_list(file_paths.pgl_yoyo)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_host_list(file_paths.malware_domains)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
+        (new_hosts, new_exceptions) = get_host_list(file_paths.malware_domains_list)
+        hosts.extend(new_hosts)
+        exceptions.extend(new_exceptions)
 
-    hosts_to_use = sorted(list(set(hosts)))
-    hosts_to_use.remove('localhost')
+    hosts_to_use = sorted(list(set(hosts) - set(exceptions)))
     write_routes(hosts_to_use, args.output_file, args.mode not in ['adult'])
