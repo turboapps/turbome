@@ -187,4 +187,8 @@ if __name__ == '__main__':
         exceptions.extend(new_exceptions)
 
     hosts_to_use = sorted(list(set(hosts) - set(exceptions)))
-    write_routes(hosts_to_use, args.output_file, args.mode not in ['adult'])
+    # The adult list is so big that we do not use wildcards. This helps with
+    # performance in VM, as without the wildcards it can create a hashmap.
+    # Wildcards handling is unoptimized.
+    use_wildcards = args.mode not in ['adult']
+    write_routes(hosts_to_use, args.output_file, use_wildcards)
