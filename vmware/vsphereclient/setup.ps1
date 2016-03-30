@@ -5,7 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-# Download Steam setup exe
+# Download VMware vSphere client setup exe. Change this to any version.
 $downloadUrl = 'http://vsphereclient.vmware.com/vsphereclient/3/0/1/6/4/4/7/VMware-viclient-all-6.0.0-3016447.exe'
 (New-Object System.Net.WebClient).DownloadFile($downloadUrl, 'installer.exe')
 
