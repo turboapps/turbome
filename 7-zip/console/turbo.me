@@ -12,30 +12,48 @@
 meta title="7-zip Console"
 meta namespace="7-zip"
 meta name="7-zip-console"
-meta tag="9.20"
 
 
 ###################################
 # Pull dependency images
 ###################################
 
-layer clean
-using wget
-
+using turbo/turboscript-tools:2016.3.17
 
 ###################################
 # Download and install
 ###################################
 
 # Set working directory
-workdir C:\
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+batch
+  echo import sys, requests, re > getUrl.py
+  echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getUrl.py
+  echo r = requests.get("http://www.7-zip.org/", headers=headers, verify=False, timeout=10) >> getUrl.py
+  echo print([re.findall('href="(.*?\-x64.exe)"^>Download', r.text)[0], re.findall('href="([^-]*?\.exe)"^>Download', r.text)[0], re.findall('NewsTitle^>7-Zip (\d*\.\d*\.*\d*)^</TD^>', r.text)[0]]) >> getUrl.py
+
+cmd python getUrl.py
+var res = last
+
+cmd "python -c ""print( %res% [0])"""
+var urlx64="http://www.7-zip.org/" + last
+
+cmd "python -c ""print( %res% [1])"""
+var urlx86="http://www.7-zip.org/" + last
+
+cmd "python -c ""print( %res% [2])"""
+var tag=last
+
 
 # Download
-cmd wget.exe http://downloads.sourceforge.net/sevenzip/7z920.exe
+cmd "wget.exe wget --no-check-certificate --quiet -O x64.exe %urlx64%"
+cmd "wget.exe wget --no-check-certificate --quiet -O x86.exe %urlx86%"
 
 # Install
-cmd 7z920.exe /S 
-
+cmd x64.exe /S 
+cmd x86.exe /S 
 
 ###################################
 # Environment Variables
@@ -43,6 +61,7 @@ cmd 7z920.exe /S
 
 env path="@PROGRAMFILESX86@\7-zip"
 
+enable MergeStartupDir
 
 ###################################
 # Startup File
@@ -55,4 +74,11 @@ startup file ("cmd", "/k 7z.exe")
 # Clean up
 ###################################
 
-cmd del C:\7z920.exe /Q
+workdir @SYSDRIVE@
+
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+meta tag=tag
