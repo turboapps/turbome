@@ -11,17 +11,10 @@ meta namespace="mozilla"
 meta name="thunderbird"
 
 ###################################
-# Install settings
-###################################
-
-var thunderbirdPage = "https://www.mozilla.org/en-US/thunderbird/"
-var thunderbirdTagPattern = "https:\/\/download.mozilla.org\/\?product=thunderbird-(\d*\.\d*\.\d*)&amp;os=win&amp;lang=en-US"
-
-###################################
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1
+using wget,python:3.4.4
 
 ###################################
 # Download and install
@@ -41,7 +34,7 @@ batch
  echo host = "https://www.mozilla.org/en-US/thunderbird/" >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(re.findall("https:\/\/download.mozilla.org\/\?product=thunderbird-(\d*\.\d*\.\d*)&amp;os=win&amp;lang=en-US", r.text )[0]) >> getRelease.py
+ echo print(re.findall('https:\/\/download.mozilla.org\/\?product=thunderbird-(\d*(?:.\d+)*)[^"]*', r.text )[0]) >> getRelease.py
 
 cmd python getRelease.py
 
