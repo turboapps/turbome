@@ -147,6 +147,80 @@ function Disable-Services($xappl)
     $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.autoStart = "false" }
 }
 
+function Add-Node($Xappl, $root, $segments, $nodeSelector, $nodeName, $attrs)
+{
+     function Add-Attribute($element, $name, $value)
+     {
+        $attribute = $Xappl.CreateAttribute($name)
+        $attribute.Value = $value
+        $element.Attributes.Append($attribute) | Out-Null
+     }
+     
+     $result = $False
+     $parent = $root
+     $currentPath = ""
+     foreach($segment in $segments)
+     {
+        $currentPath = [System.IO.Path]::Combine($currentPath, $segment)
+        $xpath = & $nodeSelector $currentPath
+        $node = $xappl.SelectSingleNode($xpath)
+            
+        if(-not $node)
+        {
+            $node = $Xappl.CreateElement($nodeName)
+            $parent.AppendChild($node) | Out-Null
+            
+            Add-Attribute $node 'name' $segment       
+            foreach($entry in $attrs.GetEnumerator())
+            {
+                Add-Attribute $node $entry.key $entry.value   
+            }
+
+            $parent = $node
+            $result = $True
+        }
+        else
+        {
+            $parent = $node
+        }
+    }
+    return $result
+}
+
+function Add-RegistryKey
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+	    [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$False,Position=3)]
+        [string] $Isolation = $FullIsolation,
+        [Parameter(Mandatory=$False)]
+        [string] $ReadOnly = $False,
+        [Parameter(Mandatory=$False)]
+        [string] $Hide = "False",
+        [Parameter(Mandatory=$False)]
+        [string] $NoSync = $False
+    )
+    process
+    {
+        $layer = Get-Layer $Path
+        $root = $Xappl.SelectSingleNode("Configuration/Layers/Layer[@name=`"$layer`"]/Registry")
+        $segments = (Skip-Layer $Path).Split('\')
+        $attrs = @{
+            'isolation' = $Isolation;
+            'readOnly' = $ReadOnly;
+            'hide' = $Hide;
+            'noSync' = $NoSync
+        }
+        
+        return Add-Node $Xappl $root $segments Get-RegistryXPath 'Key' $attrs
+    }
+}
+
 function Add-Directory
 {
     [CmdletBinding()]
@@ -167,46 +241,17 @@ function Add-Directory
     )
     process
     {
-        function Add-Attribute($element, $name, $value)
-        {
-            $attribute = $Xappl.CreateAttribute($name)
-            $attribute.Value = $value
-            $element.Attributes.Append($attribute) | Out-Null
-        }
-
-        $result = $False
-
         $layer = Get-Layer $Path
-        $parent = $Xappl.SelectSingleNode('Configuration/Layers/Layer[@name="Default"]/Filesystem')
-        $currentPath = ""
-        $segments = (Skip-Layer $Path).Split("\")
-        foreach($segment in $segments)
-        {
-            $currentPath = [System.IO.Path]::Combine($currentPath, $segment)
-            $xpath = Get-FileSystemXPath $currentPath
-            $node = $xappl.SelectSingleNode($xpath)
-
-            if(-not $node)
-            {
-                $directory = $Xappl.CreateElement('Directory')
-                $parent.AppendChild($directory) | Out-Null
-
-                Add-Attribute $directory 'name' $segment
-                Add-Attribute $directory 'isolation' $Isolation
-                Add-Attribute $directory 'readOnly' $ReadOnly
-                Add-Attribute $directory 'hide' $Hide
-                Add-Attribute $directory 'noSync' $NoSync
-
-                $parent = $directory
-                $result = $True
-            }
-            else
-            {
-                $parent = $node
-            }
+        $root = $Xappl.SelectSingleNode("Configuration/Layers/Layer[@name=`"$layer`"]/Filesystem")
+        $segments = (Skip-Layer $Path).Split('\')
+        $attrs = @{
+            'isolation' = $Isolation
+            'readOnly' = $ReadOnly
+            'hide' = $Hide
+            'noSync' = $NoSync
         }
-
-        return $result
+        
+        return Add-Node $Xappl $root $segments Get-FileSystemXPath 'Directory' $attrs
     }
 }
 
@@ -376,6 +421,7 @@ function Import-Files
     }
 }
 
+Export-ModuleMember -Function 'Add-RegistryKey'
 Export-ModuleMember -Function 'Add-Directory'
 Export-ModuleMember -Function 'Add-File'
 Export-ModuleMember -Function 'Add-StartupFile'
