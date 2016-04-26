@@ -54,12 +54,6 @@ cmd "wget.exe wget --no-check-certificate --quiet -O x86.exe %urlx86%"
 cmd x64.exe /S 
 cmd x86.exe /S 
 
-###################################
-# Environment Variables
-###################################
-
-env path="@PROGRAMFILESX86@\7-zip"
-
 enable MergeStartupDir
 
 ###################################
@@ -78,5 +72,13 @@ cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module 
 
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+env pathext=""
+env path="@PROGRAMFILESX86@\7-zip"
 
 meta tag=tag

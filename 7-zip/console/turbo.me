@@ -59,8 +59,6 @@ cmd x86.exe /S
 # Environment Variables
 ###################################
 
-env path="@PROGRAMFILESX86@\7-zip"
-
 enable MergeStartupDir
 
 ###################################
@@ -80,5 +78,9 @@ cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module 
 
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+env path=""
+env pathext=""
+env path="@PROGRAMFILESX86@\7-zip"
 
 meta tag=tag
