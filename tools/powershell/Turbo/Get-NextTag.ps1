@@ -9,9 +9,9 @@ function Get-NextTag
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [string] $Repo,
+        [string] $Repo,
         [Parameter(Mandatory=$False)]
-	    [string] $Hub = 'https://turbo.net',       
+        [string] $Hub = 'https://turbo.net',       
         [Parameter(Mandatory=$False)]    
         [ValidateSet('major', 'minor')]     
         [string] $Number = 'major'

@@ -9,7 +9,7 @@ function Update-AdBlock
     param
     (
         [Parameter(Mandatory=$True)]
-	    [string] $DownloadDir,       
+        [string] $DownloadDir,       
         [Parameter(Mandatory=$True)]    
         [string] $ConfigPath
     )

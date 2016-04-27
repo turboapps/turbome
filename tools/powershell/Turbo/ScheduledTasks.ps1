@@ -9,7 +9,7 @@ function Test-ScheduledTaskDefined
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $TaskName
+        [string] $TaskName
     )
     process
     {
@@ -23,11 +23,11 @@ function Test-ScheduledTaskRunning
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $TaskName
+        [string] $TaskName
     )
     process
     {
-	    return Get-ScheduledTask | Where-Object {$_.TaskName -like $TaskName -and $_.State -like "Running"}
+        return Get-ScheduledTask | Where-Object {$_.TaskName -like $TaskName -and $_.State -like "Running"}
     }
 }
 
@@ -37,9 +37,9 @@ function Wait-ForScheduledTask
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $TaskName,
+        [string] $TaskName,
         [Parameter(ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $MaxCount = 16
+        [string] $MaxCount = 16
     )
     process
     {
@@ -65,7 +65,7 @@ function Remove-ScheduledTask
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $TaskName
+        [string] $TaskName
     )
     process
     {
@@ -83,9 +83,9 @@ function Start-ProcessInScheduledTask
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $TaskName,
+        [string] $TaskName,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $Path
+        [string] $Path
     )
     process
     {
@@ -101,9 +101,9 @@ function Wait-ForProcess
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $ProcessName,
+        [string] $ProcessName,
         [Parameter(ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $MaxCount = 16
+        [string] $MaxCount = 16
     )
     process
     {
@@ -126,11 +126,11 @@ function Close-WindowProcessInScheduledTask
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $TaskName,
+        [string] $TaskName,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $ProcessName,
+        [string] $ProcessName,
         [Parameter(ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $MaxCount = 16
+        [string] $MaxCount = 16
     )
     process
     {

@@ -16,14 +16,14 @@ function Set-FileAssociation
     process
     {
         $regPath = "HKCU:\Software\Classes\{0}"
-	    foreach($extension in $Extensions)
-	    {
-		    $key = $regPath -f $extension
+        foreach($extension in $Extensions)
+        {
+            $key = $regPath -f $extension
             if(-not (Test-Path $key))
             {
                 New-Item -Path $key -ItemType RegistryKey -Force
             }
-		    Set-ItemProperty -path $key -name '(Default)' -value $Name
-	    }
+            Set-ItemProperty -path $key -name '(Default)' -value $Name
+        }
     }
 }

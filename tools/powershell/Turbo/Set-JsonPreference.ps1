@@ -9,15 +9,15 @@ function Set-JsonPreference
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $Path,
+        [string] $Path,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $Category,
+        [string] $Category,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $Property,
+        [string] $Property,
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
         [AllowEmptyString()]
         # Skipped type declaration to avoid unwanted conversions (example: $true should be a boolean, not a string value - "true")
-	    $Value
+        $Value
     )
     process
     {

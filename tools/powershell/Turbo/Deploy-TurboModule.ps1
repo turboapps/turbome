@@ -9,7 +9,7 @@ function Deploy-TurboModule
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $Path
+        [string] $Path
     )
     process
     {

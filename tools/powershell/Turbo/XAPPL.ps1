@@ -125,7 +125,7 @@ function Set-RegistryValue
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [XML] $Xappl,
+        [XML] $Xappl,
         [Parameter(Mandatory=$True,Position=2)]
         [string] $Path,
         [Parameter(Mandatory=$True,Position=3)]
@@ -193,7 +193,7 @@ function Add-RegistryKey
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [XML] $Xappl,
+        [XML] $Xappl,
         [Parameter(Mandatory=$True,Position=2)]
         [string] $Path,
         [Parameter(Mandatory=$False,Position=3)]
@@ -227,7 +227,7 @@ function Add-Directory
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [XML] $Xappl,
+        [XML] $Xappl,
         [Parameter(Mandatory=$True)]
         [string] $Path,
         [Parameter(Mandatory=$False)]
@@ -261,7 +261,7 @@ function Add-File
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [XML] $Xappl,
+        [XML] $Xappl,
         [Parameter(Mandatory=$True)]
         [string] $Path,
         [Parameter(Mandatory=$False)]
@@ -340,7 +340,7 @@ function Add-StartupFile
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [XML] $Xappl,
+        [XML] $Xappl,
         [Parameter(Mandatory=$True)]
         [string] $File,
         [Parameter(Mandatory=$False)]
@@ -398,7 +398,7 @@ function Import-Files
     param
     (
         [Parameter(Mandatory=$True,Position=1)]
-	    [XML] $Xappl,
+        [XML] $Xappl,
         [Parameter(Mandatory=$True)]
         [string] $SnapshotDir,
         [Parameter(Mandatory=$True)]

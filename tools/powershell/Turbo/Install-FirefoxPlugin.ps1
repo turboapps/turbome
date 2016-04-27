@@ -9,7 +9,7 @@ function Install-FirefoxPlugin
     param
     (
         [Parameter(Mandatory=$True)]
-	    [string] $DownloadDir,       
+        [string] $DownloadDir,       
         [Parameter(Mandatory=$True)]    
         [string] $PluginName,
         [Parameter(Mandatory=$True)]    

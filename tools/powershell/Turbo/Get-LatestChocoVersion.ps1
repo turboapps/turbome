@@ -9,7 +9,7 @@ function Get-LatestChocoVersion
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True,HelpMessage="Name of the Chocolatey package")]
-	    [string] $Package
+        [string] $Package
     )
     process
     {

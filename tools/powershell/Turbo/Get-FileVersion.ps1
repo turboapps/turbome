@@ -9,7 +9,7 @@ function Get-FileVersion
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $Path,
+        [string] $Path,
         [Parameter(HelpMessage="Allows to extract version from different file metadata. Supported values are: FileVersion, Comments")]
         [string] $Source = 'FileVersion'
     )

@@ -10,7 +10,7 @@ function Close-MainWindow
     param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-	    [string] $ProcessName
+        [string] $ProcessName
     )
     process
     {
