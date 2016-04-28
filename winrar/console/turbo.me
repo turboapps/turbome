@@ -1,0 +1,63 @@
+#
+# WinRAR turbo.me file
+# https://github.com/turboapps/turbome/tree/master/winrar
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="WinRAR Console"
+meta namespace="rarlab"
+meta name="winrar-console"
+meta tag="5.31"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget
+
+###################################
+# Download and install
+###################################
+cmd mkdir @SYSDRIVE@\workspace
+workdir @SYSDRIVE@\workspace
+
+cmd "wget --no-check-certificate ""http://www.win-rar.com/fileadmin/winrar-versions/winrar/wrar531.exe"" -O wrar-x86-531.exe"
+cmd "wget --no-check-certificate ""http://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-531.exe"" -O winrar-x64-531.exe"
+
+cmd wrar-x86-531.exe /S
+cmd winrar-x64-531.exe /S
+
+cmd echo "Open WinRAR.exe to avoid the first launch splash"
+workdir @PROGRAMFILESX86@\WinRAR
+cmd start WinRar.exe
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+
+###################################
+# Startup File
+###################################
+
+startup file ("cmd", "/k rar.exe")
+
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+env pathext=""
+env path="@PROGRAMFILESX86@\WinRAR"
+
+enable MergeStartupDir
