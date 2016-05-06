@@ -28,3 +28,4 @@ Foreach($cmdlet in (Get-ChildItem -Path $cmdlets -ErrorAction SilentlyContinue))
 
 . $PSScriptRoot\XAPPL.ps1
 . $PSScriptRoot\ScheduledTasks.ps1
+. $PSScriptRoot\Get-SpecialFolder.ps1

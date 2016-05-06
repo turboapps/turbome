@@ -18,14 +18,12 @@ meta name="skype"
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1
+using turbo/turboscript-tools:2016.5.5
 
 
 ###################################
 # Download and install
 ###################################
-
-cmd pip install pypiwin32 --quiet
 
 # Set working directory
 cmd mkdir c:\Workspace
@@ -46,17 +44,57 @@ batch
 cmd python getTag.py
 var tag = last
 
+# Change downloads directory to c:\Skype\Downloads
+batch cmd
+    echo Import-Module Turbo > postConfig.ps1
+    echo Start-Process -FilePath 'c:\\Skype\\Phone\\skype.exe' >> postConfig.ps1
+    echo $settingsPath = "${env:APPDATA}\\skype\\shared.xml" >> postConfig.ps1
+    echo $maxSteps = 12 >> postConfig.ps1
+    echo $currentStep = 0 >> postConfig.ps1
+    echo $settingsExist = $False >> postConfig.ps1
+    echo do { >> postConfig.ps1
+    echo     Start-Sleep -s 5 >> postConfig.ps1
+    echo     $currentStep += 1 >> postConfig.ps1
+    echo     $settingsExist = Test-Path -Path $settingsPath >> postConfig.ps1
+    echo } while(-not $settingsExist) >> postConfig.ps1
+    echo if (-not $settingsExist) { >> postConfig.ps1
+    echo     throw [System.IO.FileNotFoundException] "$settingsPath not found." >> postConfig.ps1
+    echo } >> postConfig.ps1
+    echo Stop-Process -Name 'Skype' >> postConfig.ps1
+    echo $settings = New-Object XML >> postConfig.ps1
+    echo $settings.Load($settingsPath) >> postConfig.ps1
+    echo $libNode = $settings.SelectSingleNode('/config/Lib') >> postConfig.ps1
+    echo $mediaMessagingNode = $settings.CreateElement('MediaMessaging') >> postConfig.ps1
+    echo $libNode.AppendChild($mediaMessagingNode) >> postConfig.ps1
+    echo $storageTransformNode = $settings.CreateElement('StorageTransformEnabled') >> postConfig.ps1
+    echo $storageTransformNode.InnerText = 1 >> postConfig.ps1
+    echo $mediaMessagingNode.AppendChild($storageTransformNode) >> postConfig.ps1
+    echo $uiNode = $settings.SelectSingleNode('/config/UI') >> postConfig.ps1
+    echo $transferSaveDir = "C:\\Skype\\Downloads" >> postConfig.ps1
+    echo if (-not (Test-Path $transferSaveDir)) { >> postConfig.ps1
+    echo     New-Item -ItemType Directory -Force -Path $transferSaveDir >> postConfig.ps1
+    echo } >> postConfig.ps1
+    echo $transferDirElement = $settings.CreateElement('TransferSaveDir') >> postConfig.ps1
+    echo $transferDirElement.InnerText = "C:\Skype\Downloads" >> postConfig.ps1
+    echo $uiNode.AppendChild($transferDirElement) >> postConfig.ps1
+    echo $settings.Save($settingsPath) >> postConfig.ps1
+
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File postConfig.ps1
+
 
 ###################################
 # Clean up
 ###################################
 
-workdir c:\
+workdir @SYSDRIVE@
 
-cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\python34 /s /q
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
 
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+env path=""
+env pathext=""
 
 ###################################
 # Routes
