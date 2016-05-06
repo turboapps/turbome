@@ -44,6 +44,7 @@ batch
 cmd python getTag.py
 var tag = last
 
+# Change downloads directory to c:\Skype\Downloads
 batch cmd
     echo Import-Module Turbo > postConfig.ps1
     echo Start-Process -FilePath 'c:\\Skype\\Phone\\skype.exe' >> postConfig.ps1
@@ -69,12 +70,12 @@ batch cmd
     echo $storageTransformNode.InnerText = 1 >> postConfig.ps1
     echo $mediaMessagingNode.AppendChild($storageTransformNode) >> postConfig.ps1
     echo $uiNode = $settings.SelectSingleNode('/config/UI') >> postConfig.ps1
-    echo $transferSaveDir = Get-SpecialFolder $SpecialFolders.Downloads >> postConfig.ps1
+    echo $transferSaveDir = "C:\\Skype\\Downloads" >> postConfig.ps1
     echo if (-not (Test-Path $transferSaveDir)) { >> postConfig.ps1
     echo     New-Item -ItemType Directory -Force -Path $transferSaveDir >> postConfig.ps1
     echo } >> postConfig.ps1
     echo $transferDirElement = $settings.CreateElement('TransferSaveDir') >> postConfig.ps1
-    echo $transferDirElement.InnerText = $transferSaveDir >> postConfig.ps1
+    echo $transferDirElement.InnerText = "C:\Skype\Downloads" >> postConfig.ps1
     echo $uiNode.AppendChild($transferDirElement) >> postConfig.ps1
     echo $settings.Save($settingsPath) >> postConfig.ps1
 
