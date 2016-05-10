@@ -128,6 +128,9 @@ def get_easy_list_hosts(file_path):
     def get_exception_hostname(entry):
         if not entry.startswith('@@||'):
             return None
+        if '$domain=' in entry:
+            # ignore exceptions registered for single domain only
+            return None
         match = re.search('[/:^]', entry)
         if not match:
             return None
@@ -161,30 +164,19 @@ if __name__ == '__main__':
         hosts.extend(new_hosts)
         exceptions.extend(new_exceptions)
     else:
-        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.easy_list)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.easy_list_privacy)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.ublock_filters)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.ublock_privacy)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_easy_list_hosts(file_paths.ublock_unbreak)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_host_list(file_paths.pgl_yoyo)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_host_list(file_paths.malware_domains)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
-        (new_hosts, new_exceptions) = get_host_list(file_paths.malware_domains_list)
-        hosts.extend(new_hosts)
-        exceptions.extend(new_exceptions)
+        host_exception_pairs = [
+            get_easy_list_hosts(file_paths.easy_list),
+            get_easy_list_hosts(file_paths.easy_list_privacy),
+            get_easy_list_hosts(file_paths.ublock_filters),
+            get_easy_list_hosts(file_paths.ublock_privacy),
+            get_easy_list_hosts(file_paths.ublock_unbreak),
+            get_host_list(file_paths.pgl_yoyo),
+            get_host_list(file_paths.malware_domains),
+            get_host_list(file_paths.malware_domains_list)
+        ]
+        for new_hosts, new_exceptions in host_exception_pairs:
+            hosts.extend(new_hosts)
+            exceptions.extend(new_exceptions)
 
     hosts_to_use = sorted(list(set(hosts) - set(exceptions)))
     # The adult list is so big that we do not use wildcards. This helps with
