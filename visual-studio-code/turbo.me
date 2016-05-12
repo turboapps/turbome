@@ -26,8 +26,8 @@ workdir @SYSDRIVE@\Workspace
 batch
   echo import sys, requests, re >> getUrl.py
   echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getUrl.py
-  echo r = requests.get("https://code.visualstudio.com/Updates", headers=headers, verify=False, timeout=10) >> getUrl.py
-  echo print(re.findall("(https?:\/\/.*?VSCodeSetup-stable.exe)", r.text)[0]) >> getUrl.py
+  echo r = requests.get("https://code.visualstudio.com/scripts/main.js", headers=headers, timeout=10) >> getUrl.py
+  echo print(re.findall('win:"(https:.*?)"', r.text)[1]) >> getUrl.py
 
 cmd python getUrl.py
 var url = last
