@@ -62,6 +62,8 @@ function Is-ChromeRunning() {
 Clean-ScheduledTasks
 try
 {
+    Copy-Item 'C:\vagrant\Resources\master_preferences' 'C:\Program Files (x86)\Google\Chrome\Application'
+
 	$chromeExecutable = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
     $taskAction = New-ScheduledTaskAction -Execute $chromeExecutable
     Register-ScheduledTask -Action $taskAction -TaskName $StartChromeTask | Out-Null
