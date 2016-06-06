@@ -19,8 +19,7 @@ meta name="flash"
 # Pull dependency images
 ###################################
 
-using gnu/wget,python/python:3.4.1
-
+using turbo/turboscript-tools:2016.5.5
 
 
 ###################################
@@ -31,31 +30,15 @@ using gnu/wget,python/python:3.4.1
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Get version
-cmd pip install requests --quiet
-
-# Extract the latest Adobe Flash Player version for Win and Mac
-batch
- echo import sys > getRelease.py
- echo import requests >> getRelease.py
- echo import re >> getRelease.py
- echo host = "http://www.adobe.com/support/flashplayer/downloads.html" >> getRelease.py
- echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >>  getRelease.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(re.findall("(\d+\.\d+.\d+\.\d+)\s+\(Win(?:\s+\w*)?\s+and\s+Mac\)", r.text)[0]) >> getRelease.py
-
-cmd python getRelease.py
-
-var tag = last
-
-cmd "python -c ""print('%tag%'.split('.')[0])"""
-var version = last
-
 # Download
-cmd "wget -O setup.msi --no-verbose --no-check-certificate http://download.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_%version%_plugin.msi"
+cmd "wget -O setup.msi --no-verbose --no-check-certificate https://fpdownload.macromedia.com/get/flashplayer/distyfp/current/win/install_flash_player_21_plugin.msi"
 
 # Install
 cmd "setup.msi /qn"
+
+# Get file version
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion %SYSTEMROOT%\System32\Macromed\Flash\Flash.ocx"
+var tag = last
 
 # Disable protected mode - temporary workaround for Firefox hangs on pages containing Flash content
 batch
@@ -72,11 +55,15 @@ batch
 # Clean up
 ###################################
 
-workdir c:\
+workdir @SYSDRIVE@
 
-cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+env path=""
+env pathext=""
 
 ###################################
 # Version
