@@ -5,7 +5,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-. .\Resources\shared_snapshot.ps1
+$rootDir = $(Get-Item $PSScriptRoot).Parent.FullName
+. "$rootDir\Resources\shared_snapshot.ps1"
 
 Download-Browser 'install.msi'
 $tag = Get-Version '.\install.msi'
