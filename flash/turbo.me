@@ -7,6 +7,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+requires privilege:admin
+
 ###################################
 # Meta tags
 ###################################
@@ -36,8 +38,16 @@ cmd "wget -O setup.msi --no-verbose --no-check-certificate https://fpdownload.ma
 # Install
 cmd "setup.msi /qn"
 
+
 # Get file version
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion %SYSTEMROOT%\System32\Macromed\Flash\Flash.ocx"
+cmd dir /b C:\Windows\System32\Macromed\Flash | findstr FlashUtil* > version.txt
+cmd findstr "." version.txt
+var executable = last
+var executablePath = "C:\Windows\System32\Macromed\Flash\" + executable
+cmd "copy ""%executablePath%"" flash.exe"
+batch cmd
+    powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion -Path flash.exe" > image.txt
+cmd findstr "." image.txt
 var tag = last
 
 # Disable protected mode - temporary workaround for Firefox hangs on pages containing Flash content
