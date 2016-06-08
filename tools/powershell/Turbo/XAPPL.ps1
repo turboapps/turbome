@@ -3,6 +3,14 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+# XPath attribute matches are case sensitive by default
+function EqualsIgnoreCase([string] $attribute, [string] $value)
+{
+    $upperCaseValue = $value.ToUpper()
+    $lowerCaseValue = $value.ToLower()
+    return "translate($attribute,`"$upperCaseValue`",`"$lowerCaseValue`")=`"$lowerCaseValue`""
+}
+
 function Get-XPath($prefix, $segmentName, $path)
 {
     $xpath = $prefix
@@ -421,10 +429,155 @@ function Import-Files
     }
 }
 
-Export-ModuleMember -Function 'Add-RegistryKey'
+<#
+.Description
+Renames a native ProgId to a virtual one in order not to collide with native links after SVM is installed.
+
+.EXAMPLE
+Rename-ProgId $xappl 'ChromeHTML' 'ChromeHTML-Virt' @()
+#>
+function Rename-ProgId
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True)]
+        [xml] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $OldProgId,
+        [Parameter(Mandatory=$True)]
+        [string] $NewProgId,
+        [Parameter(Mandatory=$False,HelpMessage="Array of file extensions to process prefixed by '.'. If null or empty all file extensions will be processed.")]
+        [string[]] $FileAssoc = @()
+    )
+    process
+    {
+        function TryReplaceAssoc($element)
+        {
+            if($element -and $element.value -eq $OldProgId)
+            {
+                $element.value = $NewProgId
+            }
+        }
+
+        $defaultLayer = $Xappl.SelectSingleNode('//Configuration/Layers/Layer[@name="Default"]')
+        
+        # Process XAPPL registry node
+        $registry = $defaultLayer.SelectSingleNode('./Registry')
+
+        # PRocess HKLM/SOFTWARE/Classes Hive
+        $hklmSoftwareClassesNodes = $registry.SelectNodes("./Key[@name=`"@HKLM@`"]/Key[$(EqualsIgnoreCase "@name" "software")]/Key[$(EqualsIgnoreCase "@name" "classes")]/*")
+
+        $hklmProgIdNode = $hklmSoftwareClassesNodes | Where { $_.name -eq $OldProgId } | Select -First 1
+        if(-not $hklmProgIdNode)
+        {
+            throw "ProgId $OldProgId is not defined in @HKLM@/SOFTWARE/CLASSES"
+        }
+        $hklmProgIdNode.name = $NewProgId
+
+        $extensionNodes = $hklmSoftwareClassesNodes | Where { $_.name.StartsWith('.') }
+        if ($FileExtensions)
+        {
+            $extensionNodes = $extensionNodes | Where { $FileExtensions -contains $_.name }
+        }
+
+        foreach ($extensionNode in $extensionNodes)
+        {
+            $defaultProgramIdNode = $extensionNode.SelectSingleNode('./Value[@name=""]')
+            TryReplaceAssoc $defaultProgramIdNode
+    
+            $openWithProgidsNode = $extensionNode.SelectSingleNode("./Key[$(EqualsIgnoreCase "@name" "openwithprogids")]")
+            if(-not $openWithProgidsNode)
+            {
+                continue
+            }
+            
+            $oldProgIdNode = $openWithProgidsNode.SelectSingleNode("./Value[@name=`"$OldProgId`"]")
+            if($oldProgIdNode)
+            {
+                $oldProgIdNode.name = $NewProgId
+            }
+        }
+
+        # Process HKLM/SOFTWARE/Clients Hive
+        $fileAssocNodes = $registry.SelectNodes("./Key[@name=`"@HKLM@`"]/Key[$(EqualsIgnoreCase "@name" "software")]/descendant::Key[@name=`"FileAssociations`"]/*")
+        $fileAssocNodes | ForEach { TryReplaceAssoc $_ }
+
+        $urlAssocNodes = $registry.SelectNodes("./Key[@name=`"@HKLM@`"]/Key[$(EqualsIgnoreCase "@name" "software")]/descendant::Key[@name=`"URLAssociations`"]/*")
+        $urlAssocNodes | ForEach { TryReplaceAssoc $_ }
+
+        $hkcuProgIdNode = $registry.SelectSingleNode("./Key[@name=`"@HKCU@`"]/Key[$(EqualsIgnoreCase "@name" "software")]/Key[$(EqualsIgnoreCase "@name" "classes")]/Key[@name=`"$OldProgId`"]")
+        if ($hkcuProgIdNode)
+        {
+           $hkcuProgIdNode.Name = $NewProgId 
+        }
+
+        # Process ProgIds XAPPL node
+        $progIds = $defaultLayer.SelectNodes('./ProgIds/*')
+        foreach ($progId in $progIds)
+        {
+            if ($progId.Name -eq $OldProgId)
+            {
+                $progId.Name = $NewProgId
+            }
+        }
+
+        # Process Extensions node
+        $extensions = $defaultLayer.SelectNodes('./Extensions/*')
+        foreach ($extension in $extensions)
+        {
+            if ($extension.progId -eq $OldProgId)
+            {
+                $extension.progId = $NewProgId
+            }
+        }
+    }
+}
+
+<#
+.Description
+Moves ProgId to the top of OpenWithProgIds list for all registered file associations
+#>
+function Set-DefaultProgId
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True)]
+        [xml] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $ProgId
+    )
+    process
+    {
+        $fileAssocNodes = $Xappl.SelectNodes("//Configuration/Layers/Layer[@name='Default']/Registry/Key[@name='@HKLM@']/Key[$(EqualsIgnoreCase '@name' 'software')]/Key[$(EqualsIgnoreCase '@name' 'classes')]/*")
+        foreach ($fileAssocNode in $fileAssocNodes)
+        {
+            $openWithProgIdsNode = $fileAssocNode.SelectSingleNode("./Key[$(EqualsIgnoreCase "@name" "OpenWithProgIds")]")
+            if (-not $openWithProgIdsNode)
+            {
+                continue
+            }
+
+            $progIdNode = $openWithProgIdsNode.SelectSingleNode("./Value[@name=`"$ProgId`"]")
+            if (-not $progIdNode)
+            {
+                continue
+            }
+
+            if ($openWithProgIdsNode.FirstChild.name -ne $ProgId)
+            {
+                $openWithProgIdsNode.RemoveChild($progIdNode) | Out-Null
+                $openWithProgIdsNode.InsertBefore($progIdNode, $openWithProgIdsNode.FirstChild) | Out-Null
+            }
+        }
+    }
+}
+
 Export-ModuleMember -Function 'Add-Directory'
 Export-ModuleMember -Function 'Add-File'
 Export-ModuleMember -Function 'Add-StartupFile'
+Export-ModuleMember -Function 'Add-RegistryKey'
 Export-ModuleMember -Function 'Disable-Services'
 Export-ModuleMember -Function 'Get-LatestChocoVersion'
 Export-ModuleMember -Function 'Import-Files'
@@ -433,12 +586,14 @@ Export-ModuleMember -Function 'Remove-BuildTools'
 Export-ModuleMember -Function 'Remove-FileSystemDirectoryItems'
 Export-ModuleMember -Function 'Remove-FileSystemItems'
 Export-ModuleMember -Function 'Remove-Layer'
-Export-ModuleMember -Function 'Remove-StartupFiles'
+Export-ModuleMember -Function 'Rename-ProgId'
 Export-ModuleMember -Function 'Remove-RegistryItems'
+Export-ModuleMember -Function 'Remove-StartupFiles'
+Export-ModuleMember -Function 'Save-XAPPL'
+Export-ModuleMember -Function 'Set-DefaultProgId'
+Export-ModuleMember -Function 'Set-FileSystemIsolation'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-RegistryValue'
-Export-ModuleMember -Function 'Set-FileSystemIsolation'
-Export-ModuleMember -Function 'Save-XAPPL'
 
 Export-ModuleMember -Variable FullIsolation
 Export-ModuleMember -Variable MergeIsolation

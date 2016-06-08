@@ -36,6 +36,9 @@ Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft"
 
+Set-DefaultProgId $xappl 'ChromeHTML'
+Rename-ProgId $xappl 'ChromeHTML' 'ChromeHTML-Virt'
+
 Disable-Services $xappl 
 
 Save-XAPPL $xappl $XappPath
