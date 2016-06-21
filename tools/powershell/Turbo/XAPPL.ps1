@@ -390,6 +390,28 @@ function Add-StartupFile
     }
 }
 
+function Add-ObjectMap
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $Name
+    )
+    process
+    {
+        $objectMaps = $Xappl.SelectSingleNode("Configuration/Layers/Layer[@name='Default']/ObjectMaps")
+        $objectMap = $Xappl.CreateElement('ObjectMap')
+        $objectMaps.AppendChild($objectMap) | Out-Null
+
+        $valueAttribute = $Xappl.CreateAttribute('value')
+        $valueAttribute.Value = $Name
+        $objectMap.Attributes.Append($valueAttribute) | Out-Null
+    }
+}
+
 function Remove-StartupFiles($xappl)
 {
     $xappl.SelectNodes('Configuration/StartupFiles/*') | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
@@ -576,6 +598,7 @@ function Set-DefaultProgId
 
 Export-ModuleMember -Function 'Add-Directory'
 Export-ModuleMember -Function 'Add-File'
+Export-ModuleMember -Function 'Add-ObjectMap'
 Export-ModuleMember -Function 'Add-StartupFile'
 Export-ModuleMember -Function 'Add-RegistryKey'
 Export-ModuleMember -Function 'Disable-Services'
