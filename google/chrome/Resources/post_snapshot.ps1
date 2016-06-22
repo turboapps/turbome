@@ -36,6 +36,8 @@ Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft"
 
+Add-ObjectMap $xappl -Name 'window://Chrome_MessageWindow:Chrome_MessageWindow'
+
 Disable-Services $xappl 
 
 Save-XAPPL $xappl $XappPath
