@@ -41,6 +41,8 @@ batch cmd
 cmd copy c:\TurboBuildTools\PowerShell\Turbo c:\Workspace
 cmd powershell -command ". .\Update-AdBlock.ps1; Update-AdBlock -DownloadDir ""%PROGRAMFILES(X86)%\Mozilla Firefox\cck2\resources\addons"" -ConfigPath ""%PROGRAMFILES(X86)%\Mozilla Firefox\cck2.cfg"""
 
+isolate window:firefoxMessageWindow full
+
 ###################################
 # Clean up
 ###################################
