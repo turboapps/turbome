@@ -31,6 +31,6 @@ Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Microsoft\Windows' $FullIsolation
 
 Set-RegistryValue $xappl -Path '@HKLM@\SOFTWARE\Wow6432Node\Mozilla\Firefox\TaskBarIDs' -Key '@PROGRAMFILESX86@\Mozilla Firefox' -Value ''
 
-Add-ObjectMap $xappl -Name 'Window://firefoxMessageWindow:firefoxMessageWindow'
+Add-ObjectMap $xappl -Name 'Window://firefoxMessageWindow:0'
 
 Save-XAPPL $xappl $XappPath
