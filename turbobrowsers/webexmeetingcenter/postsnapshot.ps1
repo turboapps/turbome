@@ -38,6 +38,6 @@ Add-StartupFile $xappl -File $firefoxExe -CommandLine 'https://signin.webex.com/
 Add-StartupFile $xappl -File $firefoxExe -CommandLine 'https://signin.webex.com/collabs/#/meetings/joinbynumber' -Name 'join'
 Add-StartupFile $xappl -File $firefoxExe -CommandLine 'https://signin.webex.com/collabs/auth?service=it&from=hostmeeting' -Name 'host'
 
-Add-ObjectMap $xappl -Name 'Window://firefoxMessageWindow:firefoxMessageWindow'
+Add-ObjectMap $xappl -Name 'Window://firefoxMessageWindow:0'
 
 Save-XAPPL $xappl $XappPath
