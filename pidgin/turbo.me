@@ -5,6 +5,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+requires privilege:admin
+
 meta title="pidgin"
 meta namespace="pidgin"
 meta name="pidgin"
@@ -13,7 +15,7 @@ meta name="pidgin"
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1
+using turbo/turboscript-tools:2016.5.5
 
 ###################################
 # Download and install
@@ -21,9 +23,6 @@ using wget,python:3.4.1
 
 cmd mkdir c:\Workspace
 workdir c:\Workspace
-
-# Install "requests" module for python
-cmd "pip install requests --quiet"
 
 # Get last version tag
 batch
@@ -33,21 +32,21 @@ batch
  echo host = 'https://www.pidgin.im/download/' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(list(re.findall('(http://sourceforge.net/projects/pidgin/files/Pidgin/(\d*\.\d*\.\d*)/pidgin-(\d*\.\d*\.\d*)-offline.exe/download)', r.text )[0])) >> getRelease.py
+ echo print(list(re.findall('(http://sourceforge.net/projects/pidgin/files/Pidgin/(\d*\.\d*\.\d*)/pidgin-(\d*\.\d*\.\d*)-offline.exe)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
 var res=last
 
-cmd "python -c ""print( %res% [0])"""
-var url=last
-
 cmd "python -c ""print( %res% [1])"""
 var tag=last
 
+var url = "http://tenet.dl.sourceforge.net/project/pidgin/Pidgin/" + tag + "/pidgin-" + tag + "-offline.exe"
 cmd "wget -O installer.exe %url%"
 
 # Actually install MSI
 cmd "installer.exe /S"
+
+enable HttpUrlPassthrough
 
 ###################################
 # Startup File
@@ -66,9 +65,9 @@ startup file ("@PROGRAMFILESX86@\Pidgin\pidgin.exe")
 
 workdir c:\
 
-batch
-	rmdir c:\Workspace /s /q
-	rmdir c:\wget /s /q
-	rmdir c:\Python34 /s /q
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 meta tag=tag
