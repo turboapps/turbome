@@ -3,6 +3,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+requires privilege:admin
+
 ###################################
 # Set metadata
 ###################################
@@ -15,14 +17,11 @@ meta name = "filezilla"
 # Get build dependencies
 ###################################
 
-using python:3.4.1,wget
+using turbo/turboscript-tools:2016.5.5
 
 ###################################
 # Download installer
 ###################################
-
-# Install "requests" module for python
-cmd "pip install requests --quiet"
 
 cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
@@ -61,7 +60,9 @@ startup file ("@SYSDRIVE@\FileZilla\filezilla.exe")
 # Clean up
 ###################################
 
-workdir @SYSDRIVE@\
-cmd rmdir @SYSDRIVE@\Workspace /s /q
-cmd rmdir @SYSDRIVE@\wget /s /q
-cmd rmdir @SYSDRIVE@\Python34 /s /q
+workdir c:\
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
