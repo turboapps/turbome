@@ -13,7 +13,7 @@ meta name="ghost"
 # Pull dependency images
 ###################################
 
-layer node
+layer node:0.12.6
 using wget,7-zip,python:3.4.1
 
 
@@ -50,7 +50,6 @@ cmd del getTag.py /Q
 
 # NPM install app
 cmd npm install --production
-
 
 ###################################
 # Startup File
