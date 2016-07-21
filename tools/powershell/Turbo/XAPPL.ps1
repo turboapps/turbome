@@ -19,12 +19,12 @@ function Get-XPath($prefix, $segmentName, $path)
     $lastIndex = $segments.length - 1
     for($index = 0; $index -lt $lastIndex; $index += 1)
     {
-        $xpath += "/$segmentName[@name=`"$($segments[$index])`"]"
+        $xpath += "/$segmentName[$(EqualsIgnoreCase "@name" "$($segments[$index])")]"
     }
     
     if($lastIndex -ge 0)
     {
-        $xpath += "/*[@name=`"$($segments[$lastIndex])`"]"
+        $xpath += "/*[$(EqualsIgnoreCase "@name" "$($segments[$index])")]"
     }
 
     return $xpath
