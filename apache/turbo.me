@@ -5,6 +5,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+requires privilege:admin
+
 ###################################
 # Meta tags
 ###################################
@@ -60,16 +62,17 @@ var tag = last
 # Download
 cmd "wget --no-check-certificate --no-verbose -O httpd.zip %url%"
 
-cmd 7z x httpd.zip
 cmd mkdir c:\apache
-cmd move apache* c:\apache\apache2
-workdir c:\apache\apache2
+cmd 7z x httpd.zip -oc:\apache
+cmd dir /b c:\apache | findstr A
+var outputDir = last
 
+workdir "c:\apache\Apache24"
 batch
   sed -i "s|^Listen 80|Listen 8080|" conf\httpd.conf
   sed -i "s|\("^ServerAdmin\s" * *\).*|\1admin@localhost|" conf\httpd.conf
   sed -i "s|\("^ServerName" *\)|#\1|" conf\httpd.conf
-  sed -i "s|/Apache24|C:\\apache\\apache2|" conf\httpd.conf
+  sed -i "s|/Apache24|C:\\apache\\Apache24|" conf\httpd.conf
 
 batch
   bin\httpd.exe -k install > nul
@@ -79,7 +82,7 @@ batch
 # Environment Variables
 ###################################
 
-env path="C:\apache\apache2\bin"
+env path="C:\apache\Apache24\bin"
 
 ###################################
 # Clean up
@@ -102,5 +105,5 @@ meta version=tag
 # Startup File
 ###################################
 
-setworkdir C:\apache\apache2
+setworkdir "C:\apache\Apache24"
 # No startup files needed
