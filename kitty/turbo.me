@@ -34,7 +34,8 @@ workdir c:\Workspace
 cmd mkdir c:\kitty
 var exePath = "c:\kitty\kitty_portable.exe"
 
-cmd wget --quiet -Olink.txt http://www.fosshub.com/genLink/KiTTY/kitty_portable.exe
+# cmd wget --quiet -Olink.txt http://www.fosshub.com/genLink/KiTTY/kitty_portable.exe
+cmd wget --quiet -Olink.txt http://heanet.dl.sourceforge.net/project/portableapps/KiTTY%20Portable/KiTTYPortable_0.67.1.3_English.paf.exe
 cmd findstr "." link.txt
 var url = last
 cmd wget --quiet --no-check-certificate -O%exePath% "%url%"
