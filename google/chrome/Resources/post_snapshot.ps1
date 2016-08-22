@@ -38,6 +38,7 @@ Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft"
 
 Add-ObjectMap $xappl -Name 'window://Chrome_MessageWindow:0'
 
-Disable-Services $xappl 
+Remove-Service $xappl 'gupdate'
+Remove-Service $xappl 'gupdatem'
 
 Save-XAPPL $xappl $XappPath

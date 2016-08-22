@@ -78,6 +78,11 @@ function Get-RegistryXPath($path)
     return (Get-XPath "Configuration/Layers/Layer[@name=`"$layerName`"]/Registry" 'Key' (Skip-Layer $path))
 }
 
+function Get-ServiceXPath($serviceName)
+{
+    return (Get-XPath "Configuration/Layers/Layer[@name=`"Default`"]/Services" 'Service' $serviceName )
+}
+
 Set-Variable -Name FullIsolation -Option ReadOnly -Value 'Full'
 Set-Variable -Name MergeIsolation -Option ReadOnly -Value 'Merge'
 
@@ -125,6 +130,16 @@ function Remove-RegistryItems($xappl, $path)
 {
     $xpath = Get-RegistryXPath $path
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null } 
+}
+
+function Remove-Service($xappl, $service)
+{
+    $xpath = Get-ServiceXPath $service
+    $serviceNode = $xappl.SelectSingleNode($xpath)
+    if ($serviceNode -and $serviceNode.ParentNode)
+    {
+        $serviceNode.ParentNode.RemoveChild($serviceNode) | Out-Null
+    }
 }
 
 function Set-RegistryValue
@@ -612,6 +627,7 @@ Export-ModuleMember -Function 'Remove-Layer'
 Export-ModuleMember -Function 'Rename-ProgId'
 Export-ModuleMember -Function 'Remove-RegistryItems'
 Export-ModuleMember -Function 'Remove-StartupFiles'
+Export-ModuleMember -Function 'Remove-Service'
 Export-ModuleMember -Function 'Save-XAPPL'
 Export-ModuleMember -Function 'Set-DefaultProgId'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
