@@ -10,13 +10,7 @@ $body = $page.ParsedHtml.getElementById("mainBody")
 $hyperlinks = $body.getElementsByTagName("a")
 $downloadLink = $hyperlinks | Select-Object -First 1
 
-if(-not ($downloadLink.outerText -match "\d+(\.\d+)*"))
-{
-    throw "Failed to extract version number"
-}
-$tag = $Matches[0]
-
-Write-Host "SQL Server Management Studio version $tag"
-"sqlserver/ssms2016:$tag" | Set-Content "image.txt"
+Write-Host "SQL Server Management Studio"
+"sqlserver/ssms2016" | Set-Content "image.txt"
 
 (New-Object System.Net.WebClient).DownloadFile($downloadLink.href,"install.exe")
