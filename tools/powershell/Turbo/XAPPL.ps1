@@ -611,6 +611,47 @@ function Set-DefaultProgId
     }
 }
 
+function Set-EnvironmentVariable
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True)]
+        [xml] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $Name,
+        [Parameter(Mandatory=$True)]
+        [string] $Value,
+        [Parameter(Mandatory=$False)]
+        [string] $MergeNode = 'Replace',
+        [Parameter(Mandatory=$False)]
+        [string] $MergeString = '.'
+    )
+    process
+    {
+        $environmentVariablesRootNode = $Xappl.SelectSingleNode("//Configuration/Layers/Layer[@name='Default']/EnvironmentVariablesEx")
+        $environmentVariable = $environmentVariablesRootNode.SelectSingleNode("./VariableEx[$(EqualsIgnoreCase "@name" "$Name")]")
+        if ($environmentVariable) {
+            $environmentVariable.Attributes["value"].Value = $Value
+        } else {
+            $environmentVariable = $Xappl.CreateElement('VariableEx')
+            $environmentVariablesRootNode.AppendChild($environmentVariable)
+
+            function Add-Attribute($name, $value)
+            {
+                $attribute = $Xappl.CreateAttribute($name)
+                $attribute.Value = $value
+                $environmentVariable.Attributes.Append($attribute) | Out-Null
+            }
+
+            Add-Attribute 'name' $Name
+            Add-Attribute 'isolation' 'Inherit'
+            Add-Attribute 'mergeMode' $MergeNode
+            Add-Attribute 'mergeString' $MergeString
+        }
+    }
+}
+
 Export-ModuleMember -Function 'Add-Directory'
 Export-ModuleMember -Function 'Add-File'
 Export-ModuleMember -Function 'Add-ObjectMap'
@@ -630,6 +671,7 @@ Export-ModuleMember -Function 'Remove-StartupFiles'
 Export-ModuleMember -Function 'Remove-Service'
 Export-ModuleMember -Function 'Save-XAPPL'
 Export-ModuleMember -Function 'Set-DefaultProgId'
+Export-ModuleMember -Function 'Set-EnvironmentVariable'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-RegistryValue'
