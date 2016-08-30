@@ -652,11 +652,34 @@ function Set-EnvironmentVariable
     }
 }
 
+function Add-Route
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True)]
+        [xml] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $Value
+    )
+    process
+    {
+        $objectMapsNode = $Xappl.SelectSingleNode("//Configuration/Layers/Layer[@name='Default']/ObjectMaps")
+        $objectMap = $Xappl.CreateElement('ObjectMap')
+        $objectMapsNode.AppendChild($objectMap)
+        
+        $attribute = $Xappl.CreateAttribute('value')
+        $attribute.Value = $Value
+        $environmentVariable.Attributes.Append($attribute) | Out-Null
+    }
+}
+
 Export-ModuleMember -Function 'Add-Directory'
 Export-ModuleMember -Function 'Add-File'
 Export-ModuleMember -Function 'Add-ObjectMap'
 Export-ModuleMember -Function 'Add-StartupFile'
 Export-ModuleMember -Function 'Add-RegistryKey'
+Export-ModuleMember -Function 'Add-Route'
 Export-ModuleMember -Function 'Disable-Services'
 Export-ModuleMember -Function 'Get-LatestChocoVersion'
 Export-ModuleMember -Function 'Import-Files'
