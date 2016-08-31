@@ -13,7 +13,7 @@ meta name="eclipse"
 ###################################
 
 layer jre
-using wget,python:3.4.1,7-zip
+using turbo/turboscript-tools:2016.8.31
 
 ###################################
 # Download and install
@@ -22,9 +22,6 @@ using wget,python:3.4.1,7-zip
 cmd "mkdir @SYSDRIVE@\Workspace"
 workdir @SYSDRIVE@\Workspace
 
-# Install "requests" module for python
-cmd "pip install requests --quiet"
-
 # Get last version tag
 
 # Fetch version
@@ -32,11 +29,12 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo host = 'https://www.eclipse.org/downloads/' >> getRelease.py
+ echo host = 'https://www.eclipse.org/downloads/eclipse-packages/' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=100) >> getRelease.py
- echo print(re.findall('"download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"', r.text)[0] + (max(re.findall('\d+\.\d+\.\d+', r.text)),)) >> getRelease.py
- 
+ echo print(re.findall('"\/downloads\/download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"', r.text)[0] + tuple(re.findall('(\d+(?:\.\d+)+)', r.text)),) >> getRelease.py
+
+
 cmd python getRelease.py
 var res = last
 
@@ -61,8 +59,9 @@ startup file ("@SYSDRIVE@\eclipse\eclipse.exe")
 ###################################
 
 workdir @SYSDRIVE@\
-cmd "rmdir @SYSDRIVE@\Workspace /s /q"
-cmd "rmdir @SYSDRIVE@\wget /s /q"
-cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
 
 meta tag=tag
