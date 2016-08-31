@@ -5,14 +5,20 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-& install.exe INSTALLDIR=C:\Skype /qn
+& c:\vagrant\install\install.exe /qn | Out-Null
 
-(New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/skype/added-keys.reg", "added-keys.reg")
+$webClient = (New-Object System.Net.WebClient)
+
+$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/skype/added-keys.reg", "added-keys.reg")
 & reg import added-keys.reg
 
-Import-Module Turbo
-$fileVersion = Get-FileVersion "c:\\Skype\\Phone\\Skype.exe"
-"microsoft\skype:$fileVersion" | Set-Content "C:\vagrant\image.txt"
+$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/tools/powershell/Turbo/Deploy-TurboModule.ps1", "Deploy-TurboModule.ps1")
+. .\Deploy-TurboModule.ps1
+Deploy-TurboModule -Path "."
+
+Import-Module ".\Turbo"
+$fileVersion = Get-FileVersion "c:\\Program Files (x86)\\Skype\\Phone\\Skype.exe"
+"microsoft/skype:$fileVersion" | Set-Content "C:\vagrant\image.txt"
 
 # Change downloads directory to c:\Skype\Downloads
 Start-Process -FilePath 'c:\\Skype\\Phone\\skype.exe'
