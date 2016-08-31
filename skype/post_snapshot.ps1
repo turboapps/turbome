@@ -15,9 +15,9 @@ $virtualizationSettings.httpUrlPassthrough = [string]$true
 
 Remove-FileSystemDirectoryItems $xappl "@SYSDRIVE@\tmp"
 
-Add-Route "ip://*.msads.net"
-Add-Route "ip://*.rad.msn.com"
-Add-Route "ip://a.config.skype.com"
+Add-Route $xappl "ip://*.msads.net"
+Add-Route $xappl "ip://*.rad.msn.com"
+Add-Route $xappl "ip://a.config.skype.com"
 
 Remove-EnvironmentVariable $xappl 'path'
 Remove-EnvironmentVariable $xappl 'pathex'

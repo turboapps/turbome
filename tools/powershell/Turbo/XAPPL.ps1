@@ -691,7 +691,7 @@ function Add-Route
         
         $attribute = $Xappl.CreateAttribute('value')
         $attribute.Value = $Value
-        $environmentVariable.Attributes.Append($attribute) | Out-Null
+        $objectMap.Attributes.Append($attribute) | Out-Null
     }
 }
 
