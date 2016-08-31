@@ -16,7 +16,7 @@ meta name = "audacity"
 # Get build dependencies
 ###################################
 
-using turbo/turboscript-tools:2016.1.27
+using turbo/turboscript-tools:2016.8.31
 
 
 ###################################
@@ -28,10 +28,14 @@ workdir @SYSDRIVE@\Workspace
 batch
  echo import sys > script.py
  echo import re >> script.py
- echo import urllib.request >> script.py
- echo src = urllib.request.urlopen('http://www.oldfoss.com/Audacity.html').read().decode('utf-8') >> script.py
- echo url = re.findall('a href="(.*?/audacity_win_.*?\.zip)"', src)[0] >> script.py
+ echo import requests >> script.py
+ echo host = 'https://www.fosshub.com/Audacity.html' >> script.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> script.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> script.py
+ echo url = re.findall('data="(.*?/audacity-win-.*?\.zip)"', r.text)[0] >> script.py
  echo print(url) >> script.py
+ 
+
 cmd python script.py
 var url = last
 cmd "wget --no-verbose -O audacity.zip %url%"
