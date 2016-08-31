@@ -19,7 +19,7 @@ meta name="webstorm"
 # Pull dependency images
 ###################################
 
-using turbo/turboscript-tools:2016.2.25
+using turbo/turboscript-tools:2016.8.31
 
 ###################################
 # Download and install
@@ -40,7 +40,7 @@ batch cmd
 cmd python getLink.py
 var url = last
 
-cmd "wget --no-check-certificate --quiet -Owebstorm.exe ""%url%"""
+cmd "wget --quiet -Owebstorm.exe ""%url%"""
 
 # Install
 cmd webstorm.exe /S
