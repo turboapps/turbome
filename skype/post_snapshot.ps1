@@ -19,7 +19,7 @@ Add-Route "ip://*.msads.net"
 Add-Route "ip://*.rad.msn.com"
 Add-Route "ip://a.config.skype.com"
 
-Set-EnvironmentVariable $xappl 'path' "" 'Prepend' ';'
-Set-EnvironmentVariable $xappl 'pathex' "" 'Prepend' ';'
+Remove-EnvironmentVariable $xappl 'path'
+Remove-EnvironmentVariable $xappl 'pathex'
 
 Save-XAPPL $xappl $XappPath

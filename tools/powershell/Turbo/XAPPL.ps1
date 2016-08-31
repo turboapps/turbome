@@ -646,9 +646,30 @@ function Set-EnvironmentVariable
 
             Add-Attribute 'name' $Name
             Add-Attribute 'isolation' 'Inherit'
+            Add-Attribute 'value' $Value
             Add-Attribute 'mergeMode' $MergeNode
             Add-Attribute 'mergeString' $MergeString
         }
+    }
+}
+
+function Remove-EnvironmentVariable
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True)]
+        [xml] $Xappl,
+        [Parameter(Mandatory=$True)]
+        [string] $Name
+    )
+    process
+    {
+        $environmentVariablesRootNode = $Xappl.SelectSingleNode("//Configuration/Layers/Layer[@name='Default']/EnvironmentVariablesEx")
+        $environmentVariable = $environmentVariablesRootNode.SelectSingleNode("./VariableEx[$(EqualsIgnoreCase "@name" "$Name")]")
+        if ($environmentVariable) {
+            $environmentVariablesRootNode.RemoveChild($environmentVariable)
+        } 
     }
 }
 
@@ -685,6 +706,7 @@ Export-ModuleMember -Function 'Get-LatestChocoVersion'
 Export-ModuleMember -Function 'Import-Files'
 Export-ModuleMember -Function 'Read-XAPPL'
 Export-ModuleMember -Function 'Remove-BuildTools'
+Export-ModuleMember -Function 'Remove-EnvironmentVariable'
 Export-ModuleMember -Function 'Remove-FileSystemDirectoryItems'
 Export-ModuleMember -Function 'Remove-FileSystemItems'
 Export-ModuleMember -Function 'Remove-Layer'

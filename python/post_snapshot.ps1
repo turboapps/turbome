@@ -18,5 +18,7 @@ $version = $pythonNode.name
 
 Set-EnvironmentVariable $xappl 'path' "C:\$version;C:\$version\scripts" 'Prepend' ';'
 Set-EnvironmentVariable $xappl 'pythonhome' "C:\$version" 'Replace' '.'
+Remove-EnvironmentVariable $xappl 'psmodulepath'
+Remove-EnvironmentVariable $xappl 'pathext'
 
 Save-XAPPL $xappl $XappPath
