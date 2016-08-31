@@ -635,7 +635,7 @@ function Set-EnvironmentVariable
             $environmentVariable.Attributes["value"].Value = $Value
         } else {
             $environmentVariable = $Xappl.CreateElement('VariableEx')
-            $environmentVariablesRootNode.AppendChild($environmentVariable)
+            $environmentVariablesRootNode.AppendChild($environmentVariable) | Out-Null
 
             function Add-Attribute($name, $value)
             {
