@@ -27,7 +27,7 @@ workdir c:\Workspace
 
 var url = "http://download.geogebra.org/installers/?os=win"
 
-cmd "wget --no-check-certificate --no-verbose ""%url%"""
+cmd "wget --content-disposition --no-verbose ""%url%"""
 cmd "dir > output.txt"
 
 batch
