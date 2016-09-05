@@ -32,7 +32,7 @@ batch
  echo host = 'https://www.fosshub.com/Audacity.html' >> script.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> script.py
  echo r = requests.get(host , headers=headers, timeout=10) >> script.py
- echo url = re.findall('data="(.*?/audacity-win-.*?\.zip)"', r.text)[0] >> script.py
+ echo url = re.findall('data="(.*?/audacity-win-\d+(?:\.\d)*\.zip)"', r.text)[0] >> script.py
  echo print(url) >> script.py
  
 
