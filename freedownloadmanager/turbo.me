@@ -33,15 +33,17 @@ batch
  echo host = 'http://www.freedownloadmanager.org/download.htm' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(list(re.findall('(Current stable version: FDM ver. (\d*\.\d*\.\d*) build (\d*))', r.text )[0])) >> getRelease.py
+ echo url = re.findall('a href="(.*?_x86_setup.exe)"', r.text)[0] >> getRelease.py
+ echo version = re.findall("(\d+(?:\.\d))-latest", r.text)[0] >> getRelease.py
+ echo print([url, version]) >> getRelease.py
 
 cmd python getRelease.py
 var res=last
 
-var url="http://dn2.freedownloadmanager.org/fdminst.exe"
-
-cmd "python -c ""print( %res% [1] + '.' + %res% [2])"""
-var tag=last
+cmd "python -c ""print(%res%[0])"""
+var url = last
+cmd "python -c ""print(%res%[1])"""
+var version = last
 
 # Install MSI
 batch
@@ -58,7 +60,7 @@ batch
 ###################################
 # Startup File
 ###################################
-startup file ("@PROGRAMFILESX86@\Free Download Manager\fdm.exe")
+startup file ("@PROGRAMFILESX86@\FreeDownloadManager.ORG\Free Download Manager\fdm.exe")
 
 ###################################
 # Environment Variables
@@ -77,4 +79,4 @@ batch
  rmdir c:\wget /s /q
  rmdir c:\Python34 /s /q
 
-meta tag=tag
+meta tag=version
