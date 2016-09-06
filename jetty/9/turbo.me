@@ -1,21 +1,32 @@
 #
-# sbt turbo.me file
-# https://github.com/turboapps/turbome/tree/master/sbt
+# Jetty turbo.me file
+# https://github.com/turboapps/turbome/tree/master/jetty
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
 
 # Setup meta
 meta title="jetty"
 meta namespace="jetty" 
 meta name="jetty"
 
-#Basic dependencies and tools
-layer jre:8
-using wget,python:3.4.1,7-zip
 
-#Prepare pythone for version grabbing
-cmd pip install requests --quiet
+###################################
+# Pull dependency images
+###################################
+
+# Basic dependencies and tools
+layer jre:8
+using turbo/turboscript-tools:2016.8.31
+
+
+###################################
+# Download and install
+###################################
 
 cmd mkdir c:\Workspace
 workdir c:\Workspace
@@ -25,20 +36,26 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo host = 'http://download.eclipse.org/jetty/stable-9/dist/' >> getRelease.py
+ echo import distutils.version >> getRelease.py
+ echo host = 'http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(re.findall('jetty-distribution-(9\.\d*\.\d*\.v\d*)\.zip', r.text )[0]) >> getRelease.py
-
+ echo version = max(re.findall('a href="(\d+(?:\.\d)*\.v\d+)/"', r.text), key=lambda version: distutils.version.LooseVersion(version)) >> getRelease.py
+ echo r = requests.get(host + version, headers=headers, timeout=10) >> getRelease.py
+ echo url = re.findall('a href="(.*?.zip)"', r.text)[0] >> getRelease.py
+ echo print([version, host + version + '/' + url]) >> getRelease.py
 cmd python getRelease.py
 
+var res = last
+cmd "python -c ""print(%res%[0])"""
 var tag = last
 meta tag=tag
 
-var url = "http://mirrors.ibiblio.org/eclipse/jetty/stable-9/dist/jetty-distribution-" + tag + ".zip"
+cmd "python -c ""print(%res%[1])"""
+var url = last
 
 # Prepare Jetty
-cmd "wget -O jetty.zip --no-check-certificate %url%"
+cmd "wget -O jetty.zip %url%"
 cmd 7z x jetty.zip -oC:\Workspace\jetty
 cmd del jetty.zip
 
@@ -48,17 +65,36 @@ cmd "xcopy /E %sourceFolder% C:\Jetty\*"
 cmd wget --no-check-certificate https://raw.githubusercontent.com/turboapps/turbome/master/jetty/run-jetty-bat.bat
 cmd copy run-jetty-bat.bat C:\Jetty\run-jetty-bat.bat
 
+###################################
+# Environment Variables
+###################################
+
 env JETTY_HOME="C:\Jetty\"
 env WEB_APPS="C:\Jetty\webapps"
 
+
+###################################
+# Clean up
+###################################
+
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+
 workdir "c:\"
 setworkdir "C:\Jetty\"
-
-cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\Jetty\webapps /s /q
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
+
+###################################
+# Version
+###################################
 
 meta tag=tag
+
+
+###################################
+# Startup File
+###################################
 
 startup file ("C:\Jetty\run-jetty-bat.bat")
