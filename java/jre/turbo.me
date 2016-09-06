@@ -60,7 +60,7 @@ cmd rmdir c:\Python34 /s /q
 cmd rmdir c:\ProgramData\Oracle /s /q
 
 var rootPath = "@PROGRAMFILESX86@\java\jre1." + version + ".0_" + update
-env path=rootPath + update + "\bin\"
+env path=rootPath + "\bin\"
 env JAVA_HOME=rootPath
 
 meta tag=tag
