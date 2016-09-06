@@ -5,6 +5,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+requires privilege:admin
+
 ###################################
 # Meta tags
 ###################################
@@ -17,10 +19,8 @@ meta name="tomcat"
 # Pull dependency images
 ###################################
 
+using turbo/turboscript-tools,fart
 layer jdk:8
-using wget,python:3.4.1,7-zip,fart
-
-cmd pip install requests --quiet
 
 ###################################
 # Download and install
@@ -36,7 +36,7 @@ batch
  echo host = "http://tomcat.apache.org/download-80.cgi" >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(list(re.findall('(http://.*?v(\d*\.\d*\.\d*).*?exe)', r.text )[0])) >> getRelease.py
+ echo print(list(re.findall('(http://ftp.ps.pl/pub/apache/tomcat/tomcat-\d+/v\d+(?:\.\d+)+/bin/apache-tomcat-(\d+(?:\.\d+)*).exe)', r.text )[0])) >> getRelease.py
 
 cmd python getRelease.py
 var data = last
@@ -47,16 +47,8 @@ var url = last
 cmd "python -c ""print(%data%[1])"""
 var tag = last
 
-cmd "wget -O tomcat.exe --no-check-certificate %url%"
-
+cmd "wget -O tomcat.exe %url%"
 cmd "tomcat.exe /S"
-
-
-###################################
-# Environment Variables
-###################################
-
-env CATALINA_HOME="@PROGRAMFILESX86@\Apache Software Foundation\Tomcat 8.0"
 
 ###################################
 # Additional Configuration
@@ -69,22 +61,35 @@ batch
  echo [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tomcat8\Parameters] >> service.reg
  reg import service.reg
 
-workdir "@PROGRAMFILESX86@\Apache Software Foundation\Tomcat 8.0"
+var parentPath = "c:\Program Files (x86)\Apache Software Foundation"
+cmd "dir /b ""%parentPath%"" | findstr  Tomcat"
+var tomcatDir = last
+
+var rootPath = parentPath + "/" + tomcatDir
 
 batch
- fart.exe --ignore-case conf\tomcat-users.xml "</tomcat-users>" "<user username=\"tomcat\" password=\"tomcat\" roles=\"standard,manager-gui\" /></tomcat-users>"
- echo 1
+	cd "%rootPath%"
+	fart.exe --ignore-case conf\tomcat-users.xml "</tomcat-users>" "<user username=\"tomcat\" password=\"tomcat\" roles=\"standard,manager-gui\" /></tomcat-users>"
+	echo 1
+cmd "echo c:\Program Files (x86)\Apache Software Foundation\%tomcatDir%"
+
+###################################
+# Environment Variables
+###################################
+
+env CATALINA_HOME=last
 
 
 ###################################
 # Clean up
 ###################################
 
-workdir c:\
+workdir "c:\"
+cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
 
 cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
+cmd rmdir c:\TurboBuildTools /s /q
+
 
 ###################################
 # Version
@@ -92,9 +97,9 @@ cmd rmdir c:\Python34 /s /q
 
 meta tag=tag
 
+
 ###################################
 # Startup File
 ###################################
 
-setworkdir "@PROGRAMFILESX86@\Apache Software Foundation\Tomcat 8.0"
 startup file ("cmd","/k echo Visit http://localhost:8080 to manage tomcat with preconfigured user tomcat/tomcat, if you haven't already.")
