@@ -29,26 +29,26 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
- echo host = 'https://www.eclipse.org/downloads/eclipse-packages/' >> getRelease.py
+ echo host = 'http://www.eclipse.org/downloads/packages/' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host , headers=headers, timeout=100) >> getRelease.py
- echo print(re.findall('"\/downloads\/download\.php\?file=\/technology\/epp\/downloads\/release\/(\w+)\/([\w\d]+)\/eclipse-java-\w+-[\w\d]+-win32\.zip"', r.text)[0] + tuple(re.findall('(\d+(?:\.\d+)+)', r.text)),) >> getRelease.py
-
+ echo r = requests.get(host, headers=headers, timeout=2000) >> getRelease.py
+ echo filename, release, codename = re.findall("a href='.*?(eclipse-java-(\w+)-(\w+)-win32\.zip)'", r.text)[0] >> getRelease.py
+ echo r = requests.get('https://projects.eclipse.org/releases/' + release, headers=headers, timeout=2000) >> getRelease.py
+ echo version = re.findall("/projects/eclipse/releases/(\d+(?:\.\d+)*)", r.text)[0] >> getRelease.py
+ echo download_url = "/".join(["http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/technology/epp/downloads/release", release, codename, filename]) >> getRelease.py
+ echo print([download_url, release, codename, version]) >> getRelease.py
 
 cmd python getRelease.py
 var res = last
 
 cmd "python -c ""print(%res%[0])"""
-var codename = last
+var url = last
 
-cmd "python -c ""print(%res%[1])"""
-var release = last
-
-cmd "python -c ""print(%res%[2])"""
+cmd "python -c ""print(%res%[3])"""
 var tag = last
 
 # Download and install last version
-cmd "wget -q -O eclipse.zip --no-check-certificate --no-verbose ""https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/%codename%/%release%/eclipse-java-%codename%-%release%-win32.zip&r=1"""
+cmd "wget -O eclipse.zip --no-verbose ""%url%"""
 cmd "7z x eclipse.zip -oc:\ | find /v ""ing  """
 
 # Set startup file
