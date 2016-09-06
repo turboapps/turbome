@@ -5,6 +5,8 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+requires privilege:admin
+
 ###################################
 # Meta tags
 ###################################
@@ -41,7 +43,7 @@ cmd chocolatey > output.txt & echo 1
 batch
   echo import re >> getVersion.py
   echo f = open('output.txt', 'r') >> getVersion.py
-  echo print(re.findall('Chocolatey v(\d*\.\d*\.\d*\.\d*)', f.read() )[0]) >> getVersion.py
+  echo print(re.findall('Chocolatey v(\d+(?:\.\d+)*)', f.read() )[0]) >> getVersion.py
 
 cmd python getVersion.py
 var version = last
