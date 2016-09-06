@@ -59,6 +59,8 @@ cmd rmdir c:\Python34 /s /q
 # so remove it 
 cmd rmdir c:\ProgramData\Oracle /s /q
 
-env path="@PROGRAMFILESX86@\java\jre1." + version + ".0_" + update + "\bin\"
+var rootPath = "@PROGRAMFILESX86@\java\jre1." + version + ".0_" + update
+env path=rootPath + update + "\bin\"
+env JAVA_HOME=rootPath
 
 meta tag=tag
