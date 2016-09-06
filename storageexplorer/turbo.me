@@ -42,7 +42,7 @@ cmd python script.py
 var url = last
 
 # Download and install
-cmd "wget --no-check-certificate --no-verbose %url%"
+cmd "wget --content-disposition --no-verbose %url%"
 
 cmd StorageExplorer.exe /VERYSILENT
 
