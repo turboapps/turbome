@@ -36,10 +36,11 @@ batch
  echo import sys > getRelease.py
  echo import requests >> getRelease.py
  echo import re >> getRelease.py
+ echo import distutils.version >> getRelease.py
  echo host = 'http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/' >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo version = max(re.findall('a href="(\d+(?:\.\d)*\.v\d+)/"', r.text)) >> getRelease.py
+ echo version = max(re.findall('a href="(\d+(?:\.\d)*\.v\d+)/"', r.text), key=lambda version: distutils.version.LooseVersion(version)) >> getRelease.py
  echo r = requests.get(host + version, headers=headers, timeout=10) >> getRelease.py
  echo url = re.findall('a href="(.*?.zip)"', r.text)[0] >> getRelease.py
  echo print([version, host + version + '/' + url]) >> getRelease.py
