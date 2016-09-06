@@ -9,6 +9,8 @@ meta title="dropbox"
 meta namespace="dropbox"
 meta name="dropbox"
 
+requires privilege:admin
+
 ###################################
 # Pull dependency images
 ###################################
@@ -26,7 +28,7 @@ workdir c:\Workspace
 cmd "pip install requests --quiet"
 
 # Download file
-cmd "wget ""https://www.dropbox.com/download?full=1&plat=win"" --no-check-certificate"
+cmd "wget --content-disposition ""https://www.dropbox.com/download?full=1&plat=win"""
 
 # Get version
 batch
