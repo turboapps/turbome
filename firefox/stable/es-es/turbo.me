@@ -1,0 +1,98 @@
+#
+# Firefox turbo.me file
+# https://github.com/turboapps/turbome/tree/master/firefox/es-es
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Firefox image without extra plugins preconfigured for enterprise:
+# * Maintenance service turned off
+# * Do not submit crash reports
+# * Disable default browser check
+# * Disable auto updates
+# See https://github.com/turboapps/turbome/tree/firefox/config/ for more details.
+
+requires privilege:admin
+
+###################################
+# Meta tags
+###################################
+
+meta title="Firefox"
+meta namespace="mozilla"
+meta name="firefox-es"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell,turbo/turboscript-tools:2016.8.31
+
+
+###################################
+# Download and install
+###################################
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+batch cmd
+ echo [Install] > install.ini
+ echo MaintenanceService=false >> install.ini
+
+var url = "https://download.mozilla.org/?product=firefox-latest&os=win&lang=es-ES"
+
+cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
+cmd "firefox.exe /INI=c:\Workspace\install.ini"
+
+cmd "echo if (${env:ProgramFiles(x86)} -ne $null) {$dir=${env:ProgramFiles(x86)}} else {$dir=${env:ProgramFiles}} >> GetVersion.ps1"
+cmd "echo $Firefox=$dir + '\Mozilla Firefox\firefox.exe' >> GetVersion.ps1"
+cmd "echo (Get-Item $Firefox).VersionInfo.ProductVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var tag = last
+
+meta tag=tag
+
+batch
+ if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
+ cd "Mozilla Firefox"
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg
+ pushd browser
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini
+ mkdir defaults\preferences & cd defaults\preferences
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
+ popd
+ pushd uninstall
+ helper.exe /SetAsDefaultAppUser
+ popd
+
+
+# Install uBlock Origin plugin
+workdir c:\Workspace
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Install-FirefoxPlugin -DownloadDir . -PluginName ublock-origin -PluginId uBlock0@raymondhill.net"
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+env pathext=""
+
+
+###################################
+# Clean up
+###################################
+workdir c:\
+
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+
+###################################
+# Startup File
+###################################
+
+isolate window:firefoxMessageWindow full
+
+startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe")
