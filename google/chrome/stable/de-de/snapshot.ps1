@@ -8,10 +8,10 @@
 $rootDir = $(Get-Item $PSScriptRoot).Parent.FullName
 . "$rootDir\Resources\shared_snapshot.ps1"
 
-Download-Browser 'install.msi' 'en'
+Download-Browser 'install.msi' 'de-de'
 $tag = Get-Version '.\install.msi'
 
 Write-Host "Chrome version $tag"
-"google/chrome:$tag" | Set-Content "image.txt"
+"google/chrome-de:$tag" | Set-Content "image.txt"
 
 # Silent install arguments: /quiet

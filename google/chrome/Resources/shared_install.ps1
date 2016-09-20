@@ -7,6 +7,7 @@
 
 $StartChromeTask = 'Start Chrome'
 $CloseChromeTask = 'Close Chrome'
+$PreferencesPath = "${env:USERPROFILE}\AppData\Local\Google\Chrome\User Data\Default\Preferences"
 
 function Is-ScheduledTaskDefined ($taskName)
 {
@@ -115,7 +116,7 @@ function Perform-FirstLaunch()
     }
 }
 
-function Set-PreferenceProperty($filepath, $category, $property, $value)
+function Set-PreferenceCategoryProperty($filepath, $category, $property, $value)
 {
     $json = (Get-Content $filepath) | ConvertFrom-Json
 
@@ -127,6 +128,24 @@ function Set-PreferenceProperty($filepath, $category, $property, $value)
     else
     {
         $json | Add-Member -Name $category -Value @{ $property = $value } -MemberType NoteProperty
+    }
+
+    ConvertTo-Json $json -Compress | Set-Content $filepath
+    return $true
+}
+
+function Set-PreferenceProperty($filepath, $property, $value)
+{
+    $json = (Get-Content $filepath) | ConvertFrom-Json
+
+    $propertyValue = $json.PSobject.Properties | Where-Object {$_.Name -eq $property}
+    if($propertyValue)
+    {
+        Add-Member -Name $property -Value $value -MemberType NoteProperty -InputObject $json.$property -Force
+    }
+    else
+    {
+        $json | Add-Member -Name $property -Value $value -MemberType NoteProperty
     }
 
     ConvertTo-Json $json -Compress | Set-Content $filepath
@@ -180,11 +199,16 @@ function Set-BasicFileAssoc()
 function Set-BasicPreferences()
 {
     Write-Host "Overwriting default preferences"
+    
+    Set-PreferenceCategoryProperty $PreferencesPath 'browser' 'check_default_browser' $false | Out-Null
+    Set-PreferenceCategoryProperty $PreferencesPath 'download' 'prompt_for_download' $true | Out-Null
+    Set-PreferenceCategoryProperty $PreferencesPath 'download' 'directory_upgrade' $true | Out-Null
+    Set-PreferenceCategoryProperty $PreferencesPath 'download' 'extensions_to_open' "" | Out-Null
+}
 
-    $preferencesPath = "${env:USERPROFILE}\AppData\Local\Google\Chrome\User Data\Default\Preferences"
-
-    Set-PreferenceProperty $preferencesPath 'browser' 'check_default_browser' $false | Out-Null
-    Set-PreferenceProperty $preferencesPath 'download' 'prompt_for_download' $true | Out-Null
-    Set-PreferenceProperty $preferencesPath 'download' 'directory_upgrade' $true | Out-Null
-    Set-PreferenceProperty $preferencesPath 'download' 'extensions_to_open' "" | Out-Null
+function Set-ContentLanguage($language)
+{
+    Set-PreferenceCategoryProperty $PreferencesPath 'intl' 'accept_languages' "en-US,en,$language" | Out-Null
+    Set-PreferenceCategoryProperty $PreferencesPath 'spellcheck' 'dictionaries' @("en-US",$language) | Out-Null
+    Set-PreferenceProperty $PreferencesPath 'translate_blocked_languages' @($language) | Out-Null
 }

@@ -8,7 +8,7 @@
 $rootDir = $(Get-Item $PSScriptRoot).Parent.FullName
 . "$rootDir\Resources\shared_snapshot.ps1"
 
-Download-Browser 'install.msi'
+Download-Browser 'install.msi' 'en'
 $tag = Get-Version '.\install.msi'
 
 Write-Host "Chrome Base version $tag"
