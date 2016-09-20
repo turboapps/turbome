@@ -1,0 +1,70 @@
+#
+# Chrome turbo.me file
+# https://github.com/turboapps/turbome/tree/master/google/chrome
+#
+# Created with Turbo CMD version 1.4.2603.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Chrome"
+meta namespace="google"
+meta name="chrome-fr"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget
+layer google/chrome
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+cmd wget https://raw.githubusercontent.com/turboapps/turbome/master/google/chrome/Resources/shared_install.ps1 -Oshared_install.ps1
+
+batch cmd
+	echo . .\shared_install.ps1 > script.ps1
+	echo Set-ContentLanguage "fr" >> script.ps1
+
+cmd powershell -File script.ps1 -ExecutionPolicy Unrestricted -NoProfile
+
+# Get product version
+cmd wget https://raw.githubusercontent.com/turboapps/turbome/master/tools/powershell/Turbo/Get-FileVersion.ps1 -OGet-FileVersion.ps1
+cmd powershell -NoProfile -Command ". .\Get-FileVersion; Get-FileVersion ""C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"""
+var version = last
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILESX86@\Google\Chrome\Application\chrome.exe", "-lang=fr")
