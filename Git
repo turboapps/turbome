@@ -52,9 +52,11 @@ cmd "wget --no-check-certificate -O git.exe %url%"
 
 #Batching this command is used as workaround
 batch cmd
-  git.exe /y /InstallPath=".\Git"
+  git.exe /y /InstallPath="C:\Git"
 
+###################################
 # Get version
+###################################
 
 # Get URL from web
 batch 
@@ -72,6 +74,12 @@ var version = last
 #cmd powershell -command "(Get-Item .\Git\git-bash.exe).VersionInfo.FileVersion"
 
 ###################################
+# Environment Variables
+###################################
+
+env path="C:\Git\" 
+
+###################################
 # Clean up
 ###################################
 
@@ -79,7 +87,6 @@ workdir @SYSDRIVE@\
 
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\wget /s /q
-#cmd rmdir @SYSDRIVE@\python34 /s /q
 
 ###################################
 # Version
