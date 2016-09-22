@@ -34,8 +34,8 @@ batch
   echo $url = "https://git-scm.com/download/win/" >> getUrl.ps1
   echo $output = (Invoke-WebRequest -Uri $url).Content  >> getUrl.ps1
   echo $curlregex = "(https://github.com/git-for-windows/git/releases/download/.*?64-bit\.7z\.exe)"  >> getUrl.ps1
-  echo Select-String -Path $output -Pattern $curlregex ^| ForEach-Object{ if ($_.line -match $curlregex) {} } >> getUrl.ps1
-  echo $matches[0] >> getUrl.ps1
+  echo $output -match $curlregex ^| Out-Null >> getUrl.ps1
+  echo Write-Output $matches[0] >> getUrl.ps1
 
 cmd powershell -NoProfile -ExecutionPolicy Bypass -File getUrl.ps1
 var url = last
@@ -58,8 +58,9 @@ batch
   echo $url = "https://git-scm.com/download/win/" >> getVer.ps1
   echo $output = (Invoke-WebRequest -Uri $url).Content  >> getVer.ps1
   echo $curlregex = "(download/.*\.win)"  >> getVer.ps1
-  echo Select-String -Path $output -Pattern $curlregex ^| ForEach-Object{ if ($_.line -match $curlregex) {} } >> getVer.ps1
-  echo $matches[0].Substring(10,$matches[0].Length-14) >> getVer.ps1
+  echo $output -match $curlregex ^| Out-Null >> getVer.ps1
+  echo $matches[0] -match "(\d+(?:\.\d+)*)" ^| Out-Null >> getVer.ps1
+  echo Write-Host $matches[0] >> getVer.ps1
   
 cmd powershell -NoProfile -ExecutionPolicy Bypass -File getVer.ps1
 var version = last
