@@ -1,0 +1,95 @@
+#
+# git turbo.me file
+# 
+#
+# Created with Turbo CMD version 1.4.1106.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="git"
+meta namespace="git"
+meta name="git"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,microsoft/powershell
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+# Get URL from web
+batch 
+  echo $url = "https://git-scm.com/download/win/" >> getUrl.ps1
+  echo $output = (Invoke-WebRequest -Uri $url).Content  >> getUrl.ps1
+  echo $curlregex = "(https://github.com/git-for-windows/git/releases/download/.*?64-bit\.7z\.exe)"  >> getUrl.ps1
+  echo Select-String -Path $output -Pattern $curlregex ^| ForEach-Object{ if ($_.line -match $curlregex) {} } >> getUrl.ps1
+  echo $matches[0] >> getUrl.ps1
+
+cmd powershell -NoProfile -ExecutionPolicy Bypass -File getUrl.ps1
+var url = last
+
+# Download
+cmd "wget --no-check-certificate -O git.exe %url%"
+
+# Install
+
+# Batching this command is used as workaround
+batch cmd
+  git.exe /y /InstallPath="C:\Git"
+
+###################################
+# Get version
+###################################
+
+# Get URL from web
+batch 
+  echo $url = "https://git-scm.com/download/win/" >> getVer.ps1
+  echo $output = (Invoke-WebRequest -Uri $url).Content  >> getVer.ps1
+  echo $curlregex = "(download/.*\.win)"  >> getVer.ps1
+  echo Select-String -Path $output -Pattern $curlregex ^| ForEach-Object{ if ($_.line -match $curlregex) {} } >> getVer.ps1
+  echo $matches[0].Substring(10,$matches[0].Length-14) >> getVer.ps1
+  
+cmd powershell -NoProfile -ExecutionPolicy Bypass -File getVer.ps1
+var version = last
+
+# This seems to give different version number for git portable. Probably installer version
+# cmd powershell -command "(Get-Item .\Git\git-bash.exe).VersionInfo.FileVersion"
+
+###################################
+# Environment Variables
+###################################
+
+env path="C:\Git\" 
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+###################################
+# Startup File
+###################################
+
+startup file ("git-bash.exe")
