@@ -2,45 +2,55 @@ meta title="Firefox Beta"
 meta namespace="mozilla"
 meta name="firefox-beta"
 
-using wget,powershell,python:3.4.1
+requires privilege:admin
+
+###################################
+# Pull dependency images
+###################################
+
+using wget:1.11.4,powershell
 
 cmd  mkdir c:\Workspace
 workdir c:\Workspace
 
+###################################
+# Download
+###################################
+
 var url = "https://download.mozilla.org/?product=firefox-beta-latest&os=win&lang=en-US"
 
-cmd "wget --no-check-certificate --no-verbose ""%url%"""
-cmd "dir > output.txt"
-
-batch
-  echo import re >> getVersion.py
-  echo f = open('output.txt', 'r') >> getVersion.py
-  echo print(re.findall('(\d*\.\d*\.*\d*.*)\.exe', f.read() )[0]) >> getVersion.py
-
-cmd python getVersion.py
-var tag = last
-
+cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
 
 batch cmd
- echo [Install] > install.ini
- echo InstallDirectoryPath=c:\FirefoxBeta\ >> install.ini
+ echo [Install] >> install.ini
  echo MaintenanceService=false >> install.ini
+ echo InstallDirectoryPath=c:\FirefoxBeta\ >> install.ini
 
-cmd """Firefox Setup %tag%.exe"" /INI=c:\Workspace\install.ini"
+###################################
+# Install
+###################################
+
+cmd "firefox.exe /INI=C:\Workspace\install.ini"
+
+###################################
+# Get version
+###################################
+
+cmd powershell "(Get-Item 'c:\FirefoxBeta\firefox.exe').VersionInfo.ProductVersion"
+var tag = last
 
 batch
  cd c:\FirefoxBeta
- wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/mozilla.cfg
+ wget --no-check-certificate --no-verbose -O mozilla.cfg "https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/mozilla.cfg"
  cd browser
- wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/override.ini
+ wget --no-check-certificate --no-verbose -O override.ini "https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/override.ini"
  mkdir defaults\preferences & cd defaults\preferences
- wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/defaults/preferences/local-settings.js
-
+ wget --no-check-certificate --no-verbose -O local-settings.js "https://raw.githubusercontent.com/pmateusz/browser-automation/master/config/firefox/browser/defaults/preferences/local-settings.js"
+ 
 workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
-cmd rmdir C:\python34 /s /q
 
 meta tag=tag
 
