@@ -32,7 +32,6 @@
 # 
 ###################################
 
-
 requires privilege:admin
 
 meta title="Reflection"
@@ -48,16 +47,13 @@ layer jre
 ###################################
 # Install Prerequisites
 ###################################
-cmd "echo dupa"
 
 batch cmd
  cd "C:\Reflection\rdesktop-16.0-prod-w32\Prerequisites\VB71"
  msiexec /i Vba71.msi /qn
  cd ../
- echo dotnet
  cd DotNet451
  NDP451-KB2858728-x86-x64-AllOS-ENU.exe /q
-
 
 ###################################
 # Install Reflection
@@ -66,7 +62,6 @@ batch cmd
 batch cmd
   cd "C:\Reflection\rdesktop-16.0-prod-w32\"
   msiexec /i ReflectionV16.msi /L*V log.txt /qn
-#  TODO: Check log.txt for succesfull instalation
 
 ###################################
 # Update Reflection 16.0 to 16.0.1.308
