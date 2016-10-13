@@ -3,4 +3,4 @@ and reflect-desktop-16.0.1.308-sp1-w32.exe to install update.
 
 Build using: 
 
-    turbo build turbo.me --mount "C:\Reflection"reflect-desktop-16.0.1.308-sp1-w32.exe
+    turbo build turbo.me --mount "C:\Reflection"
