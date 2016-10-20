@@ -9,8 +9,7 @@
 
 $webClient = (New-Object System.Net.WebClient)
 
-$webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/skype/added-keys.reg", "added-keys.reg")
-& reg import added-keys.reg
+& "${env:WINDIR}\\SysWOW64\\regsvr32.exe" /s jscript9.dll
 
 $webClient.DownloadFile("https://raw.githubusercontent.com/turboapps/turbome/master/tools/powershell/Turbo/Deploy-TurboModule.ps1", "Deploy-TurboModule.ps1")
 . .\Deploy-TurboModule.ps1
