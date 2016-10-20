@@ -8,7 +8,7 @@ requires privilege:admin
 # Pull dependency images
 ###################################
 
-using wget:1.11.4,powershell
+using wget
 
 cmd  mkdir c:\Workspace
 workdir c:\Workspace
@@ -19,25 +19,25 @@ workdir c:\Workspace
 
 var url = "https://download.mozilla.org/?product=firefox-beta-latest&os=win&lang=en-US"
 
-cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
+cmd "wget --content-disposition --no-check-certificate ""%url%"""
+
+###################################
+# Config install, install and get version
+###################################
 
 batch cmd
  echo [Install] >> install.ini
  echo MaintenanceService=false >> install.ini
  echo InstallDirectoryPath=c:\FirefoxBeta\ >> install.ini
+ echo dir /b ^> temp.txt >> zcommand.cmd
+ echo set /p setupName^=^<temp.txt >> zcommand.cmd
+ echo "%%setupName%%" /INI=C:\Workspace\install.ini>> zcommand.cmd
+ echo echo %%setupName:~14^,-4%% ^> temp.txt >> zcommand.cmd
+ zcommand.cmd
 
-###################################
-# Install
-###################################
-
-cmd "firefox.exe /INI=C:\Workspace\install.ini"
-
-###################################
-# Get version
-###################################
-
-cmd powershell "(Get-Item 'c:\FirefoxBeta\firefox.exe').VersionInfo.ProductVersion"
+cmd type temp.txt
 var tag = last
+
 
 batch
  cd c:\FirefoxBeta
