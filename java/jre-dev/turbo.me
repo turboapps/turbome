@@ -59,12 +59,6 @@ var url = last
 
 var tag = "9" + version
 
-# Check if version exists. If yes - break the process
-batch
-  turbo tags oracle/jre-dev >> existing_versions.txt
-  find /c "%tag%" existing_versions.txt
-  if %errorlevel% equ 0 copy null.txt null.txt
-
 # Download
 cmd "wget -O setup.exe --no-check-certificate --no-cookies --header ""Cookie: oraclelicense=accept-securebackup-cookie""  %url%"
 
