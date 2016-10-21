@@ -2,8 +2,6 @@ meta title="Firefox Beta"
 meta namespace="mozilla"
 meta name="firefox-beta"
 
-requires privilege:admin
-
 ###################################
 # Pull dependency images
 ###################################
@@ -29,15 +27,13 @@ batch cmd
  echo [Install] >> install.ini
  echo MaintenanceService=false >> install.ini
  echo InstallDirectoryPath=c:\FirefoxBeta\ >> install.ini
- echo dir /b ^> temp.txt >> zcommand.cmd
- echo set /p setupName^=^<temp.txt >> zcommand.cmd
- echo "%%setupName%%" /INI=C:\Workspace\install.ini>> zcommand.cmd
- echo echo %%setupName:~14^,-4%% ^> temp.txt >> zcommand.cmd
- zcommand.cmd
+ dir /b > temp.txt
+ set /p setupName=<temp.txt
+ "%setupName%" /INI=C:\Workspace\install.ini
+ echo %setupName:~14,-4% >temp.txt
 
 cmd type temp.txt
 var tag = last
-
 
 batch
  cd c:\FirefoxBeta
