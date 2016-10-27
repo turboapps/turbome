@@ -1,0 +1,14 @@
+# install4j response file for Micro Focus MSS 12.3.309
+newInstallationDir=C\:\\MSS
+oldInstallationDir=
+runUtilityChoice$Integer=0
+startServersNow$Boolean=true
+sys.adminRights$Boolean=true
+sys.component.ReflectionServerComponentID$Boolean=true
+sys.component.SecurityProxyServerComponentID$Boolean=false
+sys.installationDir=C\:\\MSS
+sys.languageId=en
+sys.programGroupAllUsers$Boolean=true
+sys.programGroupDir=C\:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Micro Focus Host Access Management and Security Server
+sys.programGroupDisabled$Boolean=false
+sys.programGroupName=Micro Focus Host Access Management and Security Server

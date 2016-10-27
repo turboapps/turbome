@@ -1,0 +1,65 @@
+#
+# Host Access Management and Security Server turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Requirements and notes
+#
+# 1. C:\Installer directory must be mounted using --mount "C:\Installer"
+#
+# Installer direcotry must contain
+#  - activation.mss_for_windows_desktop_emulation-12.3.jaw
+#  - mss-12.3.309-prod.wx64.exe
+#  - response.varfile
+# The first two files are from install_automated directory
+# The third one is on git repo with this script file
+# 
+###################################
+
+requires privilege:admin
+
+meta title="Host Access Management and Security Server"
+meta namespace="microfocus"
+meta name="mss"
+meta tag=12.3.309
+
+###################################
+# Install
+###################################
+
+batch cmd
+ cd C:\Installer\
+ mss-12.3.309-prod-wx64 -q -c -varfile response.varfile
+
+batch cmd
+ cd C:\MSS
+ echo IF EXIST run.txt (>>test.bat
+ echo "%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe" C:\MSS\utilities\AdministrativeWebStation.html>>test.bat
+ echo ) ELSE (>>test.bat
+ echo sc stop "Micro Focus MSS Server">>test.bat
+ echo START /WAIT C:\MSS\utilities\bin\InitialConfigurationUtility.exe>>test.bat
+ echo type NUL^>run.txt>>test.bat
+ echo sc start "Micro Focus MSS Server">>test.bat
+ echo "%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe" C:\MSS\utilities\AdministrativeWebStation.html>>test.bat
+ echo )>>test.bat
+
+###################################
+# Startup File
+###################################
+layer jre,firefox
+
+enable FaultExecutables
+
+startup file ("@SYSDRIVE@\MSS\test.bat")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
