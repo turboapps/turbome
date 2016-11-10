@@ -1,0 +1,16 @@
+# install4j response file for Micro Focus Reflection ZFE 2.0 2.0.0.51
+rsgRadioBtnAction=rsgActionUseExistingLocalRsgInstallation
+rsg_hostname=localhost
+rzfe_cert_fetch_perform$Boolean=true
+rzfe_server_port=7070
+rzfe_server_secure_port=7443
+rzfe_startserver_chkbox$Boolean=true
+sys.adminRights$Boolean=true
+sys.component.ManagementServerComponentID$Boolean=true
+sys.component.SessionServerComponentID$Boolean=true
+sys.installationDir=C\:\\ReflectionZFE
+sys.languageId=en
+sys.programGroupAllUsers$Boolean=true
+sys.programGroupDisabled$Boolean=false
+sys.programGroupName=Micro Focus Reflection ZFE
+txtField_secure_http_port_value=443

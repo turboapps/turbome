@@ -1,0 +1,50 @@
+#
+# ReflectionZFE turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Requirements and notes
+#
+# 1. C:\Installer directory must be mounted using --mount "C:\Installer"
+#
+# Installer direcotry must contain
+#  - activation.reflection_zfe-12.3.jaw
+#  - reflectionzfe-2.0.0.51-windows-x64.exe
+#  - response.varfile
+#  - test.bat
+#  - manual.html
+# 
+###################################
+
+requires privilege:admin
+
+meta title="Reflection ZFE"
+meta namespace="microfocus"
+meta name="zfe"
+meta tag=2.0.0.51
+
+layer microfocus/mss
+
+###################################
+# Copy installer
+###################################
+cmd xcopy C:\Installer C:\ZFEInstaller /i /s/e
+cmd xcopy C:\ZFEInstaller\test.bat C:\MSS /y
+
+###################################
+# Startup File
+###################################
+
+startup file ("@SYSDRIVE@\MSS\test.bat")
+
+###################################
+# Environment Variables
+###################################
+
+# No variables needed
+
+###################################
+# Clean up
+###################################
