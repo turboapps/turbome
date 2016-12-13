@@ -29,25 +29,22 @@ using turbo/turboscript-tools:2016.5.5
 ###################################
 
 # Set working directory
-cmd mkdir c:\Workspace
-workdir c:\Workspace
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+cmd "wget -O chocolatey_page.html --no-check-certificate https://chocolatey.org/packages/flashplayerplugin"
+cmd "echo Select-String -Path .\chocolatey_page.html -Pattern 'http.*://download.*msi' ^| % { $_.Matches } ^| % { $_.Value } > script.ps1"
+cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File script.ps1"
+
+var url = last
 
 # Download
-cmd "wget -O setup.msi --no-verbose --no-check-certificate https://fpdownload.macromedia.com/get/flashplayer/distyfp/current/win/install_flash_player_21_plugin.msi"
-
+cmd "wget -O setup.msi --no-verbose --no-check-certificate %url%"
 # Install
 cmd "setup.msi /qn"
 
-
 # Get file version
-cmd dir /b C:\Windows\System32\Macromed\Flash | findstr FlashUtil* > version.txt
-cmd findstr "." version.txt
-var executable = last
-var executablePath = "C:\Windows\System32\Macromed\Flash\" + executable
-cmd "copy ""%executablePath%"" flash.exe"
-batch cmd
-    powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion -Path flash.exe" > image.txt
-cmd findstr "." image.txt
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion -Path C:\Windows\System32\Macromed\Flash\FlashPlayerPlugin*.exe"
 var tag = last
 
 # Disable protected mode - temporary workaround for Firefox hangs on pages containing Flash content
@@ -55,11 +52,12 @@ batch
     echo ProtectedMode=0 >> %SYSTEMROOT%\system32\macromed\flash\mms.cfg
     echo ProtectedMode=0 >> %SYSTEMROOT%\syswow64\macromed\flash\mms.cfg
 
-
 ###################################
 # Environment Variables
 ###################################
 
+env path=""
+env pathext=""
 
 ###################################
 # Clean up
@@ -72,16 +70,12 @@ cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module 
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
 
-env path=""
-env pathext=""
-
 ###################################
 # Version
 ###################################
 
 meta tag=tag
 meta version=tag
-
 
 ###################################
 # Startup File
