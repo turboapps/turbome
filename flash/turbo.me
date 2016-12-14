@@ -32,14 +32,12 @@ using turbo/turboscript-tools:2016.5.5
 cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
 
-cmd "wget -O chocolatey_page.html --no-check-certificate https://chocolatey.org/packages/flashplayerplugin"
-cmd "echo Select-String -Path .\chocolatey_page.html -Pattern 'http.*://download.*msi' ^| % { $_.Matches } ^| % { $_.Value } > script.ps1"
-cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File script.ps1"
-
-var url = last
-
 # Download
-cmd "wget -O setup.msi --no-verbose --no-check-certificate %url%"
+cmd wget -O chocolatey_page.html --no-check-certificate https://chocolatey.org/packages/flashplayerplugin
+cmd "echo $url = Select-String -Path .\chocolatey_page.html -Pattern 'http.*://download.*msi' ^| % { $_.Matches } ^| % { $_.Value } > script.ps1"
+cmd echo Invoke-WebRequest -Uri $url -OutFile 'setup.msi' >> script.ps1
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File script.ps1
+
 # Install
 cmd "setup.msi /qn"
 
