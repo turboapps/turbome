@@ -182,6 +182,22 @@ function Remove-Installer()
     }
 }
 
+function Remove-CacheContent()
+{
+    # Remove the cache directories from the snap shot
+    # However, we leave in the empty cache directories, so that we can set a noSync policy on them
+    # Check that this section is in sync with the snapshot/xappl manipulation in 'post_snapshot.ps1'
+    Remove-Item -Recurse -Force $env:LOCALAPPDATA'\Google\Chrome\User Data\Default\Cache'
+    New-Item -ItemType Directory -Force -Path $env:LOCALAPPDATA'\Google\Chrome\User Data\Default\Cache'
+	
+    Remove-Item -Recurse -Force $env:LOCALAPPDATA'\Google\Chrome\User Data\Default\GPUCache'
+    New-Item -ItemType Directory -Force -Path $env:LOCALAPPDATA'\Google\Chrome\User Data\Default\GPUCache'
+	
+    Remove-Item -Recurse -Force $env:LOCALAPPDATA'\Google\Chrome\User Data\ShaderCache'
+    New-Item -ItemType Directory -Force -Path $env:LOCALAPPDATA'\Google\Chrome\User Data\ShaderCache'
+    
+}
+
 function Set-BasicFileAssoc()
 {
     Write-Host 'Register basic associations'

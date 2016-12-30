@@ -104,6 +104,12 @@ function Set-FileSystemIsolation($xappl, $path, $isolationMode)
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.isolation = $isolationMode }
 }
 
+function Set-FileSystemNoSync($xappl, $path, $noSync)
+{
+    $xpath = Get-FileSystemXPath($path)
+    $xappl.SelectNodes($xpath) | ForEach-Object { $_.noSync = $noSync }
+}
+
 function Set-RegistryIsolation($xappl, $path, $isolationMode)
 {
     $xpath = Get-RegistryXPath($path)
@@ -718,6 +724,7 @@ Export-ModuleMember -Function 'Save-XAPPL'
 Export-ModuleMember -Function 'Set-DefaultProgId'
 Export-ModuleMember -Function 'Set-EnvironmentVariable'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
+Export-ModuleMember -Function 'Set-FileSystemNoSync'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-RegistryValue'
 
