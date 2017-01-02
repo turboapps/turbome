@@ -66,6 +66,16 @@ batch
  helper.exe /SetAsDefaultAppUser
  popd
 
+ 
+# Create a default, fix named profile. 
+# We pin down the name, so that we can set isolation and sync settings on that directory 
+copy "profiles.ini" "C:\Workspace\profiles.ini"
+copy "Profiles" "C:\Workspace\Profiles"
+
+batch
+ mkdir %APPDATA%\Mozilla\Firefox\
+ copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
+ robocopy /E C:\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
 
 ###################################
 # Environment Variables
