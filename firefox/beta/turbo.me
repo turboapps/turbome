@@ -42,6 +42,18 @@ batch
  wget --no-check-certificate --no-verbose -O override.ini "https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini"
  mkdir defaults\preferences & cd defaults\preferences
  wget --no-check-certificate --no-verbose -O local-settings.js "https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js"
+
+
+# Create a default, fix named profile. 
+# We pin down the name, so that we can set isolation and sync settings on that directory 
+copy "profiles.ini" "C:\Workspace\profiles.ini"
+copy "Profiles" "C:\Workspace\Profiles"
+
+batch
+ mkdir %APPDATA%\Mozilla\Firefox\
+ copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
+ robocopy /E C:\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
+
  
 workdir c:\
 
