@@ -42,10 +42,15 @@ cmd "echo (Get-Item $Firefox ).VersionInfo.ProductVersion >> GetVersion.ps1"
 cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1
 var version = last
 
-# Create Firefox Profile
-batch cmd
-    cd "C:\Program Files (x86)\Mozilla Firefox"
-    firefox.exe -CreateProfile Turbo
+# Create a default, fix named profile. 
+# We pin down the name, so that we can set isolation and sync settings on that directory 
+copy "profiles.ini" "C:\Workspace\profiles.ini"
+copy "Profiles" "C:\Workspace\Profiles"
+
+batch
+ mkdir %APPDATA%\Mozilla\Firefox\
+ copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
+ robocopy /E C:\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
 
 isolate window:firefoxMessageWindow full
     

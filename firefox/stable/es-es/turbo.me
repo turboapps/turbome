@@ -71,6 +71,17 @@ batch
 workdir c:\Workspace
 cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Install-FirefoxPlugin -DownloadDir . -PluginName ublock-origin -PluginId uBlock0@raymondhill.net"
 
+
+# Create a default, fix named profile. 
+# We pin down the name, so that we can set isolation and sync settings on that directory 
+copy "profiles.ini" "C:\Workspace\profiles.ini"
+copy "Profiles" "C:\Workspace\Profiles"
+
+batch
+ mkdir %APPDATA%\Mozilla\Firefox\
+ copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
+ robocopy /E C:\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
+
 ###################################
 # Environment Variables
 ###################################
