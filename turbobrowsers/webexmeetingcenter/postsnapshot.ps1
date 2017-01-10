@@ -21,6 +21,9 @@ Set-RegistryIsolation $xappl '@HKCU@\Software\Microsoft' $FullIsolation
 Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Microsoft' $FullIsolation
 Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Microsoft' $FullIsolation
 
+#This key is removed due to illegal character it brings to xappl. This line may be removed if xappl is moved from XML 1.0 to 1.1 or higher.
+Remove-RegistryItems $xappl '@HKLM@\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products'
+
 Remove-FileSystemItems $xappl '@APPDATACOMMON@\chocolatey'
 Remove-FileSystemItems $xappl '@APPDATALOCAL@\NuGet'
 Remove-FileSystemItems $xappl '@APPDATALOCALLOW@\Microsoft'
