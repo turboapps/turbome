@@ -6,4 +6,4 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 $version = Get-Date -Format 'yyyy.M.dd'
-"turbobrowsers/webexmeetings:$version" | Set-Content image.txt
+"turbobrowsers/webex:$version" | Set-Content image.txt
