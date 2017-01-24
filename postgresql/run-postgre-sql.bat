@@ -14,11 +14,13 @@ if not exist %PGDATA% (
   mkdir %PGDATA%
 )
 
+set LANG=en
+
 cd %TEMP% 
 
 if not exist %PGDATA%\PG_VERSION (
   echo postgres>tmp-pwd.file
-  initdb -U postgres -A password -E utf8 --pwfile=tmp-pwd.file
+  initdb --locale=en-us -U postgres -A password -E utf8 --pwfile=tmp-pwd.file
   del tmp-pwd.file
 )
 cd %PGDATA%
