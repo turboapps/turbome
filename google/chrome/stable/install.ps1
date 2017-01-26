@@ -27,6 +27,7 @@ Perform-FirstLaunch
 #
 Remove-GoogleUpdate
 Remove-Installer
+Remove-CacheContent
 
 
 #

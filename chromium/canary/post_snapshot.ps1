@@ -25,6 +25,12 @@ Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft"
 
+# No need to sync chaches across machines
+# Check that this section is in sync with installation preparations in install.ps1
+Set-FileSystemNoSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\Default\Cache" "True"
+Set-FileSystemNoSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\Default\GPUCache" "True"
+Set-FileSystemNoSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\ShaderCache" "True"
+
 Remove-StartupFiles $xappl
 Add-StartupFile $xappl -File "@SYSDRIVE@\Chromium\chrome-win32\chrome.exe" -AutoStart
 
