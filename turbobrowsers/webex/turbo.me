@@ -1,0 +1,64 @@
+#
+# Webex turbo.me file
+# https://github.com/turboapps/turbome/tree/master/turbobrowsers/webex]
+#
+# Created with Turbo CMD version 1.4.2242.0
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Webex"
+meta namespace="turbobrowsers"
+meta name="webex"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget
+layer turbobrowsers/turbobase
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Copy snapshot files
+batch cmd
+
+    robocopy "C:\Snapshot\@APPDATA@" "%APPDATA%" * /E /NFL /NDL /NJH /NJS
+    robocopy "C:\Snapshot\@APPDATALOCAL@" "%LOCALAPPDATA%" * /E /NFL /NDL /NJH /NJS
+    robocopy "C:\Snapshot\@PROGRAMFILESX86@" "%PROGRAMFILES(X86)%" * /E /NFL /NDL /NJH /NJS	
+    exit /B 0
+
+isolate window:firefoxMessageWindow full
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+cmd rmdir c:\Workspace /s /q
+
+startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/#/meetings/joinbynumber")
+
+startup file join=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/#/meetings/joinbynumber")
+
+startup file host=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/auth?service=it&from=hostmeeting")
+
+startup file test=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://www.webex.com/test-meeting.html")
+
+###################################
+# Version
+###################################
+
+var version = year + "." + month + "." + day
+meta tag = version
+
