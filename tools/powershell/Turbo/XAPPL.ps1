@@ -106,11 +106,13 @@ function Set-FileSystemIsolation($xappl, $path, $isolationMode)
 
 function Set-FileEnableSystemSync($xappl, $path, $sync)
 {
-    $xpath = Get-FileSystemXPath($path)+'//Directory'
     # Consistant with turbo script, synching enables/disables for all children
-    $allSubDirsPath = $xpath+'//Directory'
-    $nodes = $xappl.SelectNodes($allSubDirsPath)
-    $nodes | ForEach-Object { $_.noSync = (!$sync).ToString() }
+    $xpath = Get-FileSystemXPath($path)
+    $mainNode = $xappl.SelectNodes($xpath)
+    $mainNode | ForEach-Object { $_.noSync = (!$sync).ToString() }
+    $allSubDirsPath = $xpath + '//Directory'
+    $subDirs = $xappl.SelectNodes($allSubDirsPath)
+    $subDirs | ForEach-Object { $_.noSync = (!$sync).ToString() }
 }
 
 function Set-RegistryIsolation($xappl, $path, $isolationMode)
