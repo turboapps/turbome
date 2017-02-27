@@ -29,7 +29,7 @@ Set-FileSystemIsolation $xappl "@PROGRAMFILESX86@\Google" $FullIsolation
 
 
 # Enable sync for the profile, while disable sync for the caches
-Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google" $true
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google\Chrome" $true
 Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\Default\Cache" $false
 Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\ShaderCache" $false
 
