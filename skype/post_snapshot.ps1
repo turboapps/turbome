@@ -12,6 +12,7 @@ $xappl = Read-XAPPL $XappPath
 
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
 $virtualizationSettings.httpUrlPassthrough = [string]$true
+$virtualizationSettings.shutdownProcessTree = [string]$true
 
 Remove-FileSystemDirectoryItems $xappl "@SYSDRIVE@\tmp"
 
