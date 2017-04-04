@@ -16,9 +16,6 @@ $xappl = Read-XAPPL $XappPath
 
 Remove-Layer $xappl 'Xenocode'
 
-# Remove sandbox settings - workaround for the bug: hundreds of _IEXPLORER.EXE procs start and IE fails to launch
-$xappl.Configuration.RemoveChild($xappl.Configuration.VirtualizationSettings)
-
 Remove-FileSystemItems $xappl "@SYSTEM@\MsDtc"
 Remove-FileSystemItems $xappl "@SYSTEM@\Sysprep"
 Remove-FileSystemItems $xappl "@APPDATALOCALLOW@\Microsoft"
