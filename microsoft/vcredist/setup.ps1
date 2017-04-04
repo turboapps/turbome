@@ -18,3 +18,5 @@ $webClient.DownloadFile($x86DownloadLink,'vc_redist.x86.exe')
 $webClient.DownloadFile($x64DownloadLink,'vc_redist.x64.exe')
 
 "microsoft/vcredist:2015" | Set-Content 'image.txt'
+# TODO: Support something like this in Turbo Jenkins plugin
+#"microsoft/universal-crt" | Set-Content 'dependencies.txt'
