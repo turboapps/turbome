@@ -24,6 +24,6 @@ $xappl = Read-XAPPL $XappPath
 Set-EnvironmentVariable $xappl 'path' "@PROGRAMFILESX86@\java\jre1.$version.0_$update\bin\"
 Set-EnvironmentVariable $xappl 'JAVA_HOME' "@PROGRAMFILESX86@\java\jre1.$version.0_$update"
 
-Add-StartupFile $xappl "@PROGRAMFILESX86@\java\jre1.$version.0_$update\bin\javacpl.exe"
+Remove-StartupFiles $xappl
 
 Save-XAPPL $xappl $XappPath
