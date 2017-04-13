@@ -47,16 +47,16 @@ cmd intellij.exe /S
 cmd dir "c:\Program Files (x86)\JetBrains" /b > image.txt
 cmd findstr "." image.txt 
 var installDir = "c:\Program Files (x86)\JetBrains\" + last 
-var exePath = installDir + "\bin\idea.exe"
+var exePath = installDir + "\bin\idea64.exe"
 
 # Get product version
-cmd powershell -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
+cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
 var version = last
 
 batch cmd
     echo $productVersion = [version] "%version%" > versionContract.ps1
     echo Write-Output $productVersion.Major >> versionContract.ps1
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File versionContract.ps1
+cmd powershell -ExecutionPolicy Unrestricted -NoProfile -ExecutionPolicy Unrestricted -File versionContract.ps1
 var versionMajor = last
 var conifgPath = ".IdeaIC" + versionMajor + "\config\options"
 
@@ -68,7 +68,7 @@ batch cmd
 # Clean up
 ###################################
 
-cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
 
 workdir c:\
 cmd rmdir c:\Workspace /s /q
