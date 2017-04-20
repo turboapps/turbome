@@ -1,6 +1,6 @@
 ﻿#
-# Java JRE setup script
-# https://github.com/turboapps/turbome/tree/master/oracle/jre
+# Java Runtime Environment setup script
+# https://github.com/turboapps/turbome/tree/master/java/jre
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
