@@ -1,18 +1,61 @@
-using wget
+#
+# sublime-text turbo.me file
+# [https://github.com/turboapps/turbome/blob/master/sublime-text/turbo.me]
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
+###################################
+# Meta tags
+###################################
+
+meta title="Sublime Text"
+meta namespace=sublime
+meta name=sublimetext
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell
+
+###################################
+# Download
+###################################
+
+# Set working directory
 workdir c:\
 cmd mkdir c:\sublime
 workdir c:\sublime
 
-cmd wget --no-check-certificate --no-verbose -Osetup.exe c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.2%20x64%20Setup.exe
+batch cmd
+  echo $content = (Invoke-WebRequest -URI "https://www.sublimetext.com/3").Content >> scirpt.ps1
+  echo $content -match "The latest build is (?<version>\d*)." ^| Out-Null >> scirpt.ps1
+  echo $version = $Matches['version'] >> scirpt.ps1
+  echo Invoke-WebRequest -URI "https://download.sublimetext.com/Sublime%%20Text%%20Build%%20$version%%20Setup.exe" -OutFile setup.exe >> scirpt.ps1
+  echo Write-Output $version >> scirpt.ps1
+
+cmd powershell -NoProfile -ExecutionPolicy Bypass -File scirpt.ps1
+
+var version = last
+
+###################################
+# Install
+###################################
 
 cmd setup.exe /VERYSILENT /NORESTART
+
+###################################
+# Clean up
+###################################
 
 workdir c:\
 cmd rmdir c:\sublime /S /Q
 
-meta title="Sublime Text"
-meta namespace=Sublime
-meta name=SublimeText
+startup file ("@PROGRAMFILESX86@\Sublime Text 3\sublime_text.exe")
 
-startup file ("C:\Program Files\Sublime Text 2\sublime_text.exe")
+###################################
+# Version
+###################################
+
+meta tag=version
