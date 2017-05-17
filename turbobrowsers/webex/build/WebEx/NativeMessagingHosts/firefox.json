@@ -2,6 +2,6 @@
    "allowed_extensions" : [ "ciscowebexstart@cisco.com", "ciscowebexstart1@cisco.com" ],
    "description" : "Cisco WebEx Meeting Native Message Host",
    "name" : "com.webex.meeting",
-   "path" : "C:\\Users\\Administrator\\AppData\\Local\\WebEx\\NativeMessagingHosts\\CiscoWebExStart.exe",
+   "path" : "C:\\WebEx\\NativeMessagingHosts\\CiscoWebExStart.exe",
    "type" : "stdio"
 }

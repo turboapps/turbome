@@ -12,14 +12,13 @@
 ###################################
 
 meta title="Webex"
-meta namespace="turbobrowsers"
+meta namespace="mrv"
 meta name="webex"
 
 ###################################
 # Pull dependency images
 ###################################
 
-using wget
 layer turbobrowsers/turbobase
 
 ###################################
@@ -31,12 +30,17 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Copy snapshot files
-batch cmd
 
-    robocopy "C:\Snapshot\@APPDATA@" "%APPDATA%" * /E /NFL /NDL /NJH /NJS
-    robocopy "C:\Snapshot\@APPDATALOCAL@" "%LOCALAPPDATA%" * /E /NFL /NDL /NJH /NJS
-    robocopy "C:\Snapshot\@PROGRAMFILESX86@" "%PROGRAMFILES(X86)%" * /E /NFL /NDL /NJH /NJS	
-    exit /B 0
+cmd mkdir c:\WebEx
+cmd mkdir "@PROGRAMFILESX86@\Mozilla Firefox\distribution\extensions\"
+cmd xcopy "C:\build\ciscowebexstart1@cisco.com.xpi" "@PROGRAMFILESX86@\Mozilla Firefox\distribution\extensions"
+cmd xcopy "C:\build\APPDATA" "%APPDATA%" /E
+cmd xcopy "C:\build\WebEx" "C:\WebEx" /E
+cmd xcopy "C:\build\PROGRAMFILESX86" "C:\Program Files" /E
+
+cmd "REG ADD HKCU\Software\Mozilla\NativeMessagingHosts\com.webex.meeting /t REG_SZ /d C:\WebEx\NativeMessagingHosts\firefox.json"
+
+cmd dir /b "@PROGRAMFILESX86@\Mozilla Firefox\distribution\extensions"
 
 isolate window:firefoxMessageWindow full
 
@@ -47,13 +51,13 @@ isolate window:firefoxMessageWindow full
 workdir c:\
 cmd rmdir c:\Workspace /s /q
 
-startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/#/meetings/joinbynumber")
+#startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/#/meetings/joinbynumber")
 
-startup file join=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/#/meetings/joinbynumber")
+#startup file join=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/#/meetings/joinbynumber")
 
-startup file host=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/auth?service=it&from=hostmeeting")
+#startup file host=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://signin.webex.com/collabs/auth?service=it&from=hostmeeting")
 
-startup file test=("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://www.webex.com/test-meeting.html")
+startup file ("@PROGRAMFILESX86@\Mozilla Firefox\firefox.exe", "https://www.webex.com/test-meeting.html")
 
 ###################################
 # Version
