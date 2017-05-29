@@ -1,14 +1,8 @@
-### Download installer LineInst.exe from http://cdn.line-apps.com/client/win/new/LineInst.exe
-### Use flag --enable=HttpUrlPassthrough
-
-#
 #  line.me file
 # https://github.com/turboapps/turbome/tree/master/line
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
-
-requires privilege:admin
 
 ###################################
 # Meta tags
@@ -24,42 +18,43 @@ meta name="line"
 
 using gnu/wget,powershell
 
-
 ###################################
-# Download and install
+# Download
 ###################################
 
 # Set working directory
 workdir c:\
-cmd mkdir c:\line
+cmd mkdir c:\workdir
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O C:\line\LineInst.exe http://cdn.line-apps.com/client/win/new/LineInst.exe
+cmd wget --no-check-certificate --no-verbose -O C:\workdir\LineInst.exe http://cdn.line-apps.com/client/win/new/LineInst.exe
 
 ###################################
-# Run bat script which installs line, renames exe and kills all line tasks. Replace UNC
+# Install
 ###################################
 
-cmd START C:\line\LineInst.exe /s
+cmd START C:\workdir\LineInst.exe /s
 
-# Get version number
-cmd "echo (Get-Item 'C:\line\LineInst.exe' ).VersionInfo.ProductVersion >> GetVersion.ps1"
-cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+###################################
+# Get Version
+###################################
+
+cmd powershell "(Get-Item 'C:\workdir\LineInst.exe' ).VersionInfo.ProductVersion"
 var version = last
 
 ###################################
-# Environment Variables
+# Remove Line Updater
 ###################################
 
+cmd del @APPDATALOCAL@\LINE\bin\%version%\LineUpdater.exe
 
 ###################################
 # Clean up
 ###################################
 
-cmd rmdir c:\wget /s /q
-cmd del GetVersion.ps1
+cmd rmdir @SYSDRIVE@\wget /s /q
 workdir @SYSDRIVE@\
-cmd "rmdir @SYSDRIVE@\line /s /q"
+cmd "rmdir @SYSDRIVE@\workdir /s /q"
 
 ###################################
 # Version
