@@ -1,6 +1,6 @@
 #
-# Remotix turbo.me file
-# https://github.com/turboapps/turbome/tree/master/remotix
+# Remotix Agent turbo.me file
+# https://github.com/turboapps/turbome/tree/master/remotixagent
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -60,10 +60,6 @@ batch
   RemotixAgentInstaller.exe /S /Settings=c:\Workspace\agent.rxasettings
   timeout /t 60
   taskkill /F /IM RemotixAgent.exe /T
-  REG DELETE HKLM\Software\Wow6432Node\Nulana /v DeviceUID /F
-  REG DELETE HKLM\Software\Wow6432Node\Nulana /v DeviceUIDSW /F
-  REG DELETE HKLM\Software\Nulana /v DeviceUID /F
-  REG DELETE HKLM\Software\Nulana /v DeviceUIDSW /F
 
 # Get version details from exe file
 cmd "echo if (Test-Path 'C:\Program Files\Remotix Agent\RemotixAgent.exe') {$app='C:\Program Files\Remotix Agent\RemotixAgent.exe'} else {$app='C:\Program Files (x86)\Remotix Agent\RemotixAgent.exe'} >> GetVersion.ps1"
@@ -87,10 +83,15 @@ env pathext=""
 ###################################
 workdir c:\
 
-cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
-cmd rmdir @SYSDRIVE@\Workspace /s /q
-cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
-
+# Device UIDs need to be deleted on the last container start, because the remotix agent service starts on each cmd and resets the UID
+batch
+  powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
+  rmdir @SYSDRIVE@\Workspace /s /q
+  rmdir @SYSDRIVE@\TurboBuildTools /s /q
+  REG DELETE HKLM\Software\Wow6432Node\Nulana /v DeviceUID /F
+  REG DELETE HKLM\Software\Wow6432Node\Nulana /v DeviceUIDSW /F
+  REG DELETE HKLM\Software\Nulana /v DeviceUID /F
+  REG DELETE HKLM\Software\Nulana /v DeviceUIDSW /F
 
 ###################################
 # Startup File
