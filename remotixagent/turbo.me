@@ -88,7 +88,7 @@ env pathext=""
 ###################################
 workdir c:\
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
 
