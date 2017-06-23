@@ -61,7 +61,10 @@ cmd "wget -O agent.rxasettings --no-check-certificate --no-verbose https://raw.g
 # /Dir=<install directory> -> installation directory path, by default it's C:\Program Files\Remotix Agent;
 # /Settings=<settings file path> -> path to .rxasettings file;
 # /S -> silent install.
-cmd "RemotixAgentInstaller.exe /S /Settings=agent.rxasettings"
+batch
+  RemotixAgentInstaller.exe /S /Settings=c:\Workspace\agent.rxasettings
+  timeout /t 60
+  taskkill /F /IM RemotixAgent.exe /T
 
 # Get version details from exe file
 cmd "echo if (Test-Path 'C:\Program Files\Remotix Agent\RemotixAgent.exe') {$app='C:\Program Files\Remotix Agent\RemotixAgent.exe'} else {$app='C:\Program Files (x86)\Remotix Agent\RemotixAgent.exe'} >> GetVersion.ps1"
