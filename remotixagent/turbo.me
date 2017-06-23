@@ -60,6 +60,10 @@ batch
   RemotixAgentInstaller.exe /S /Settings=c:\Workspace\agent.rxasettings
   timeout /t 60
   taskkill /F /IM RemotixAgent.exe /T
+  REG DELETE HKLM\Software\Wow6432Node\Nulana /v DeviceUID /F
+  REG DELETE HKLM\Software\Wow6432Node\Nulana /v DeviceUIDSW /F
+  REG DELETE HKLM\Software\Nulana /v DeviceUID /F
+  REG DELETE HKLM\Software\Nulana /v DeviceUIDSW /F
 
 # Get version details from exe file
 cmd "echo if (Test-Path 'C:\Program Files\Remotix Agent\RemotixAgent.exe') {$app='C:\Program Files\Remotix Agent\RemotixAgent.exe'} else {$app='C:\Program Files (x86)\Remotix Agent\RemotixAgent.exe'} >> GetVersion.ps1"
