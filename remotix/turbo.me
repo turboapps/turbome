@@ -1,0 +1,86 @@
+#
+# Remotix turbo.me file
+# https://github.com/turboapps/turbome/tree/master/remotix
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+
+# Remotix installs 64-bit bins on 64-bit OSes and 32-bit bins on 32-bit OSes.
+# Since CI builds on a 64-bit system, make sure that we require the same on run
+requires architecture:x64
+require architecture:x64
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="Remotix"
+meta namespace="nulana"
+meta name="remotix"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell,turbo/turboscript-tools:2016.8.31
+
+
+###################################
+# Download and install
+###################################
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download installer
+# https://downloads.nulana.com/remotix-win/Remotix_Installer.exe
+# https://nulana.com/download/com.nulana.remotixwin/
+cmd "wget -O Remotix_Installer.exe --no-check-certificate --no-verbose https://downloads.nulana.com/remotix-win/Remotix_Installer.exe"
+
+# Install
+# /S -> silent install
+# /NB -> skip bounjour driver
+cmd "Remotix_Installer.exe /S /NB"
+
+# Get version details from exe file
+cmd "echo if (Test-Path 'C:\Program Files\Remotix\Remotix.exe') {$app='C:\Program Files\Remotix\Remotix.exe'} else {$app='C:\Program Files (x86)\Remotix\Remotix.exe'} >> GetVersion.ps1"
+cmd "echo (Get-Item $app).VersionInfo.FileVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var tag = last
+
+meta tag=tag
+
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+env pathext=""
+
+
+###################################
+# Clean up
+###################################
+workdir c:\
+
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILES@\Remotix\Remotix.exe")
