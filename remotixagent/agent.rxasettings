@@ -1,0 +1,30 @@
+; 
+; Remotix Agent settings
+;
+
+trusted_users=
+enable_system_reports=false
+enable_system_actions=false
+enable_remote_console=false
+enable_screenshots=false
+enable_location_tracking=false
+
+; Possible values are:
+;    auto:     <access_code_expiration_time> key must be present and have one of the possible values [1 hour, 6 hours, 1 day, 1 week, never]
+;              example:
+;
+;              access_code_type=auto
+;              access_code_expiration_time=6 hours
+;
+;    custom:   <access_code_value> key must be present and have at least four-symbol value
+;              example:
+;
+;              access_code_type=custom
+;              access_code_value=12.secure_key.34
+;
+;    disabled: no additional keys are required.
+access_code_type=auto
+access_code_expiration_time=6 hours
+check_for_updates_automatically=false
+hide_main_window_on_startup=false
+autostart=true

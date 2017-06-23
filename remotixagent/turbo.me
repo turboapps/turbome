@@ -1,0 +1,97 @@
+#
+# Remotix turbo.me file
+# https://github.com/turboapps/turbome/tree/master/remotix
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+
+# Remotix installs 64-bit bins on 64-bit OSes and 32-bit bins on 32-bit OSes.
+# Since CI builds on a 64-bit system, make sure that we require the same on run
+requires architecture:x64
+require architecture:x64
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="Remotix Agent"
+meta namespace="nulana"
+meta name="remotixagent"
+
+
+###################################
+# VM Settings
+###################################
+
+enable HttpUrlPassthrough
+
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell,turbo/turboscript-tools:2016.8.31
+
+
+###################################
+# Download and install
+###################################
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download installer
+cmd "wget -O RemotixAgentInstaller.exe --no-check-certificate --no-verbose https://downloads.remotixcloud.com/rxagentwin/RemotixAgentInstaller.exe"
+
+# Download installer settings file
+## Disables hiding window on startup
+## Disabled autoupdate check-certificate
+cmd "wget -O agent.rxasettings --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/remotixagent/agent.rxasettings"
+
+# Install
+# /Dir=<install directory> -> installation directory path, by default it's C:\Program Files\Remotix Agent;
+# /Settings=<settings file path> -> path to .rxasettings file;
+# /S -> silent install.
+cmd "RemotixAgentInstaller.exe /S /Settings=agent.rxasettings"
+
+# Get version details from exe file
+cmd "echo if (Test-Path 'C:\Program Files\Remotix Agent\RemotixAgent.exe') {$app='C:\Program Files\Remotix Agent\RemotixAgent.exe'} else {$app='C:\Program Files (x86)\Remotix Agent\RemotixAgent.exe'} >> GetVersion.ps1"
+cmd "echo (Get-Item $app).VersionInfo.FileVersion >> GetVersion.ps1"
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var tag = last
+
+meta tag=tag
+
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+env pathext=""
+
+
+###################################
+# Clean up
+###################################
+workdir c:\
+
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILES@\Remotix\Remotix.exe")
