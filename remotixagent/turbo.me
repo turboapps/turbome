@@ -13,11 +13,6 @@
 
 requires privilege:admin
 
-# Remotix installs 64-bit bins on 64-bit OSes and 32-bit bins on 32-bit OSes.
-# Since CI builds on a 64-bit system, make sure that we require the same on run
-requires architecture:x64
-require architecture:x64
-
 
 ###################################
 # Meta tags
@@ -97,4 +92,4 @@ cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
 # Startup File
 ###################################
 
-startup file ("@PROGRAMFILES@\Remotix\Remotix.exe")
+startup file ("@PROGRAMFILESX86@\Remotix Agent\RemotixAgent.exe")
