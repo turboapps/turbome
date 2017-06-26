@@ -37,6 +37,9 @@ batch cmd
     VSCodeSetup.exe /verysilent /norestart /dir="c:\vscode"
     timeout 10 /nobreak
     taskkill /im Code.exe /t /f
+    wget -q -O settings.json --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/visual-studio-code/settings.json
+    copy /y settings.json %APPDATA%\Code\User\settings.json
+
 cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion c:\vscode\code.exe"
 
 var tag = last
@@ -51,9 +54,9 @@ startup file ("@SYSDRIVE@\vscode\code.exe")
 
 workdir @SYSDRIVE@
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
-
-cmd rmdir @SYSDRIVE@\Workspace /s /q
-cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+batch
+  powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+  rmdir %SYSTEMDRIVE%\Workspace /s /q
+  rmdir %SYSTEMDRIVE%\TurboBuildTools /s /q
 
 env path=
