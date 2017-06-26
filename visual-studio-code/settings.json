@@ -1,0 +1,5 @@
+// Place your settings in this file to overwrite the default settings
+{
+"update.channel": "none"
+"telemetry.enableTelemetry": false
+}
