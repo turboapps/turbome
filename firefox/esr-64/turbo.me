@@ -1,0 +1,126 @@
+#
+# Firefox Extended Support Release (ESR) 64-bit turbo.me file
+# https://github.com/turboapps/turbome/tree/master/firefox/esr-64/
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Firefox ESR image without extra plugins preconfigured for enterprise:
+# * Maintenance service turned off
+# * Do not submit crash reports
+# * Disable default browser check
+# * Disable auto updates
+# See https://github.com/turboapps/turbome/tree/firefox/esr-64/ for more details.
+
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+requires architecture:x64
+require architecture:x64
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="Firefox ESR 64-bit"
+meta namespace="mozilla"
+meta name="firefox-esr-64"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell,turbo/turboscript-tools:2016.4.25
+
+
+###################################
+# Download and install
+###################################
+
+# Create workspace folder
+cmd "mkdir %SYSTEMDRIVE%\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Create a default, fix named profile. We pin down the name, so that we can set isolation and sync settings on that directory
+copy "profiles.ini" "c:\Workspace\profiles.ini"
+copy "Profiles" "C:\Workspace\Profiles"
+
+# Installer link
+var url = "https://download.mozilla.org/?product=firefox-esr-latest&os=win64&lang=en-US"
+
+# Download, install, and configure app
+batch cmd
+  @ECHO Define install.ini
+  echo [Install] > install.ini
+  echo MaintenanceService=false >> install.ini
+  
+  @ECHO Download installer
+  wget -O firefox.exe --no-check-certificate --no-verbose "%url%"
+  
+  @ECHO Run installer
+  firefox.exe /INI=%SYSTEMDRIVE%\Workspace\install.ini
+  
+  @ECHO Get config files and set preferences
+  pushd "%SYSDRIVE%\Program Files\Mozilla Firefox"
+  wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla-64.cfg
+  cd browser
+  wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini
+  mkdir defaults\preferences
+  cd defaults\preferences
+  wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
+  cd ..\..\..\uninstall
+  helper.exe /SetAsDefaultAppUser
+  cd ..
+  popd
+  
+  @ECHO Configure profile
+  mkdir %APPDATA%\Mozilla\Firefox\
+  copy %SYSTEMDRIVE%\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
+  robocopy /E %SYSTEMDRIVE%\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
+  
+  @ECHO Write script to get app version
+  echo $Firefox= Join-Path $env:SYSTEMDRIVE 'Program Files\Mozilla Firefox\firefox.exe' >> GetVersion.ps1
+  echo (Get-Item $Firefox).VersionInfo.ProductVersion >> GetVersion.ps1
+
+# Get app version
+cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
+var tag = last
+meta tag=tag
+
+
+###################################
+# Environment Variables
+###################################
+
+env path=""
+env pathext=""
+
+
+###################################
+# Clean up
+###################################
+workdir @SYSDRIVE@
+
+batch
+  powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+  rmdir @SYSDRIVE@\Workspace /s /q
+  rmdir @SYSDRIVE@\TurboBuildTools /s /q
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILES@\Mozilla Firefox\firefox.exe")
+
+
+###################################
+# Settings
+###################################
+
+isolate window:firefoxMessageWindow full
