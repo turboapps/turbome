@@ -1,17 +1,16 @@
 #
-# Firefox Extended Support Release (ESR) 64-bit turbo.me file
-# https://github.com/turboapps/turbome/tree/master/firefox/esr-64/
+# Firefox base 64-bit turbo.me file
+# https://github.com/turboapps/turbome/tree/master/firefox/release-64/
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-# Firefox ESR 64-bit image without extra plugins preconfigured for enterprise:
+# Firefox 64-bit image without extra plugins preconfigured for enterprise:
 # * Maintenance service turned off
 # * Do not submit crash reports
 # * Disable default browser check
 # * Disable auto updates
 # See https://github.com/turboapps/turbome/tree/master/firefox/config/ for more details.
-
 
 ###################################
 # Requirements
@@ -26,9 +25,9 @@ require architecture:x64
 # Meta tags
 ###################################
 
-meta title="Firefox ESR 64-bit"
+meta title="Firefox 64-bit"
 meta namespace="mozilla"
-meta name="firefox-esr-64"
+meta name="firefox-64"
 
 
 ###################################
@@ -51,7 +50,7 @@ copy "profiles.ini" "c:\Workspace\profiles.ini"
 copy "Profiles" "C:\Workspace\Profiles"
 
 # Installer link
-var url = "https://download.mozilla.org/?product=firefox-esr-latest&os=win64&lang=en-US"
+var url = "https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US"
 
 # Download, install, and configure app
 batch cmd
