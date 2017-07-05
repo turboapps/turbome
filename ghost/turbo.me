@@ -13,7 +13,8 @@ meta name="ghost"
 # Pull dependency images
 ###################################
 
-layer node:0.12.6
+# TODO: Update dependency to node lts once it is avilable
+layer node:6.9
 using wget,7-zip,python:3.4.1
 
 
@@ -21,53 +22,60 @@ using wget,7-zip,python:3.4.1
 # Download and install
 ###################################
 
-cmd pip install requests --quiet
+# Create workspace and app directory
+cmd "mkdir %SYSTEMDRIVE%\ghost & mkdir %SYSTEMDRIVE%\Workspace"
+workdir @SYSDRIVE@\Workspace
 
-# Create app directory
-cmd mkdir c:\ghost
-workdir C:\ghost
-
-
+# Get Download Link
 batch
- echo import sys > getTag.py
- echo import requests >> getTag.py
- echo import re >> getTag.py
- echo host = 'http://ghost.org/download/' >> getTag.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getTag.py
- echo r = requests.get(host , headers=headers, timeout=10) >>  getTag.py
- echo print(re.findall('/zip/ghost-(\d*\.\d*\.\d*).zip', r.text )[0]) >> getTag.py
+  pip install requests --quiet
+  echo import sys > getDownloadLink.py
+  echo import requests >> getDownloadLink.py
+  echo import re >> getDownloadLink.py
+  echo host = 'http://ghost.org/download/' >> getDownloadLink.py
+  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >>  getDownloadLink.py
+  echo r = requests.get(host , headers=headers, timeout=10) >>  getDownloadLink.py
+  echo print(re.findall('http.*Ghost.*.zip', r.text)[0]) >> getDownloadLink.py
 
-cmd python getTag.py
-var tag = last
+cmd python getDownloadLink.py
+var downloadlink = last
+
+# Get Version
+batch
+  echo import os > getVersion.py
+  echo import re >> getVersion.py
+  echo print ((str (re.findall('Ghost-\d.*\d.*\d.*.zip', os.environ['downloadlink'])[0])).replace('Ghost-','').replace('.zip','')) >> getVersion.py
+
+cmd python getVersion.py
+var appversion = last
+meta tag=appversion
 
 # Download and unzip
-cmd "wget --no-check-certificate -O ghost.zip https://ghost.org/zip/ghost-%tag%.zip"
-
-cmd 7z x ghost.zip
-
-cmd del ghost.zip /Q
-cmd del getTag.py /Q
+batch
+  wget.exe --no-check-certificate -O ghost.zip %downloadlink%
+  7z.exe x ghost.zip -o%SYSTEMDRIVE%\ghost
 
 # NPM install app
+workdir @SYSDRIVE@\ghost
 cmd npm install --production
+
 
 ###################################
 # Startup File
 ###################################
 
-setworkdir C:\ghost
+setworkdir @SYSDRIVE@\ghost
 
 # Create startup file
 batch cmd
-  echo @ECHO OFF > spn_start.cmd
-  echo ECHO Starting node.js... >> spn_start.cmd
-  echo C: >> spn_start.cmd
-  echo CD c:\ghost >> spn_start.cmd	
-  echo start "nodejs" npm start --production >> spn_start.cmd
-  echo ECHO Edit config.js to configure Ghost, if you haven't already.  >> spn_start.cmd
-  echo ECHO ON  >> spn_start.cmd
+  echo @ECHO OFF > turbo_start.cmd
+  echo ECHO Starting node.js (default url: http://localhost:2368)... >> turbo_start.cmd
+  echo PUSHD %SYSTEMDRIVE%\ghost >> turbo_start.cmd	
+  echo START "nodejs" cmd /c npm start --production >> turbo_start.cmd
+  echo ECHO Edit config.js to configure Ghost, if you haven't already.  >> turbo_start.cmd
+  echo ECHO ON  >> turbo_start.cmd
   
-startup file ("cmd","/k C:\ghost\spn_start.cmd")
+startup file ("cmd","/k %SYSTEMDRIVE%\ghost\turbo_start.cmd")
 
 
 ###################################
@@ -81,9 +89,8 @@ startup file ("cmd","/k C:\ghost\spn_start.cmd")
 # Clean up
 ###################################
 
-workdir c:\
-
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
-
-meta tag=tag
+workdir @SYSDRIVE@
+batch
+  rmdir %SYSTEMDRIVE%\wget /s /q
+  rmdir %SYSTEMDRIVE%\Python34 /s /q
+  rmdir %SYSTEMDRIVE%\Workspace /s /q
