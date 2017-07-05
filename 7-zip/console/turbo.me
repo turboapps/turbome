@@ -47,9 +47,9 @@ var urlx86="http://www.7-zip.org/" + last
 # Download and install 7-zip
 batch
   @ECHO Downloading 7-zip 64-bit %urlx64%...
-  wget.exe wget --no-check-certificate --quiet -O x64.exe %urlx64%
+  wget.exe --no-check-certificate --quiet -O x64.exe %urlx64%
   @ECHO Downloading 7-zip 32-bit %urlx86%...
-  wget.exe wget --no-check-certificate --quiet -O x86.exe %urlx86%
+  wget.exe --no-check-certificate --quiet -O x86.exe %urlx86%
   
   @ECHO Installing 7-zip 64-bit...
   x64.exe /S 
