@@ -1,0 +1,90 @@
+#
+# Python 3 turbo.me file
+# https://github.com/turboapps/turbome/tree/master/python
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="Python"
+meta namespace="python"
+meta name="python" 
+
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,7-zip/7-zip,turbobuild/disable-ie-enhanced-security
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir %SYSTEMDRIVE%\Workspace
+workdir @SYSDRIVE@\Workspace
+
+# Reset environment variable
+env pythonhome=""
+
+# Get download link
+batch
+  echo $website = Invoke-WebRequest -Uri https://www.python.org/downloads/ > GetDownloadLink.ps1
+  echo $item = $website.links ^| where {$_.innerText -like "*Download Python 3*" -and $_.href -like "*python-3*.exe"} >> GetDownloadLink.ps1
+  echo $link = $item.href >> GetDownloadLink.ps1
+  echo Write-Host "$link" >> GetDownloadLink.ps1
+
+cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File GetDownloadLink.ps1"
+var downloadlink = last
+
+# Download and install 
+batch
+  wget.exe -O python3.exe --no-check-certificate %downloadlink%"
+  python3.exe /quiet InstallAllUsers=1 PrependPath=1
+
+# Get version
+batch
+  echo $folder = (Get-ChildItem "$($env:SYSTEMDRIVE)\Program Files") ^| where {$_.name -like "python*"} > GetVersion.ps1
+  echo if ($folder -eq $null) { $folder = (Get-ChildItem "$($env:SYSTEMDRIVE)\Program Files (x86)") ^| where {$_.name -like "python*"} } >> GetVersion.ps1
+  echo if ($folder -eq $null) { Exit -1 } >> GetVersion.ps1
+  echo $file = Join-Path $folder.fullname "python.exe" >> GetVersion.ps1
+  echo $version = (Get-Item $file).VersionInfo.FileVersion >> GetVersion.ps1
+  echo Write-Host "$version" >> GetVersion.ps1
+  
+cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1"
+var tag = last
+meta tag=tag
+
+
+###################################
+# Environment Variables
+###################################
+
+# nothing
+
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@
+batch
+  rmdir %SYSTEMDRIVE%\Workspace /s /q
+
+
+###################################
+# Startup File
+###################################
+
