@@ -1,11 +1,16 @@
 #
-# git turbo.me file
-# 
-#
-# Created with Turbo CMD version 1.4.1106.0
+# Git turbo.me file
+# https://github.com/turboapps/turbome/tree/master/git
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+
 
 ###################################
 # Meta tags
@@ -15,11 +20,13 @@ meta title="git"
 meta namespace="git"
 meta name="git"
 
+
 ###################################
 # Pull dependency images
 ###################################
 
-using gnu/wget,microsoft/powershell
+using gnu/wget,turbobuild/disable-ie-enhanced-security
+
 
 ###################################
 # Download and install
@@ -29,50 +36,47 @@ using gnu/wget,microsoft/powershell
 cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
 
-# Get URL from web
+# Get download link
+batch
+  echo $website = Invoke-WebRequest -Uri https://git-scm.com/download/win/ > GetDownloadLink.ps1
+  echo $link = ($website.links ^| where {$_.innerText -like "32*bit*Git*Windows*Setup" -and $_.href -like "*git*.exe"}).href >> GetDownloadLink.ps1
+  echo Write-Host "$link" >> GetDownloadLink.ps1
+
+cmd powershell -NoProfile -ExecutionPolicy Bypass -File GetDownloadLink.ps1
+var downloadlink = last
+
+# Download and Install
 batch 
-  echo $url = "https://git-scm.com/download/win/" >> getUrl.ps1
-  echo $output = (Invoke-WebRequest -Uri $url).Content  >> getUrl.ps1
-  echo $curlregex = "(https://github.com/git-for-windows/git/releases/download/.*?64-bit\.7z\.exe)"  >> getUrl.ps1
-  echo $output -match $curlregex ^| Out-Null >> getUrl.ps1
-  echo Write-Output $matches[0] >> getUrl.ps1
+  wget.exe --no-check-certificate -O git.exe %downloadlink%
+  git.exe /SILENT
 
-cmd powershell -NoProfile -ExecutionPolicy Bypass -File getUrl.ps1
-var url = last
-
-# Download
-cmd "wget --no-check-certificate -O git.exe %url%"
-
-# Install
-
-# Batching this command is used as workaround
-batch cmd
-  git.exe /y /InstallPath="C:\Git"
-
+  
 ###################################
 # Get version
 ###################################
 
-# Get URL from web
+# Get Version from file
 batch 
-  echo $url = "https://git-scm.com/download/win/" >> getVer.ps1
-  echo $output = (Invoke-WebRequest -Uri $url).Content  >> getVer.ps1
-  echo $curlregex = "(download/.*\.win)"  >> getVer.ps1
-  echo $output -match $curlregex ^| Out-Null >> getVer.ps1
-  echo $matches[0] -match "(\d+(?:\.\d+)*)" ^| Out-Null >> getVer.ps1
-  echo Write-Host $matches[0] >> getVer.ps1
+  echo if (Test-Path "$($env:SYSTEMDRIVE)\Program Files\Git\bin\git.exe") { > GetVersion.ps1
+  echo   $file = "$($env:SYSTEMDRIVE)\Program Files\Git\bin\git.exe" } >> GetVersion.ps1
+  echo elseif (Test-Path "$($env:SYSTEMDRIVE)\Program Files (x86)\Git\bin\git.exe") { >> GetVersion.ps1
+  echo   $file = "$($env:SYSTEMDRIVE)\Program Files (x86)\Git\bin\git.exe" } >> GetVersion.ps1
+  echo else {Exit -1} >> GetVersion.ps1
+  echo $query = $file.FullName.replace("\","\\") >> GetVersion.ps1
+  echo $version = (get-wmiobject -class cim_datafile -Filter "Name='$query'" | Select-Object Version).Version >> GetVersion.ps1
+  echo Write-Host "$version" >> GetVersion.ps1
   
-cmd powershell -NoProfile -ExecutionPolicy Bypass -File getVer.ps1
-var version = last
+cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1"
+var tag=last
+meta tag=tag
 
-# This seems to give different version number for git portable. Probably installer version
-# cmd powershell -command "(Get-Item .\Git\git-bash.exe).VersionInfo.FileVersion"
 
 ###################################
 # Environment Variables
 ###################################
 
-env path="C:\Git\" 
+# Nothing
+
 
 ###################################
 # Clean up
@@ -83,14 +87,9 @@ workdir @SYSDRIVE@\
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\wget /s /q
 
-###################################
-# Version
-###################################
-
-meta tag=version
 
 ###################################
 # Startup File
 ###################################
 
-startup file ("git-bash.exe")
+startup file ("cmd", "/k git.exe --help")
