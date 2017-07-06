@@ -2,6 +2,12 @@
   "browser": { 
     "check_default_browser": false 
   }, 
+    "distribution": {
+      "suppress_first_run_bubble": true,
+      "suppress_first_run_default_browser_prompt": true,
+      "welcome_page_on_os_upgrade_enabled": false,
+      "suppress_default_browser_prompt_for_version": "#CHROME_VERSION#"
+    },
   "download": { 
     "prompt_for_download": true,
     "directory_upgrade": true,

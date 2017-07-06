@@ -11,7 +11,7 @@
 
 Import-Module Turbo
 
-$XappPath = '.\output\Snapshot.xappl'
+$XappPath = 'C:\output\Snapshot.xappl'
 $xappl = Read-XAPPL $XappPath
 
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
@@ -28,6 +28,12 @@ Set-FileSystemIsolation $xappl "@APPDATALOCAL@\Google" $FullIsolation
 Set-FileSystemIsolation $xappl "@PROGRAMFILESX86@\Google" $FullIsolation
 
 Remove-FileSystemDirectoryItems $xappl "@SYSDRIVE@"
+Write-Host 'Removing Google Update'
+Remove-FileSystemDirectoryItems $xappl "@PROGRAMFILESX86@\Google\Update"
+Write-Host 'Removing installer files'
+$chromeVersion = Get-Content "X:\install\version.txt"
+Remove-FileSystemDirectoryItems $xappl "${env:PROGRAMFILES}\Google\Chrome\Application\$chromeVersion\Installer"
+
 
 Set-RegistryIsolation $xappl "@HKCU@\Software\Google" $FullIsolation
 Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE\Wow6432Node\Google" $FullIsolation

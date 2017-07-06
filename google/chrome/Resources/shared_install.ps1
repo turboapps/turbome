@@ -5,49 +5,10 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-$StartChromeTask = 'Start Chrome'
-$CloseChromeTask = 'Close Chrome'
 $PreferencesPath = "${env:USERPROFILE}\AppData\Local\Google\Chrome\User Data\Default\Preferences"
 
-function Is-ScheduledTaskDefined ($taskName)
-{
-    return Get-ScheduledTask | Where-Object {$_.TaskName -like $taskName}
-}
-
-function Is-ScheduledTaskRunning ($taskName)
-{
-	return Get-ScheduledTask | Where-Object {$_.TaskName -like $taskName -and $_.State -like "Running"}
-}
-
-function Wait-ForScheduledTask ($taskName, $maxCount)
-{
-    $isTaskRunning = $false
-    $counter = 0
-    do
-    {
-        Sleep 1
-        $counter += 1
-        $isTaskRunning = Is-ScheduledTaskRunning $taskName
-    } while(($counter -lt $maxCount) -and $isTaskRunning)
-    
-    if($isTaskRunning)
-    {
-        Write-Error "$taskName did not complete"
-    }
-}
-
-function Clean-ScheduledTasks()
-{
-    if(Is-ScheduledTaskDefined $StartChromeTask)
-    {
-        Unregister-ScheduledTask $StartChromeTask -Confirm:$False
-    }
-
-    if(Is-ScheduledTaskDefined $CloseChromeTask)
-    {
-        Unregister-ScheduledTask $CloseChromeTask -Confirm:$False
-    }
-}
+if (${env:ProgramFiles(x86)} -ne $null) {$programFiles=${env:ProgramFiles(x86)}} else {$programFiles=${env:ProgramFiles}}
+$MasterPreferencesPath = "$programFiles\Google\Chrome\Application\master_preferences"
 
 function Is-ChromeRunning()
 {
@@ -58,17 +19,13 @@ function Is-ChromeRunning()
 # Clicking 'Next' button in the dialog does not work in a container.
 # To prevent showing 'Welcome Dialog' in container runs, we launch Chrome for the first time before taking 'after' snapshot.
 # Chrome process has to be closed gracefully, otherwise crash notification may be presented in a container run.
-# Scheduled tasks are used to lauch Chrome with user interface from WinRM session.
 function Perform-FirstLaunch()
 {
-    Clean-ScheduledTasks
     try
     {
-        $chromeExecutable = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
-        $taskAction = New-ScheduledTaskAction -Execute $chromeExecutable
-        Register-ScheduledTask -Action $taskAction -TaskName $StartChromeTask | Out-Null
-        Start-ScheduledTask $StartChromeTask
-        
+        $chromeExecutable = "${env:PROGRAMFILES}\Google\Chrome\Application\chrome.exe"
+        Start-Process $chromeExecutable
+		
         $counter = 0
         $isChromeRunning = $false
         while(($counter -lt 10) -and !$isChromeRunning)
@@ -86,19 +43,13 @@ function Perform-FirstLaunch()
             Write-Error 'Failed to launch Chrome'
             Exit 1
         }
-        
-        $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes("(Get-Process | Where-Object {`$_.Name -eq 'chrome' -and `$_.MainWindowTitle -ne ''}).CloseMainWindow()"))
-        $taskAction = New-ScheduledTaskAction -Execute PowerShell.exe -Argument "-EncodedCommand $encodedCommand"
-        Register-ScheduledTask -Action $taskAction -TaskName $CloseChromeTask | Out-Null
+		
+		(Get-Process | Where-Object {$_.Name -eq 'chrome' -and $_.MainWindowTitle -ne ''}).CloseMainWindow() | Out-Null
         
         $counter = 0
         while(($counter -lt 10) -and $isChromeRunning)
         {
-            Sleep 5
-            
-            Start-ScheduledTask $CloseChromeTask
-            Wait-ForScheduledTask $CloseChromeTask 60
-            
+            Sleep 5           
             $counter += 1
             $isChromeRunning = Is-ChromeRunning
         }
@@ -112,7 +63,6 @@ function Perform-FirstLaunch()
     }
     finally
     {
-        Clean-ScheduledTasks
     }
 }
 
@@ -155,7 +105,7 @@ function Set-PreferenceProperty($filepath, $property, $value)
 function Remove-GoogleUpdate()
 {
     Write-Host 'Removing Google Update'
-    $updateDir = 'C:\Program Files (X86)\Google\Update'
+    $updateDir = "${env:PROGRAMFILES}\Google\Update"
     if(Test-Path $updateDir)
     {
         Remove-Item $updateDir -Recurse -Force
@@ -168,7 +118,7 @@ function Remove-GoogleUpdate()
 
 function Remove-Installer()
 {
-    $applicationDir = 'C:\Program Files (X86)\Google\Chrome\Application'
+    $applicationDir = "${env:PROGRAMFILES}\Google\Chrome\Application"
     $versionDir = Get-ChildItem $applicationDir | Where-Object {$_.Name -Match '(?:\d+\.){3}\d+'}
     if($versionDir)
     {
@@ -208,7 +158,7 @@ function Set-BasicPreferences()
 
 function Set-ContentLanguage($language)
 {
-    Set-PreferenceCategoryProperty $PreferencesPath 'intl' 'accept_languages' "en-US,en,$language" | Out-Null
-    Set-PreferenceCategoryProperty $PreferencesPath 'spellcheck' 'dictionaries' @("en-US",$language) | Out-Null
-    Set-PreferenceProperty $PreferencesPath 'translate_blocked_languages' @($language) | Out-Null
+    Set-PreferenceCategoryProperty $MasterPreferencesPath 'intl' 'accept_languages' "en-US,en,$language" | Out-Null
+    Set-PreferenceCategoryProperty $MasterPreferencesPath 'spellcheck' 'dictionaries' @("en-US",$language) | Out-Null
+    Set-PreferenceProperty $MasterPreferencesPath 'translate_blocked_languages' @($language) | Out-Null
 }

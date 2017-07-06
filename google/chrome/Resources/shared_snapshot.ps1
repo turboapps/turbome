@@ -7,6 +7,7 @@
 
 function Download-Browser($msiPath, $language)
 {
+	Write-Host "Downloading browsers to $msiPath"
 	(New-Object System.Net.WebClient).DownloadFile(
     "https://dl.google.com/tag/s/appguid={00000000-0000-0000-0000-000000000000}&iid={00000000-0000-0000-0000-000000000000}&lang=$language&browser=3&usagestats=0&appname=Google%20Chrome&installdataindex=defaultbrowser&needsadmin=prefers/edgedl/chrome/install/GoogleChromeStandaloneEnterprise.msi",
     $msiPath)
@@ -21,7 +22,7 @@ function Get-Version($msiPath)
 	$shellfolder = $shell.Namespace($folder)
 	$shellfile = $shellfolder.ParseName($file)
 
-	$CommentsKey = 0..287 | Where-Object { $shellfolder.GetDetailsOf($null, $_) -eq "Comments" }
+	$CommentsKey = 0..287 | Where-Object { ($shellfolder.GetDetailsOf($null, $_) -eq "Komentarze") -or ($shellfolder.GetDetailsOf($null, $_) -eq "Comments")}
 	$comment = $shellfolder.GetDetailsOf($shellfile, $CommentsKey)
 	if(-not ($comment -match '^(?<version>\d+(?:\.\d+){3})')) {
 		throw "Failed to extract Chrome version"

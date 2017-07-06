@@ -8,30 +8,22 @@
 #
 # Import shared code
 #
-. C:\vagrant\resources\shared_install.ps1
-
+. X:\resources\shared_install.ps1
+. X:\resources\shared_snapshot.ps1
 
 #
 # Installation for a single user
 #
 Write-Host "Installing application"
-& msiexec /i "C:\vagrant\install\install.msi" /qn ALLUSERS="2" MSIINTSTALLPERUSER="1" | Out-Null
+& msiexec /i "X:\install\install.msi" /qn ALLUSERS="2" MSIINTSTALLPERUSER="1" | Out-Null
 
-Perform-FirstLaunch
+(Get-Version "X:\install\install.msi") | Out-File "X:\install\version.txt"
 
-
-#
-# Remove unnecessary files
-#
-Remove-GoogleUpdate
-Remove-Installer
-
-
-#
-# Overwrite default preferences
-#
-Set-BasicPreferences
-
+Copy-Item 'X:\Resources\master_preferences_base' "${env:PROGRAMFILES}\Google\Chrome\Application\master_preferences"
+$chromeVersion = Get-Content "X:\install\version.txt"
+$preferences = Get-Content "${env:PROGRAMFILES}\Google\Chrome\Application\master_preferences"
+$preferences = $preferences -replace '#CHROME_VERSION#', $chromeVersion
+$preferences | Set-Content "${env:PROGRAMFILES}\Google\Chrome\Application\master_preferences"
 
 #
 # Register basic file associations
