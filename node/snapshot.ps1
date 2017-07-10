@@ -16,5 +16,6 @@ $tag = $Matches['version']
 Write-Host "Node version $tag"
 "node/node:$tag" | Set-Content "image.txt"
 
-(New-Object System.Net.WebClient).DownloadFile("https://nodejs.org/dist/v$tag/node-v$tag-x86.msi", "install.msi")
+if(!(Test-Path ".\installFiles")) { New-Item ".\installFiles" -type directory}
+(New-Object System.Net.WebClient).DownloadFile("https://nodejs.org/dist/v$tag/node-v$tag-x86.msi", ".\installFiles\install.msi")
 
