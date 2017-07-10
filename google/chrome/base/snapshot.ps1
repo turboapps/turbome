@@ -8,16 +8,8 @@
 $rootDir = $(Get-Item $PSScriptRoot).Parent.FullName
 . "$rootDir\Resources\shared_snapshot.ps1"
 
-#Clean workspace
-if(Test-Path ".\share") { Remove-Item ".\share" -Recurse -Force }
-Remove-Item "*.svm", "*.png"
-
-New-Item ".\share" -type directory
-New-Item ".\share\install" -type directory
-New-Item ".\share\tools" -type directory
-New-Item ".\share\output" -type directory
-
-$msiPath = ".\share\install\install.msi"
+$msiPath = ".\installFiles\install.msi"
+if(!(Test-Path ".\installFiles")) { New-Item ".\installFiles" -type directory}
 
 Download-Browser "$msiPath" 'en'
 $tag = Get-Version "$msiPath"
