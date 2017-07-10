@@ -1,8 +1,8 @@
 <buildconfig>
-<vmName>Windows7x86Fast</vmName>
+<vmName>Turbo7x86</vmName>
 <installScriptPath>C:\spoon\spoonme\chromium\canary\install.ps1</installScriptPath>
 <preInstallScriptPath></preInstallScriptPath>
 <postSnapshotScriptPath>C:\spoon\spoonme\chromium\canary\post_snapshot.ps1</postSnapshotScriptPath>
 <mountDirectoryPath></mountDirectoryPath>
-<overwrite>true</overwrite>
+<overwrite></overwrite>
 </buildconfig>
