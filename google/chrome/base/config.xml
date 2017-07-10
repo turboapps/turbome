@@ -1,0 +1,8 @@
+<buildconfig>
+<vmName>Turbo7x86</vmName>
+<installScriptPath>C:\spoon\spoonme\google\chrome\base\install.ps1</installScriptPath>
+<preInstallScriptPath></preInstallScriptPath>
+<postSnapshotScriptPath>C:\spoon\spoonme\google\chrome\Resources\post_snapshot.ps1</postSnapshotScriptPath>
+<mountDirectoryPath>C:\spoon\spoonme\google\chrome\Resources</mountDirectoryPath>
+<overwrite></overwrite>
+</buildconfig>
