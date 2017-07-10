@@ -11,7 +11,7 @@
 
 Import-Module Turbo
 
-$XappPath = '.\output\Snapshot.xappl'
+$XappPath = 'C:\output\Snapshot.xappl'
 $xappl = Read-XAPPL $XappPath
 
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
