@@ -1,11 +1,11 @@
 #
 # Node snapshot setup file
-# https://github.com/turboapps/turbome/tree/master/node
+# https://github.com/turboapps/turbome/tree/master/node/current
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-$content = (Invoke-WebRequest -URI "https://nodejs.org/en/download/").Content
+$content = (Invoke-WebRequest -URI "https://nodejs.org/en/download/current/").Content
 $content -match "https://nodejs.org/dist/v(?<version>\d+.\d+.\d+)/node-v\k<version>-x86.msi" | Out-Null
 if (-not $Matches) {
     Write-Error "Failed to find Node version"
