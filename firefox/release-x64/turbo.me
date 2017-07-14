@@ -1,11 +1,11 @@
 #
-# Firefox Extended Support Release (ESR) 64-bit turbo.me file
-# https://github.com/turboapps/turbome/tree/master/firefox/esr-64/
+# Firefox base 64-bit turbo.me file
+# https://github.com/turboapps/turbome/tree/master/firefox/release-x64/
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-# Firefox ESR 64-bit image without extra plugins preconfigured for enterprise:
+# Firefox 64-bit image without extra plugins preconfigured for enterprise:
 # * Maintenance service turned off
 # * Do not submit crash reports
 # * Disable default browser check
@@ -26,9 +26,9 @@ require architecture:x64
 # Meta tags
 ###################################
 
-meta title="Firefox ESR 64-bit"
+meta title="Firefox 64-bit"
 meta namespace="mozilla"
-meta name="firefox-esr-64"
+meta name="firefox-x64"
 
 
 ###################################
@@ -51,7 +51,7 @@ copy "profiles.ini" "c:\Workspace\profiles.ini"
 copy "Profiles" "C:\Workspace\Profiles"
 
 # Installer link
-var url = "https://download.mozilla.org/?product=firefox-esr-latest&os=win64&lang=en-US"
+var url = "https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US"
 
 # Download, install, and configure app
 batch cmd
@@ -67,7 +67,7 @@ batch cmd
   
   @ECHO Get config files and set preferences
   pushd "%SYSDRIVE%\Program Files\Mozilla Firefox"
-  wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla-64.cfg
+  wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla-x64.cfg
   cd browser
   wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini
   mkdir defaults\preferences
