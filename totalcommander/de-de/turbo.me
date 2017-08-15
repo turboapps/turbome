@@ -8,7 +8,7 @@ requires privilege:admin
 
 meta title="totalcommander"
 meta namespace="totalcommander"
-meta name="totalcommander"
+meta name="totalcommander-de"
 
 ###################################
 # Pull dependency images
@@ -37,9 +37,9 @@ batch
  echo print(re.findall('tcmd(\d*(?:.\d+)*)[^"]*', r.text )[0]) >> getRelease.py
 
 cmd "python getRelease.py"
- var tag = last
+var version = last
 
-var url="http://totalcommander.ch/win/tcmd" + last + "ax32_64.exe"
+var url="http://totalcommander.ch/win/tcmd" + version + "ax32_64.exe"
 
 # Download and install last version
 cmd "wget --no-verbose -O tcmd.exe ""%url%"""
@@ -57,4 +57,4 @@ cmd "rmdir @SYSDRIVE@\Workspace /s /q"
 cmd "rmdir @SYSDRIVE@\wget /s /q"
 cmd "rmdir @SYSDRIVE@\Python34 /s /q"
 
-meta tag=tag
+meta tag=version

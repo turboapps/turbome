@@ -1,5 +1,5 @@
 # Total Commander
-is a two pne file manager for Windows® 95/98/ME/NT/2000/XP/Vista/7/8/8.1/10. Total Commander for Windows is a Shareware (demo version) program. This means that you can test it for a period of 30 days. After testing the program, you must either order the full version, or delete the program from your harddisk.
+Total Commander is a two pane file manager for Windows® 95/98/ME/NT/2000/XP/Vista/7/8/8.1/10. Total Commander for Windows is a Shareware (demo version) program. This means that you can test it for a period of 30 days. After testing the program, you must either order the full version, or delete the program from your harddisk.
 
 Project website: http://www.ghisler.com
 
