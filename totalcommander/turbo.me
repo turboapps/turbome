@@ -8,6 +8,7 @@ requires privilege:admin
 
 meta title="totalcommander"
 meta namespace="totalcommander"
+meta name="totalcommander"
 
 ###################################
 # Pull dependency images
@@ -42,6 +43,7 @@ var url="http://totalcommander.ch/win/tcmd" + version + "ax32_64.exe"
 
 # Download and install last version
 cmd "wget --no-verbose -O tcmd.exe ""%url%"""
+cmd tcmd.exe /A1H1L1M1G1D1U0K0
 
 # Set startup file
 startup file ("@SYSDRIVE@\totalcmd\TOTALCMD.exe")
