@@ -1,4 +1,4 @@
-# RoyalTS turbo.me file
+# Royal TS turbo.me file
 # https://github.com/turboapps/turbome/tree/master/royalts
 #
 # Licensed under the Apache License, Version 2.0
@@ -6,9 +6,9 @@
  
 requires privilege:admin
  
-meta title="RoyalTS"
-meta namespace="RoyalTS"
-meta name="RoyalTS"
+meta title="Royal TS"
+meta namespace="royalts"
+meta name="royalts"
  
 ###################################
 # Pull dependency images
@@ -34,12 +34,12 @@ batch
  echo host = "https://www.royalapplications.com/ts/win/download" >> getRelease.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
  echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(re.findall('RoyalTSInstaller(\d*(?:.\d+)*)[^"]*', r.text )[0]) >> getRelease.py
+ echo print(re.findall('RoyalTSInstaller_(\d*(?:.\d+)*)[^"]*', r.text )[0]) >> getRelease.py
  
 cmd "python getRelease.py"
- var tag = last
+var version = last
  
-var url="https://download.royalapplications.com/RoyalTS/RoyalTSInstaller" + last + ".msi"
+var url="http://download.royalapplications.com/RoyalTS/RoyalTSInstaller_" + version + ".msi"
 
 # Download and install last version
 cmd "wget --no-verbose -O royalts.msi ""%url%"""
@@ -57,4 +57,4 @@ cmd "rmdir @SYSDRIVE@\Workspace /s /q"
 cmd "rmdir @SYSDRIVE@\wget /s /q"
 cmd "rmdir @SYSDRIVE@\Python34 /s /q"
  
-meta tag=tag
+meta tag=version
