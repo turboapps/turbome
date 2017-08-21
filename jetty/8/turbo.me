@@ -55,9 +55,12 @@ workdir "c:\"
 setworkdir "C:\Jetty\"
 
 cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\Jetty\webapps /s /q
 cmd rmdir c:\wget /s /q
 cmd rmdir c:\Python34 /s /q
+# Clear out example app
+cmd rmdir c:\Jetty\contexts /s /q
+cmd mkdir c:\Jetty\contexts
+cmd rmdir c:\Jetty\webapps /s /q
 
 meta tag=tag
 
