@@ -1,5 +1,5 @@
 # Foxit Reader
-Foxit Reader (EXE) is a free PDF document viewer and printer.
+Foxit Reader is a free PDF document viewer and printer.
 
 Project website: https://www.foxitsoftware.com/
 

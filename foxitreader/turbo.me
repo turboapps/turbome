@@ -4,9 +4,13 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+# To Do:
+# Make script install the latest version of Foxit Reader
+# Disable the default viewer dialog
+
 requires privilege:admin
 
-meta title="FoxitReader"
+meta title="foxitreader"
 meta namespace="foxitreader"
 meta name="foxitreader"
 
@@ -14,7 +18,7 @@ meta name="foxitreader"
 # Pull dependency images
 ###################################
 
-using gnu/wget,python/python:3.4.1
+using gnu/wget,python/python:3.4.1,sysinternals
 
 ###################################
 # Download and install
@@ -37,13 +41,24 @@ batch
  echo print(re.findall('FoxitReader(\d*(?:.\d+)*)[^"]*', r.text )[0]) >> getRelease.py
 
 cmd "python getRelease.py"
- var version = last
+var version = last
 
-var url="http://cdn09.foxitsoftware.com/pub/foxit/reader/desktop/win/8.x/8.3/en_us/FoxitReader" + last + "_enu_Setup_Prom.exe"
+var url="http://cdn09.foxitsoftware.com/pub/foxit/reader/desktop/win/8.x/8.3/en_us/FoxitReader" + version + "_enu_Setup_Prom.exe"
 
 # Download and install last version
-cmd "wget --no-verbose -O foxitreader.exe ""%url%"""
-cmd "foxitreader.exe /COMPONENTS=pdfviewer /verysilent /force"
+batch 
+ wget --no-verbose -O foxitreader.exe "%url%"
+ foxitreader.exe /COMPONENTS=pdfviewer /verysilent /force
+ reg add "HKCU\Software\Foxit Software\Foxit Reader 8.0\plugins\Updater" /v UpdateMode /t REG_SZ /d 0
+ reg add "HKCU\Software\Foxit Software\Foxit Reader 8.0\Preferences\Registration" /v bShowRegisterDlg /t REG_SZ /d 0
+ 
+# Get application version
+batch
+  if exist "C:\Program Files (x86)\Foxit Software\Foxit Reader" (sigcheck.exe -n "C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe" > appversion.txt) else (sigcheck.exe -n "C:\Program Files\Foxit Software\Foxit Reader\FoxitReader.exe" > appversion.txt)
+
+cmd "type appversion.txt"
+var version2 = last
+meta tag=version2
 
 # Set startup file
 startup file ("@PROGRAMFILESX86@\Foxit Software\Foxit Reader\FoxitReader.exe")
@@ -56,5 +71,4 @@ workdir @SYSDRIVE@\
 cmd "rmdir @SYSDRIVE@\Workspace /s /q"
 cmd "rmdir @SYSDRIVE@\wget /s /q"
 cmd "rmdir @SYSDRIVE@\Python34 /s /q"
-
-meta tag=version
+cmd "rmdir @SYSDRIVE@\Sysinternals /s /q"
