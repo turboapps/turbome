@@ -1,0 +1,60 @@
+# Total Commander turbo.me file
+# https://github.com/turboapps/turbome/tree/master/totalcommander
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="totalcommander"
+meta namespace="totalcommander"
+meta name="totalcommander-de"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,python/python:3.4.1
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Install "requests" module for python
+cmd pip install requests --quiet
+
+# Get last version tag
+batch
+ echo import sys > getRelease.py
+ echo import requests >> getRelease.py
+ echo import re >> getRelease.py
+ echo host = "http://totalcommander.ch/win/" >> getRelease.py
+ echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
+ echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
+ echo print(re.findall('tcmd(\d*(?:.\d+)*)[^"]*', r.text )[0]) >> getRelease.py
+
+cmd "python getRelease.py"
+var version = last
+
+var url="http://totalcommander.ch/win/tcmd" + version + "ax32_64.exe"
+
+# Download and install last version
+cmd "wget --no-verbose -O tcmd.exe ""%url%"""
+cmd tcmd.exe /A1H1L2M1G1D1U0K0
+
+# Set startup file
+startup file ("@SYSDRIVE@\totalcmd\TOTALCMD.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+cmd "rmdir @SYSDRIVE@\Python34 /s /q"
+
+meta tag=version
