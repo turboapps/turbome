@@ -52,15 +52,12 @@ var downloadlink = last
 # Download and install 
 batch
   wget.exe -O python3.exe --no-check-certificate %downloadlink%"
-  python3.exe /quiet InstallAllUsers=1 PrependPath=1
+  python3.exe /quiet InstallAllUsers=1 PrependPath=1 TargetDir=%SYSTEMDRIVE%\Python3
 
 # Get version
 batch
-  echo $folder = (Get-ChildItem "$($env:SYSTEMDRIVE)\Program Files") ^| where {$_.name -like "python*"} > GetVersion.ps1
-  echo if ($folder -eq $null) { $folder = (Get-ChildItem "$($env:SYSTEMDRIVE)\Program Files (x86)") ^| where {$_.name -like "python*"} } >> GetVersion.ps1
-  echo if ($folder -eq $null) { Exit -1 } >> GetVersion.ps1
-  echo $file = Join-Path $folder.fullname "python.exe" >> GetVersion.ps1
-  echo $version = (Get-Item $file).VersionInfo.FileVersion >> GetVersion.ps1
+  echo $file = "%SYSTEMDRIVE%\Python3\python.exe" >> GetVersion.ps1
+  echo $version = (Get-Item $file).VersionInfo.ProductVersion >> GetVersion.ps1
   echo Write-Host "$version" >> GetVersion.ps1
   
 cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1"

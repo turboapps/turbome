@@ -7,14 +7,14 @@
 
 $result = Invoke-WebRequest -Uri "http://www.python.org/downloads/windows/"
 
-if ($result -NotMatch 'a href="(?<downloadLink>.*)">Windows x86 MSI ')
+if ($result -NotMatch 'a href="(?<downloadLink>.*[0-9.][^rc]+\.msi)">Windows x86 MSI')
 {
 	throw "Failed to extract download link"
 }
 $downloadLink = $matches["downloadLink"]
 (New-Object System.Net.WebClient).DownloadFile($downloadLink, "install.msi")
 
-if ($result -NotMatch '.*python-(?<release>.*)\.msi')
+if ($downloadLink -NotMatch '.*python/(?<release>.*[0-9.][^rc]+)/python')
 {
 	throw "Failed to extract tag"
 }
