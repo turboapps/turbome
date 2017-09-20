@@ -1,0 +1,49 @@
+# AdventureWorks 2014 turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="AdventureWorks 2014 Database"
+meta namespace="sqlserver"
+meta name="adventureworks2014-db"
+
+###################################
+# Pull dependency images
+###################################
+
+using turbo/turboscript-tools:2016.4.25
+layer sqlserver/sqlserver2016-express
+
+###################################
+# Download and install
+###################################
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+
+var url = "http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=msftdbprodsamples&DownloadId=880661&FileTime=130507138100830000&Build=21055"
+cmd "wget -O adventureworks2014.zip --no-check-certificate --no-verbose ""%url%"""
+
+# Unzip to sqlserver backup folder so the image contains a copy of the file in case user wants to restore
+cmd 7z x adventureworks2014.zip 
+cmd move AdventureWorks2014.bak "c:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\Backup"
+
+# Debug, check the file moved correctly
+#cmd dir "c:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\Backup"
+
+# Run sqlcmd
+batch
+  echo USE master >> restore.sql
+  echo RESTORE DATABASE AdventureWorks2014 >> restore.sql
+  echo FROM disk = 'c:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\Backup\AdventureWorks2014.bak' >> restore.sql
+  echo WITH MOVE 'AdventureWorks2014_data' TO 'c:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\AdventureWorks2014.mdf', >> restore.sql
+  echo MOVE 'AdventureWorks2014_Log' TO 'c:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\AdventureWorks2014.ldf', >> restore.sql
+  echo REPLACE >> restore.sql
+  sqlcmd -i restore.sql
+
+###################################
+# Clean up
+###################################
+workdir c:\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
