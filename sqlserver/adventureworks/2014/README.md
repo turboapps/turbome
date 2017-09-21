@@ -1,0 +1,1 @@
+The 2014 versions are for using sqlserver2014-express and ssms2014 which do not have shutdown bugs on server 2012r2
