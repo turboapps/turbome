@@ -21,7 +21,7 @@ meta name="xencenter"
 ###################################
 
 using turbo/turboscript-tools:2016.2.2
-
+requires privilege:admin
 
 ###################################
 # Download and install
@@ -33,14 +33,14 @@ workdir c:\Workspace
 
 # Get download link
 batch cmd
-    echo import requests > getDownloadLink.py
-    echo import re >> getDownloadLink.py
-    echo host = 'http://xenserver.org/overview-xenserver-open-source-virtualization/download.html' >> getDownloadLink.py
-    echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getDownloadLink.py
-    echo r = requests.get(host , headers=headers, timeout=10, verify=False) >> getDownloadLink.py
-    echo res = re.findall("(?<=href=\")(.*?XenServer-(?:\d+\.)*\d+.*?-XenCenterSetup\.exe)(?=\")", r.text)[0] >> getDownloadLink.py
-    echo print(res) >> getDownloadLink.py
-cmd python getDownloadLink.py    
+    echo $result = Invoke-WebRequest -Uri https://xenserver.org/overview-xenserver-open-source-virtualization/download.html > getDownloadLink.ps1
+    echo if ($result -NotMatch 'a href="(?<downloadSite>.*standard-edition.html)"^>XenCenter Management GUI') >> getDownloadLink.ps1
+    echo { throw "Failed to extract download site link" } >> getDownloadLink.ps1
+    echo $result = Invoke-WebRequest -Uri $Matches['downloadSite'] >> getDownloadLink.ps1
+    echo if ($result -NotMatch 'rel="(?<downloadLink>.*-XenCenterSetup.exe)"') >> getDownloadLink.ps1
+    echo { throw "Failed to extract download site link" } >> getDownloadLink.ps1
+    echo Write-Host $Matches['downloadLink'] >> getDownloadLink.ps1
+cmd powershell -File getDownloadLink.ps1
 var url = last
 
 # Download
