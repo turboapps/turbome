@@ -8,6 +8,12 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 ###################################
+# Requirements
+###################################
+
+requires privilege:admin
+
+###################################
 # Meta tags
 ###################################
 
@@ -15,13 +21,12 @@ meta title="XenCenter Management Console"
 meta namespace="xensource"
 meta name="xencenter"
 
-
 ###################################
 # Pull dependency images
 ###################################
 
-using turbo/turboscript-tools:2016.2.2
-requires privilege:admin
+# dotnet shouldbe layered, change after CLNT-7280 is fixed
+using turbo/turboscript-tools:2016.2.2, microsoft/dotnet:4.6.1
 
 ###################################
 # Download and install
@@ -111,4 +116,3 @@ meta tag=version
 ###################################
 
 startup file("@PROGRAMFILESX86@\Citrix\XenCenter\XenCenter.exe")
-
