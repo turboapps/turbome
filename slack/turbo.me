@@ -1,0 +1,70 @@
+#
+# Slack turbo.me file
+# https://github.com/turboapps/turbome/tree/master/slack
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="slack"
+meta namespace="slack"
+meta name="slack"
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget
+
+###################################
+# Download
+###################################
+
+# Set working directory
+cmd mkdir c:\Workdir
+workdir c:\Workdir
+
+# Download
+cmd wget --no-verbose -O slack.exe https://slack.com/ssb/download-win
+
+###################################
+# Install
+###################################
+
+cmd C:\Workdir\slack.exe -s
+
+cmd del @APPDATALOCAL@\slack\Update.exe
+cmd del @APPDATALOCAL@\slack\SquirrelSetup.log
+cmd rmdir @APPDATALOCAL@\SquirrelTemp /q /s
+
+###################################
+# Get version
+###################################
+
+cmd "powershell (Get-Item $env:LOCALAPPDATA\slack\slack.exe).VersionInfo.ProductVersion"
+  
+var version = last
+
+###################################
+# Clean up
+###################################
+
+cmd rmdir c:\wget /s /q
+workdir @SYSDRIVE@\
+cmd rmdir C:\Workdir /s /q
+
+###################################
+# Version
+###################################
+
+meta tag=version
+meta version=version
+
+###################################
+# Startup File
+###################################
+
+startup file ("@APPDATALOCAL@\slack\slack.exe")
