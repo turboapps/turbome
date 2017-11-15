@@ -12,40 +12,41 @@ meta name = "vscode"
 # Pull dependency images
 ###################################
 
-using turbo/turboscript-tools:2016.3.17
-
-###################################
-# Download and install
-###################################
+using wget,7-zip
 
 # Set working directory
 cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
 
-# Download and install the latest version
-batch
-  echo import sys, requests, re >> getUrl.py
-  echo headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"} >> getUrl.py
-  echo r = requests.get("https://code.visualstudio.com/scripts/main.js", headers=headers, timeout=10) >> getUrl.py
-  echo print(re.findall('win:"(https:.*?)"', r.text)[1]) >> getUrl.py
+###################################
+# Download
+###################################
 
-cmd python getUrl.py
-var url = last
+cmd "wget -O vscode.zip https://go.microsoft.com/fwlink/?Linkid=850641"
 
-cmd "wget -q -O VSCodeSetup.exe --no-check-certificate --no-verbose ""%url%"""
+###################################
+#Unpack
+###################################
+
 batch cmd
-    VSCodeSetup.exe /verysilent /norestart /dir="c:\vscode"
-    timeout 10 /nobreak
-    taskkill /im Code.exe /t /f
-    wget -q -O settings.json --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/visual-studio-code/settings.json
-    copy /y settings.json %APPDATA%\Code\User\settings.json
+  7z x vscode.zip -oC:\vscode
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Get-FileVersion c:\vscode\code.exe"
+batch cmd
+	mkdir %APPDATA%\Code\User
+    wget -q -O %APPDATA%\Code\User\settings.json --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/visual-studio-code/settings.json
 
+###################################
+#Get version
+###################################
+
+cmd powershell "(Get-Item C:\vscode\Code.exe).VersionInfo.ProductVersion"
 var tag = last
 meta tag = tag
 
+###################################
 # Set startup file
+###################################
+
 startup file ("@SYSDRIVE@\vscode\code.exe")
 
 ###################################
@@ -55,8 +56,6 @@ startup file ("@SYSDRIVE@\vscode\code.exe")
 workdir @SYSDRIVE@
 
 batch
-  powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
   rmdir %SYSTEMDRIVE%\Workspace /s /q
-  rmdir %SYSTEMDRIVE%\TurboBuildTools /s /q
+  rmdir %SYSTEMDRIVE%\wget /s /q
 
-env path=
