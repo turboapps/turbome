@@ -13,3 +13,5 @@ $link = "https:" + $item[0].href
 $link = $link -replace "amp;",""
 Write-Host "Fixed link is: " + $link
 (New-Object System.Net.WebClient).DownloadFile($link, ".\installFiles\install.msi")
+
+if(Test-Path ".\image.txt") {Remove-Item ".\image.txt"}
