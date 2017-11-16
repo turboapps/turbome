@@ -15,14 +15,12 @@ meta title="Firefox"
 meta namespace="mozilla"
 meta name="firefox"
 
-
 ###################################
 # Pull dependency images
 ###################################
 
-using powershell,turbo/turboscript-tools:2016.2.25
+using powershell
 layer mozilla/firefox-base
-
 
 ###################################
 # Download and install
@@ -33,7 +31,9 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Install uBlock Origin plugin
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Install-FirefoxPlugin -DownloadDir . -PluginName ublock-origin -PluginId uBlock0@raymondhill.net"
+batch cmd
+  wget --no-check-certificate --no-verbose -O C:\Workspace\Install-FirefoxPlugin.ps1 https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/Install-FirefoxPlugin.ps1
+  powershell -NoProfile -ExecutionPolicy Unrestricted -Command ". C:\Workspace\Install-FirefoxPlugin.ps1; Install-FirefoxPlugin -DownloadDir . -PluginName ublock-origin -PluginId uBlock0@raymondhill.net"
 
 # Get product version
 cmd "echo $dir = (${env:ProgramFiles(x86)}, ${env:ProgramFiles} -ne $null)[0] > GetVersion.ps1" 
@@ -42,19 +42,14 @@ cmd "echo (Get-Item $Firefox ).VersionInfo.ProductVersion >> GetVersion.ps1"
 cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1
 var version = last
 
-
 isolate window:firefoxMessageWindow full
     
 ###################################
 # Clean up
 ###################################
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
-
 workdir c:\
 cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\TurboBuildTools /s /q
-
 
 ###################################
 # Version
