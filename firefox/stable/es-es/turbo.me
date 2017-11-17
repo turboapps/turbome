@@ -27,7 +27,7 @@ meta name="firefox-es"
 # Pull dependency images
 ###################################
 
-using powershell
+using powershell,wget
 
 ###################################
 # Download and install
@@ -65,7 +65,6 @@ batch
  helper.exe /SetAsDefaultAppUser
  popd
 
-
 # Create a default, fix named profile. 
 # We pin down the name, so that we can set isolation and sync settings on that directory 
 copy "profiles.ini" "C:\Workspace\profiles.ini"
@@ -83,16 +82,12 @@ batch
 env path=""
 env pathext=""
 
-
 ###################################
 # Clean up
 ###################################
 workdir c:\
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
 cmd rmdir @SYSDRIVE@\Workspace /s /q
-cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
-
 
 ###################################
 # Startup File
