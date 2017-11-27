@@ -17,7 +17,7 @@ workdir c:\Workspace
 
 var url = "https://download.mozilla.org/?product=firefox-beta-latest&os=win&lang=en-US"
 
-cmd "wget -O firefox.exe --content-disposition --no-check-certificate ""%url%"""
+cmd "wget --local-encoding=UTF-8 --content-disposition --no-check-certificate ""%url%"""
 
 ###################################
 # Config install, install and get version
@@ -29,7 +29,7 @@ batch cmd
  echo InstallDirectoryPath=c:\FirefoxBeta\ >> install.ini
  dir /b > temp.txt
  set /p setupName=<temp.txt
- firefox.exe /INI=C:\Workspace\install.ini
+ "%setupName%" /INI=C:\Workspace\install.ini
  echo %setupName:~14,-4% >temp.txt
 
 cmd type temp.txt
