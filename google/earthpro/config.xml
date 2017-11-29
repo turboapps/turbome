@@ -1,0 +1,8 @@
+<buildconfig>
+<vmName>Turbo7x86</vmName>
+<installScriptPath>C:\spoon\spoonme\google\earthpro\install.ps1</installScriptPath>
+<preInstallScriptPath></preInstallScriptPath>
+<postSnapshotScriptPath></postSnapshotScriptPath>
+<mountDirectoryPath></mountDirectoryPath>
+<overwrite></overwrite>
+</buildconfig>
