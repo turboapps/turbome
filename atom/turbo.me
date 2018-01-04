@@ -3,8 +3,6 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-requires privilege:admin
-
 ###################################
 # Meta tags
 ###################################
@@ -19,7 +17,6 @@ meta name="atom"
 
 using gnu/wget,powershell
 
-
 ###################################
 # Download and install
 ###################################
@@ -30,28 +27,20 @@ workdir @SYSDRIVE@\Workspace
 # Download
 cmd wget --no-check-certificate --no-verbose -O atom.exe https://atom.io/download/windows
 
-###################################
-# Run bat script which installs line, renames exe and kills all line tasks. Replace UNC
-###################################
-
+# Install
 cmd start atom.exe
 
-# cmd "echo $appdata=get-content env:AppData >> GetVersion.ps1"
-# cmd "echo $Atom=$appdata + '\atom\atom.exe' >> GetVersion.ps1"
+# Generate version powershell script
 cmd "echo $Atom='c:\workspace\atom.exe' >> GetVersion.ps1"
 cmd "echo (Get-Item $Atom ).VersionInfo.ProductVersion >> GetVersion.ps1"
 cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
 var version = last
 
 ###################################
-# Environment Variables
-###################################
-
-
-###################################
 # Clean up
 ###################################
 
+# Sets the image workdir
 workdir @SYSDRIVE@\
 cmd rmdir @SYSDRIVE@\Workspace /s /q
 cmd rmdir @SYSDRIVE@\wget /s /q
@@ -71,4 +60,4 @@ meta version=version
 ###################################
 
 # Set startup file
-startup file ("@APPDATALOCAL@\atom\atom-" + version + "\atom.exe")
+startup file ("@APPDATALOCAL@\atom\atom.exe")
