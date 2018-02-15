@@ -12,7 +12,7 @@ function Is-ChromeRunning()
 
 # Download Canary binaries
 (New-Object System.Net.WebClient).DownloadFile(
-    "https://download-chromium.appspot.com/dl/Win?type=continuous",
+    "https://download-chromium.appspot.com/dl/Win?type=snapshots",
     "chromium-win32.zip")
 
 # Extract binaries to a fixed location
