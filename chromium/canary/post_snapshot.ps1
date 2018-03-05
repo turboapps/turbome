@@ -25,6 +25,10 @@ Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft"
 
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Chromium" $true
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Chromium\User Data\Default\Cache" $false
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Chromium\User Data\ShaderCache" $false
+
 Remove-StartupFiles $xappl
 Add-StartupFile $xappl -File "@SYSDRIVE@\Chromium\chrome-win32\chrome.exe" -AutoStart
 

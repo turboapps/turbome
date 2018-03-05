@@ -27,6 +27,12 @@ Set-FileSystemIsolation $xappl "@APPDATACOMMON@\Microsoft" $FullIsolation
 Set-FileSystemIsolation $xappl "@APPDATALOCAL@\Google" $FullIsolation
 Set-FileSystemIsolation $xappl "@PROGRAMFILESX86@\Google" $FullIsolation
 
+
+# Enable sync for the profile, while disable sync for the caches
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google\Chrome" $true
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\Default\Cache" $false
+Set-FileEnableSystemSync $xappl "@APPDATALOCAL@\Google\Chrome\User Data\ShaderCache" $false
+
 Remove-FileSystemDirectoryItems $xappl "@SYSDRIVE@"
 Write-Host 'Removing Google Update'
 Remove-FileSystemDirectoryItems $xappl "@PROGRAMFILESX86@\Google\Update"
@@ -48,3 +54,4 @@ Remove-Service $xappl 'gupdate'
 Remove-Service $xappl 'gupdatem'
 
 Save-XAPPL $xappl $XappPath
+Get-Content $XappPath

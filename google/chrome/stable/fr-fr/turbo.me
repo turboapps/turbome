@@ -58,6 +58,13 @@ cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
 
 ###################################
+# Enable sync for base directory
+###################################
+sync enable "@APPDATALOCAL@\Google\Chrome\"
+sync disable "@APPDATALOCAL@\Google\Chrome\User Data\Default\Cache"
+sync disable "@APPDATALOCAL@\User Data\ShaderCache"
+
+###################################
 # Version
 ###################################
 
