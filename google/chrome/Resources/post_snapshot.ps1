@@ -43,7 +43,7 @@ Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
 #This is to keep @HKLM@\SOFTWARE\Microsoft\CurrentVersion\App Paths but delete everything else from @HKLM@\SOFTWARE\Microsoft
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\Active Setup"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\Internet Explorer"
-Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\MediaPlayrer"
+Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\MediaPlayer"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\Windows NT"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\CurrentVersion\Installer"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\CurrentVersion\Uninstaller"
