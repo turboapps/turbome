@@ -7,11 +7,7 @@
 
 if(!(Test-Path ".\installFiles")) { New-Item ".\installFiles" -type directory}
 
-$website = Invoke-WebRequest -Uri https://powerbi.microsoft.com/en-us/desktop/
-$item = $website.links | where {$_.innerText -like "*Download free*"}
-$link = "https:" + $item[0].href
-$link = $link -replace "amp;",""
-Write-Host "Fixed link is: " + $link
+$link = "https://download.microsoft.com/download/9/B/A/9BAEFFEF-1A68-4102-8CDF-5D28BFFE6A61/PBIDesktop_x64.msi"
 (New-Object System.Net.WebClient).DownloadFile($link, ".\installFiles\install.msi")
 
 if(Test-Path ".\image.txt") {Remove-Item ".\image.txt"}
