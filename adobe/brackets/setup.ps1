@@ -12,6 +12,8 @@ if ($result -NotMatch 'a href="(?<downloadLink>.*.msi)"')
 $link = "https://github.com/"+$Matches['downloadLink']
 $version = [regex]::match($link,'[0-9]+.[0-9]+').Value
 
-(New-Object System.Net.WebClient).DownloadFile($link,"install.msi")
+if(!(Test-Path ".\installFiles")) { New-Item ".\installFiles" -type directory}
+
+(New-Object System.Net.WebClient).DownloadFile($link, ".\installFiles\install.msi")
 
 "adobe/brackets:$version" | Set-Content "image.txt"
