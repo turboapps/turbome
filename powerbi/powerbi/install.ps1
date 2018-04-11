@@ -30,4 +30,4 @@ $mainExe = "$env:PROGRAMFILES\Microsoft Power BI Desktop\bin\PBIDesktop.exe"
 Write-Host "Version info"
 (Get-Item $mainExe).VersionInfo
 $version = (Get-Item $mainExe).VersionInfo.FileVersion
-"microsoft/powerbi:$version" | Set-Content "X:\output\image.txt"
+"powerbi/powerbi:$version" | Set-Content "X:\output\image.txt"
