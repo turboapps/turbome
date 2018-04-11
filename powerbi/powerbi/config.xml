@@ -1,8 +1,8 @@
 <buildconfig>
 <vmName>Turbo7x64</vmName>
-<installScriptPath>C:\spoon\spoonme\microsoft\powerbi\install.ps1</installScriptPath>
+<installScriptPath>C:\spoon\spoonme\powerbi\powerbi\install.ps1</installScriptPath>
 <preInstallScriptPath></preInstallScriptPath>
-<postSnapshotScriptPath>C:\spoon\spoonme\microsoft\powerbi\post_snapshot.ps1</postSnapshotScriptPath>
+<postSnapshotScriptPath>C:\spoon\spoonme\powerbi\powerbi\post_snapshot.ps1</postSnapshotScriptPath>
 <mountDirectoryPath></mountDirectoryPath>
 <overwrite></overwrite>
 </buildconfig>
