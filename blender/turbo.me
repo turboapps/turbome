@@ -13,7 +13,8 @@ meta name="blender"
 # Pull dependency images
 ###################################
 
-using wget,python:3.4.1
+using wget,powershell
+
 
 ###################################
 # Download and install
@@ -22,41 +23,46 @@ using wget,python:3.4.1
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Install "requests" module for python
-cmd "pip install requests --quiet"
+# Write powershell script
+batch cmd
+  echo param([string]$arg) >> getUrlAndVersion.ps1
+  echo $page = Invoke-WebRequest -Uri "https://www.blender.org/download/" >> getUrlAndVersion.ps1
+  echo $link = ($page.Links.href -match "windows64.msi")[0]  >> getUrlAndVersion.ps1
+  echo $link -match "[0-9]\.[0-9]*[a-z]" ^| Out-Null>> getUrlAndVersion.ps1
+  echo $version = $Matches[0] >> getUrlAndVersion.ps1
+  echo if($arg -ne "link") {Write-Host $version; Exit 0} >> getUrlAndVersion.ps1
+  echo $link -match "[0-9]\.[0-9]*" ^| Out-Null>> getUrlAndVersion.ps1
+  echo $versionMain = $Matches[0] >> getUrlAndVersion.ps1
+  echo $downloadUrl = "https://download.blender.org/release/" >> getUrlAndVersion.ps1
+  echo $page = Invoke-WebRequest -Uri $downloadUrl >> getUrlAndVersion.ps1
+  echo $downloadUrl += $page.Links.href -match $versionMain >> getUrlAndVersion.ps1
+  echo $page = Invoke-WebRequest -Uri $downloadUrl >> getUrlAndVersion.ps1
+  echo $downloadUrl += $page.Links.href -match $version+"-windows32.zip" >> getUrlAndVersion.ps1
+  echo Write-Host $downloadUrl >> getUrlAndVersion.ps1
 
-# Get last version tag
-batch
- echo import sys > getRelease.py
- echo import requests >> getRelease.py
- echo import re >> getRelease.py
- echo host = 'https://www.blender.org/download/' >> getRelease.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(list(re.findall('(http://\S*?-(\d*\.*\d*\.*\d*[a-z])-windows32.msi)', r.text )[0])) >> getRelease.py
-
-# Get version tag and MSI installer URL
-cmd python getRelease.py
-var res=last
-
-cmd "python -c ""print( %res% [0])"""
+# Get url
+cmd powershell -File getUrlAndVersion.ps1 -arg "link"
 var url=last
 
-cmd "python -c ""print( %res% [1])"""
+cmd powershell -File getUrlAndVersion.ps1 -arg "version"
 var tag=last
 
-# Actually install MSI
-cmd msiexec /i %url% /passive /qn
+# Install
+cmd wget -Oblender.zip %url%
+cmd powershell Expand-Archive blender.zip C:\blenderTemp
+
+cmd dir /b C:\blenderTemp
+var blenderpath = "C:\blenderTemp\" + last
+cmd move %blenderpath% C:\blender
+
 
 # Install file associations
-batch cmd
-    cd "C:\Program Files (x86)\Blender Foundation\Blender"
-    blender.exe -r
+cmd C:\blender\blender.exe -r
 
 ###################################
 # Startup File
 ###################################
-startup file ("@PROGRAMFILESX86@\Blender Foundation\Blender\blender.exe")
+startup file ("C:\blender\blender.exe")
 
 ###################################
 # Environment Variables
@@ -72,6 +78,6 @@ workdir c:\
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
+cmd rmdir C:\blenderTemp /s /q
 
 meta tag=tag
