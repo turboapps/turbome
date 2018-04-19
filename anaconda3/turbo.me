@@ -5,34 +5,71 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+###################################
+# Meta tags
+###################################
+
+meta title="Anaconda3"
+meta namespace="continuum"
+meta name="anaconda3"
+meta tag=5.0.1
 
 ###################################
 # Pull dependency images
 ###################################
 
-layer clean
-using gnu/wget,fart/fart
-
+using gnu/wget
 
 ###################################
 # Download and install
 ###################################
 
-# Set workdir
-workdir C:\
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
 
 # Download
-cmd wget.exe http://repo.continuum.io/anaconda3/Anaconda3-2.1.0-Windows-x86.exe -O Anaconda3-2.1.0-Windows-x86.exe
+batch
+  echo param([string]$arg) >> getUrlAndVersion.ps1
+  echo $page = Invoke-WebRequest -Uri "https://www.anaconda.com/download/" >> getUrlAndVersion.ps1
+  echo $link = ($page.Links ^| where {$_.href -like "*Anaconda3*Windows-x86.exe"}).href >> getUrlAndVersion.ps1
+  echo $link -match "[0-9]\.[0-9]\.[0-9]" ^| Out-Null>> getUrlAndVersion.ps1
+  echo $version = $Matches[0] >> getUrlAndVersion.ps1
+  echo if($arg -ne "link") {Write-Host $version; Exit 0} >> getUrlAndVersion.ps1
+  echo Write-Host $link >> getUrlAndVersion.ps1
+
+# Get url
+cmd powershell -File getUrlAndVersion.ps1 -arg "link"
+var url=last
+
+cmd powershell -File getUrlAndVersion.ps1 -arg "version"
+var tag=last
+meta tag=tag
+
+cmd wget.exe %url% -OAnaconda3.exe
 
 # Install
-cmd Anaconda3-2.1.0-Windows-x86.exe /S "/D=C:\Anaconda3"
+cmd ("Anaconda3.exe", "/S", "/D=C:\Anaconda3")
 
-# Fix for Environment variable bug in anaconda3
-batch cmd
-  C:\fart\fart.exe C:\Anaconda3\Scripts\anaconda.bat ANACONDA_OLD_PATH=\"%%PATH%%\" \"ANACONDA_OLD_PATH=%%PATH%%\"
-  C:\fart\fart.exe C:\Anaconda3\Scripts\anaconda.bat PATH=\"%%ANACONDA%%;%%ANACONDA_SCRIPTS%%;%%PATH%%\" \"PATH=%%ANACONDA%%;%%ANACONDA_SCRIPTS%%;%%PATH%%\"
-  ver > nul
+# Configure navigator
+batch
+  mkdir %USERPROFILE%\.anaconda\navigator
+  cd %USERPROFILE%\.anaconda\navigator
+  echo [main] >> anaconda-navigator.ini
+  echo name = Anaconda Navigator >> anaconda-navigator.ini
+  echo show_startup = False >> anaconda-navigator.ini
+  echo hide_update_dialog = True >> anaconda-navigator.ini
+  echo provide_analytics = False >> anaconda-navigator.ini
 
+# Configure spyder
+batch
+  mkdir %USERPROFILE%\.spyder-py3
+  cd %USERPROFILE%\.spyder-py3
+  echo [main] >> spyder.ini
+  echo icon_theme = spyder 2 >> spyder.ini
+  echo check_updates_on_startup = False >> spyder.ini
+
+
+enable HttpUrlPassthrough
 
 ###################################
 # Environment Variables
@@ -40,19 +77,17 @@ batch cmd
 
 # No variables needed
 
-
 ###################################
 # Startup File
 ###################################
 
-# You may change the startup file by uncommenting one of the following lines:
-startup file ("@PROGRAMS@\Anaconda (32-bit)\Anaconda Command Prompt.lnk")
-# startup file ("@PROGRAMS@\Anaconda (32-bit)\Launcher.lnk")
-# startup file ("@PROGRAMS@\Anaconda (32-bit)\Spyder.lnk")
-
+startup file ("C:\Anaconda3\pythonw.exe", "C:\Anaconda3\cwp.py", "C:\Anaconda3", "C:\Anaconda3\pythonw.exe", "C:\Anaconda3\Scripts\anaconda-navigator-script.py")
+startup file navigator=("C:\Anaconda3\pythonw.exe", "C:\Anaconda3\cwp.py", "C:\Anaconda3", "C:\Anaconda3\pythonw.exe", "C:\Anaconda3\Scripts\anaconda-navigator-script.py")
+startup file prompt=("cmd", "/K", "C:\Anaconda3\Scripts\activate.bat", "C:\Anaconda3")
+startup file spyder=("C:\Anaconda3\pythonw.exe", "C:\Anaconda3\cwp.py", "C:\Anaconda3", "C:\Anaconda3\pythonw.exe", "C:\Anaconda3\Scripts\spyder-script.py")
 
 ###################################
 # Clean up
 ###################################
 
-cmd del C:\Anaconda3-2.1.0-Windows-x86.exe /Q
+cmd del Anaconda3.exe /Q
