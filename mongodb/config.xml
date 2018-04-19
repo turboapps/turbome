@@ -1,0 +1,8 @@
+<buildconfig>
+<vmName>Turbo7x64</vmName>
+<installScriptPath>C:\spoon\spoonme\mongodb\install.ps1</installScriptPath>
+<preInstallScriptPath></preInstallScriptPath>
+<postSnapshotScriptPath></postSnapshotScriptPath>
+<mountDirectoryPath></mountDirectoryPath>
+<overwrite></overwrite>
+</buildconfig>
