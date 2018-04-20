@@ -2,7 +2,7 @@
 <vmName>Turbo7x64</vmName>
 <installScriptPath>C:\spoon\spoonme\github\githubdesktop\install.ps1</installScriptPath>
 <preInstallScriptPath></preInstallScriptPath>
-<postSnapshotScriptPath></postSnapshotScriptPath>
+<postSnapshotScriptPath>C:\spoon\spoonme\github\githubdesktop\post-snapshot.ps1</postSnapshotScriptPath>
 <mountDirectoryPath></mountDirectoryPath>
 <overwrite></overwrite>
 </buildconfig>
