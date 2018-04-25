@@ -17,6 +17,3 @@ if(!(Test-Path ".\installFiles")) { New-Item ".\installFiles" -type directory}
 (New-Object System.Net.WebClient).DownloadFile($link, ".\installFiles\install.msi")
 
 "mongodb/mongo:$version" | Set-Content "image.txt"
-
-https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.4-signed.msi
-https://www.mongodb.com/dr/fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.4-signed.msi/download
