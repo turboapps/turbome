@@ -6,7 +6,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 $page = Invoke-WebRequest -Uri "https://www.mongodb.com/download-center?jmp=nav#community"
-$link = "https://mongodb.com"+( $page.Links.href -Match "signed.msi")
+$link = ( $page.Links.href -Match "signed.msi")[0]
 $link = $link -replace "/dr/", "http://"
 $link = $link -replace "/download$",""
 
