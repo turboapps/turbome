@@ -40,6 +40,8 @@ workdir @SYSDRIVE@\Workspace
 batch
   echo $website = Invoke-WebRequest -Uri https://git-scm.com/download/win/ > GetDownloadLink.ps1
   echo $link = ($website.links ^| where {$_.innerText -like "32*bit*Git*Windows*Setup" -and $_.href -like "*git*.exe"}).href >> GetDownloadLink.ps1
+  echo $link -match "[0-9]+\.[0-9]+\.[0-9]+\.\w*\.[0-9]" ^| Out-Null >> GetDownloadLink.ps1
+  echo $Matches[0] ^| Out-File C:\version.txt >> GetDownloadLink.ps1
   echo Write-Host "$link" >> GetDownloadLink.ps1
 
 cmd powershell -NoProfile -ExecutionPolicy Bypass -File GetDownloadLink.ps1
@@ -48,25 +50,14 @@ var downloadlink = last
 # Download and Install
 batch 
   wget.exe --no-check-certificate -O git.exe %downloadlink%
-  git.exe /SILENT
+  git.exe /SILENT /DIR="C:\git"
 
   
 ###################################
 # Get version
 ###################################
-
-# Get Version from file
-batch 
-  echo if (Test-Path "$($env:SYSTEMDRIVE)\Program Files\Git\bin\git.exe") { > GetVersion.ps1
-  echo   $file = "$($env:SYSTEMDRIVE)\Program Files\Git\bin\git.exe" } >> GetVersion.ps1
-  echo elseif (Test-Path "$($env:SYSTEMDRIVE)\Program Files (x86)\Git\bin\git.exe") { >> GetVersion.ps1
-  echo   $file = "$($env:SYSTEMDRIVE)\Program Files (x86)\Git\bin\git.exe" } >> GetVersion.ps1
-  echo else {Exit -1} >> GetVersion.ps1
-  echo $query = $file.FullName.replace("\","\\") >> GetVersion.ps1
-  echo $version = (get-wmiobject -class cim_datafile -Filter "Name='$query'" | Select-Object Version).Version >> GetVersion.ps1
-  echo Write-Host "$version" >> GetVersion.ps1
   
-cmd "powershell -NoProfile -ExecutionPolicy Unrestricted -File GetVersion.ps1"
+cmd type C:\version.txt
 var tag=last
 meta tag=tag
 
