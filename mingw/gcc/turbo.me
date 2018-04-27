@@ -1,0 +1,50 @@
+#
+# MinGW GCC turbo.me file
+# https://github.com/turboapps/turbome/tree/master/mingw/gcc
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="MinGW GCC"
+meta namespace="mingw"
+meta name="gcc"
+
+###################################
+# Pull dependency images
+###################################
+
+using mingw/get
+
+
+###################################
+# Download and install
+###################################
+
+cmd mingw-get install base gcc g++
+
+cmd g++ --version > C:\version.txt
+
+batch 
+  echo (Get-Content C:\version.txt)[0] -match "[0-9]*\.[0-9]*\.[0-9-]*" ^| Out-Null; $Matches[0] > C:\getVersion.ps1
+
+cmd powershell -NoProfile -ExecutionPolicy Bypass -File C:\getVersion.ps1
+var tag=last
+
+
+###################################
+# Startup File
+
+
+###################################
+# Environment Variables
+###################################
+
+
+###################################
+# Clean up
+###################################
+
+meta tag=tag
+
+cmd del C:\version.txt
+cmd del C:\getVersion.ps1
