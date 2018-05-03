@@ -47,7 +47,7 @@ var filename = last
 cmd "python -c ""print(%res%[2])"""
 var version = last
 meta tag = version
-cmd "wget %url%"
+cmd "wget %url% --no-check-certificate"
 
 ###################################
 # Install
