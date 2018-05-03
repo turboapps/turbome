@@ -27,34 +27,40 @@ workdir c:\
 cmd mkdir c:\workdir
 
 # Download
-cmd wget --no-check-certificate --no-verbose -O C:\workdir\LineInst.exe http://cdn.line-apps.com/client/win/new/LineInst.exe
+cmd "wget --no-check-certificate --no-verbose -O C:\workdir\LineInst.exe http://cdn.line-apps.com/client/win/new/LineInst.exe"
 
 ###################################
 # Install
 ###################################
 
-cmd START C:\workdir\LineInst.exe /s
+cmd "START C:\workdir\LineInst.exe /s"
 
 ###################################
 # Get Version
 ###################################
 
-cmd powershell "(Get-Item 'C:\workdir\LineInst.exe' ).VersionInfo.ProductVersion"
+cmd "powershell ""(Get-Item 'C:\workdir\LineInst.exe' ).VersionInfo.ProductVersion"""
 var version = last
 
 ###################################
 # Remove Line Updater
 ###################################
 
-cmd del @APPDATALOCAL@\LINE\bin\%version%\LineUpdater.exe
+cmd "del @APPDATALOCAL@\LINE\bin\%version%\LineUpdater.exe"
+
+###################################
+# Create data dir (startup error)
+###################################
+
+cmd "mkdir @APPDATALOCAL@\LINE\Data"
 
 ###################################
 # Clean up
 ###################################
 
-cmd rmdir @SYSDRIVE@\wget /s /q
 workdir @SYSDRIVE@\
-cmd "rmdir @SYSDRIVE@\workdir /s /q"
+cmd "rmdir ""@SYSDRIVE@\wget"" /s /q"
+cmd "rmdir ""@SYSDRIVE@\workdir"" /s /q"
 
 ###################################
 # Version
