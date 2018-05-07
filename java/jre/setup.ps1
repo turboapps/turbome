@@ -5,6 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $content = Invoke-WebRequest https://www.java.com/en/download/manual.jsp
 
 $urlPattern = "<a title=`"Download Java software for Windows Offline`" href=`"(?<url>[a-zA-Z0-9._/?:=]+)`">"

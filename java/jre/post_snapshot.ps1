@@ -9,6 +9,7 @@
 # Edit XAPPL
 #
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $content = Invoke-WebRequest https://www.java.com/en/download/manual.jsp
 $versionPattern = "Recommended Version (?<version>[\d]+) Update (?<update>[\d]+)"
 

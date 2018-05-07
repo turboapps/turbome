@@ -11,6 +11,7 @@ function Is-ChromeRunning()
 }
 
 # Download Canary binaries
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 (New-Object System.Net.WebClient).DownloadFile(
     "https://download-chromium.appspot.com/dl/Win?type=snapshots",
     "chromium-win32.zip")

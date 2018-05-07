@@ -7,6 +7,7 @@
 
 if(!(Test-Path ".\installFiles")) { New-Item ".\installFiles" -type directory}
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $downloadPath = "https://dl.google.com/earth/client/advanced/current/GoogleEarthProWin.exe"
 (New-Object System.Net.WebClient).DownloadFile($downloadPath,".\installFiles\install.exe")
 

@@ -38,7 +38,8 @@ workdir @SYSDRIVE@\Workspace
 
 # Get download link
 batch
-  echo $website = Invoke-WebRequest -Uri https://git-scm.com/download/win/ > GetDownloadLink.ps1
+  echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 > GetDownloadLink.ps1
+  echo $website = Invoke-WebRequest -Uri https://git-scm.com/download/win/ >> GetDownloadLink.ps1
   echo $link = ($website.links ^| where {$_.innerText -like "32*bit*Git*Windows*Setup" -and $_.href -like "*git*.exe"}).href >> GetDownloadLink.ps1
   echo $link -match "[0-9]+\.[0-9]+\.[0-9]+\.\w*\.[0-9]" ^| Out-Null >> GetDownloadLink.ps1
   echo $Matches[0] ^| Out-File C:\version.txt >> GetDownloadLink.ps1

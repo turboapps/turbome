@@ -29,6 +29,7 @@ cmd mkdir c:\sublime
 workdir c:\sublime
 
 batch cmd
+  echo echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> scirpt.sp1
   echo $content = (Invoke-WebRequest -URI "https://www.sublimetext.com/3").Content >> scirpt.ps1
   echo $content -match "The latest build is (?<version>\d*)." ^| Out-Null >> scirpt.ps1
   echo $version = $Matches['version'] >> scirpt.ps1

@@ -15,6 +15,7 @@ function Update-AdBlock
     )
     process
     {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         # Visit AdBlock Plugin page and extract a download link to the latest version
         $pluginPage = (Invoke-WebRequest "https://addons.mozilla.org/en-US/firefox/addon/adblock-plus")
         if(-not ($pluginPage -match '(?<=\").*?(?<filename>adblock_plus-(?:\d+\.)+\d+-.*?\.xpi)'))

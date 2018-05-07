@@ -8,6 +8,7 @@
 function Download-Browser($msiPath, $language)
 {
 	Write-Host "Downloading browsers to $msiPath"
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	(New-Object System.Net.WebClient).DownloadFile(
     "https://dl.google.com/tag/s/appguid={00000000-0000-0000-0000-000000000000}&iid={00000000-0000-0000-0000-000000000000}&lang=$language&browser=3&usagestats=0&appname=Google%20Chrome&installdataindex=defaultbrowser&needsadmin=prefers/edgedl/chrome/install/GoogleChromeStandaloneEnterprise.msi",
     $msiPath)

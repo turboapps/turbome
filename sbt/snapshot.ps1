@@ -5,6 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $content = (Invoke-WebRequest -URI "http://www.scala-sbt.org/download.html").Content
 $content -match '"(?<downloadlink>.*?sbt\-(?<version>\d+\.\d+\.\d+\.\d+).msi)"' | Out-Null
 if (-not $Matches) {

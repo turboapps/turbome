@@ -5,6 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $page = Invoke-WebRequest -Uri "https://msdn.microsoft.com/en-us/library/mt238290.aspx"
 $body = $page.ParsedHtml.getElementById("mainBody")
 $hyperlinks = $body.getElementsByTagName("a")

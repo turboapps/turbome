@@ -22,6 +22,7 @@ function Deploy-TurboModule
         # Invoke-WebRequest is not available in PowerShell 2.0
         function Invoke-WebRequest20($url)
         {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             [System.Reflection.Assembly]::LoadWithPartialName("System.Web.Extensions") | Out-Null
             
             # Create request manually to avoid 'The server committed a protocol violation. Section=ResponseStatusLine'

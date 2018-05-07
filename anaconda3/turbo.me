@@ -30,6 +30,7 @@ workdir @SYSDRIVE@\Workspace
 # Download
 batch
   echo param([string]$arg) >> getUrlAndVersion.ps1
+  echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> getUrlAndVersion.ps1
   echo $page = Invoke-WebRequest -Uri "https://www.anaconda.com/download/" >> getUrlAndVersion.ps1
   echo $link = ($page.Links ^| where {$_.href -like "*Anaconda3*Windows-x86.exe"}).href >> getUrlAndVersion.ps1
   echo $link -match "[0-9]\.[0-9]\.[0-9]" ^| Out-Null>> getUrlAndVersion.ps1

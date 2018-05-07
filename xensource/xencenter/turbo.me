@@ -38,7 +38,8 @@ workdir c:\Workspace
 
 # Get download link
 batch cmd
-    echo $result = Invoke-WebRequest -Uri https://xenserver.org/overview-xenserver-open-source-virtualization/download.html > getDownloadLink.ps1
+    echo echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 > getDownloadLink.ps1
+    echo $result = Invoke-WebRequest -Uri https://xenserver.org/overview-xenserver-open-source-virtualization/download.html >> getDownloadLink.ps1
     echo if ($result -NotMatch 'a href="(?<downloadSite>.*standard-edition.html)"^>XenCenter Management GUI') >> getDownloadLink.ps1
     echo { throw "Failed to extract download site link" } >> getDownloadLink.ps1
     echo $result = Invoke-WebRequest -Uri $Matches['downloadSite'] >> getDownloadLink.ps1

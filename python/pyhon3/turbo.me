@@ -41,7 +41,8 @@ env pythonhome=""
 
 # Get download link
 batch
-  echo $website = Invoke-WebRequest -Uri https://www.python.org/downloads/ > GetDownloadLink.ps1
+  echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 > GetDownloadLink.ps1
+  echo $website = Invoke-WebRequest -Uri https://www.python.org/downloads/ >> GetDownloadLink.ps1
   echo $item = $website.links ^| where {$_.innerText -like "*Download Python 3*" -and $_.href -like "*python-3*.exe"} >> GetDownloadLink.ps1
   echo $link = $item.href >> GetDownloadLink.ps1
   echo Write-Host "$link" >> GetDownloadLink.ps1

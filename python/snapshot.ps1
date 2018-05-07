@@ -5,6 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $result = Invoke-WebRequest -Uri "http://www.python.org/downloads/windows/"
 
 if ($result -NotMatch 'a href="(?<downloadLink>.*[0-9.][^rc]+\.msi)">Windows x86 MSI')

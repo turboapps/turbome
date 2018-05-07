@@ -5,6 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $content = Invoke-WebRequest https://www.microsoft.com/en-us/download/confirmation.aspx?id=48145
 
 $content -match "(?<="")https://download.microsoft.com/download/[^""]*?/vc_redist.x86.exe(?="")"

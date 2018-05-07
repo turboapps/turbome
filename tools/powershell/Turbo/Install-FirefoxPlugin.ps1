@@ -18,6 +18,7 @@ function Install-FirefoxPlugin
     process
     {
         Add-Type -Assembly “system.io.compression.filesystem”
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
         $hostname = "https://addons.mozilla.org"
         $pluginPage = (Invoke-WebRequest "$hostname/en-US/firefox/addon/$PluginName")

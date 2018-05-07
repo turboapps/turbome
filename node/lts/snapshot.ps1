@@ -5,6 +5,7 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $content = (Invoke-WebRequest -URI "https://nodejs.org/en/download/").Content
 $content -match "https://nodejs.org/dist/v(?<version>\d+.\d+.\d+)/node-v\k<version>-x86.msi" | Out-Null
 if (-not $Matches) {
