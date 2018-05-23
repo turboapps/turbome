@@ -59,7 +59,7 @@ copy "Profiles" "C:\Workspace\Profiles"
 batch
  mkdir %APPDATA%\Mozilla\Firefox\
  copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
- robocopy /E C:\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
+ xcopy /sy /e /I C:\Workspace\Profiles %APPDATA%\Mozilla\Firefox\Profiles
 
  
 workdir c:\

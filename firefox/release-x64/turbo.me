@@ -35,7 +35,7 @@ meta name="firefox-x64"
 # Pull dependency images
 ###################################
 
-using powershell,turbo/turboscript-tools:2016.4.25
+using powershell,wget
 
 
 ###################################
@@ -81,7 +81,7 @@ batch cmd
   @ECHO Configure profile
   mkdir %APPDATA%\Mozilla\Firefox\
   copy %SYSTEMDRIVE%\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
-  robocopy /E %SYSTEMDRIVE%\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
+  xcopy /sy /e /I C:\Workspace\Profiles %APPDATA%\Mozilla\Firefox\Profiles
   
   @ECHO Write script to get app version
   echo $Firefox= Join-Path $env:SYSTEMDRIVE 'Program Files\Mozilla Firefox\firefox.exe' >> GetVersion.ps1
@@ -107,9 +107,8 @@ env pathext=""
 workdir @SYSDRIVE@
 
 batch
-  powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
   rmdir @SYSDRIVE@\Workspace /s /q
-  rmdir @SYSDRIVE@\TurboBuildTools /s /q
+  rmdir @SYSDRIVE@\wget /s /q
 
 
 ###################################

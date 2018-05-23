@@ -27,7 +27,7 @@ meta name="firefox-base"
 # Pull dependency images
 ###################################
 
-using powershell,turbo/turboscript-tools:2016.4.25
+using powershell,wget
 
 
 ###################################
@@ -75,7 +75,7 @@ copy "Profiles" "C:\Workspace\Profiles"
 batch
  mkdir %APPDATA%\Mozilla\Firefox\
  copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
- robocopy /E C:\Workspace\Profiles\ %APPDATA%\Mozilla\Firefox\Profiles
+ xcopy /sy /e /I C:\Workspace\Profiles %APPDATA%\Mozilla\Firefox\Profiles
 
 ###################################
 # Environment Variables
@@ -90,9 +90,8 @@ env pathext=""
 ###################################
 workdir c:\
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
-cmd rmdir @SYSDRIVE@\Workspace /s /q
-cmd rmdir @SYSDRIVE@\TurboBuildTools /s /q
+cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
 
 
 ###################################

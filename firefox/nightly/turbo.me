@@ -30,7 +30,8 @@ batch cmd
  wget -O firefox.win32.zip --no-check-certificate --no-verbose "%DOWNLOAD_URL%"
  7z x firefox.win32.zip -y >nul
  mkdir c:\FirefoxNightly
- robocopy firefox c:\FirefoxNightly *.* /e /move >nul
+ xcopy /sy /e /I firefox c:\FirefoxNightly
+ rmdir firefox /s /q
  cd c:\FirefoxNightly
  wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg
  cd browser
