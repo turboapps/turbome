@@ -19,7 +19,7 @@ meta name="firefox"
 # Pull dependency images
 ###################################
 
-using powershell
+using powershell,wget
 layer mozilla/firefox-base
 
 ###################################
@@ -50,6 +50,7 @@ isolate window:firefoxMessageWindow full
 
 workdir c:\
 cmd rmdir c:\Workspace /s /q
+cmd rmdir c:\wget /s /q
 
 ###################################
 # Version

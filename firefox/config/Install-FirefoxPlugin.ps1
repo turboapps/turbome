@@ -22,11 +22,11 @@ function Install-FirefoxPlugin
 
         $hostname = "https://addons.mozilla.org"
         $pluginPage = (Invoke-WebRequest "$hostname/en-US/firefox/addon/$PluginName")
-        if(-not ($pluginPage -match "href=`"(?<link>https://addons.mozilla.org/firefox/downloads.*ublock_origin-.*\.xpi).*<span"))
+        if(-not ($pluginPage -match "(?<link>https:\\u002F\\u002Faddons\.mozilla\.org\\u002Ffirefox\\u002Fdownloads\\u002Ffile\\u002F[0-9]*\\u002Fublock_origin-[0-9\.]*-an\+fx\.xpi)"))
         {
             throw "Failed to extract download link"
         }
-        $downloadLink = $Matches['link']
+        $downloadLink = $Matches['link'] -replace "\\u002F", "/"
 
         if (-not (Test-Path $DownloadDir))
         {
