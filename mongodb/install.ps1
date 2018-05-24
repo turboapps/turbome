@@ -1,4 +1,4 @@
-﻿#
+#
 # MongoDB install script
 # https://github.com/turboapps/turbome/tree/master/mongodb
 #
@@ -6,4 +6,4 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 #Install
-& msiexec /i "X:\install\install.msi" /qn /norestart | Out-Null
+& msiexec /i "X:\install\install.msi" /qn /norestart INSTALLLOCATION="C:\MongoDB\" SHOULD_INSTALL_COMPASS="0" | Out-Null
