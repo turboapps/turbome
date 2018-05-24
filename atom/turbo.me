@@ -28,7 +28,18 @@ workdir @SYSDRIVE@\Workspace
 cmd wget --no-check-certificate --no-verbose -O atom.exe https://atom.io/download/windows
 
 # Install
-cmd start atom.exe
+batch cmd
+  start /WAIT atom.exe
+# Sleep for 20 seconds
+  ping localhost -n 21 >NUL
+  taskkill /F /T /im atom.exe
+
+#Config
+cmd del %userprofile%\.atom\config.cson
+batch cmd
+  echo "*": >> %userprofile%\.atom\config.cson
+  echo   core: >> %userprofile%\.atom\config.cson
+  echo      automaticallyUpdate: false >> %userprofile%\.atom\config.cson
 
 # Generate version powershell script
 cmd "echo $Atom='c:\workspace\atom.exe' >> GetVersion.ps1"
