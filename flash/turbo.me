@@ -34,7 +34,7 @@ workdir @SYSDRIVE@\Workspace
 
 # Download
 cmd wget -O chocolatey_page.html --no-check-certificate https://chocolatey.org/packages/flashplayerplugin
-cmd echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> script.ps1
+cmd "echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> script.ps1"
 cmd "echo $url = Select-String -Path .\chocolatey_page.html -Pattern 'http.*://download.*msi' ^| % { $_.Matches } ^| % { $_.Value } >> script.ps1"
 cmd echo Invoke-WebRequest -Uri $url -OutFile 'setup.msi' >> script.ps1
 cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File script.ps1
