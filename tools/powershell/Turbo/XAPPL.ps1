@@ -214,7 +214,7 @@ function Remove-Service($xappl, $service)
 
 <#
 .Description
-Sets the properties on a registry value object (creating if not present?).
+Sets the value on an existing registry value.
 #>
 function Set-RegistryValue
 {
@@ -226,7 +226,7 @@ function Set-RegistryValue
         [Parameter(Mandatory=$True,Position=2)]
         [string] $Path,
         [Parameter(Mandatory=$True,Position=3)]
-        [string] $Key,
+        [string] $ValueName,
         [Parameter(Mandatory=$True,Position=4)]
         [AllowEmptyString()]
         [string] $Value
@@ -234,7 +234,7 @@ function Set-RegistryValue
     process
     {
         $propertyXPath = Get-RegistryXPath($path)
-        $valueXPath = "$propertyXPath/Value[@name=`"$Key`"]"
+        $valueXPath = "$propertyXPath/Value[@name=`"$ValueName`"]"
         $xappl.SelectNodes($valueXPath) | ForEach-Object { $_.value = $Value }
     }
 }
