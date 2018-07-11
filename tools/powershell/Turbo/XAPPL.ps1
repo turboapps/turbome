@@ -3,14 +3,33 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-# XPath attribute matches are case sensitive by default
+# isolation string constants.
+Set-Variable -Name FullIsolation -Option ReadOnly -Value 'Full'
+Set-Variable -Name MergeIsolation -Option ReadOnly -Value 'Merge'
+Set-Variable -Name WriteCopyIsolation -Option ReadOnly -Value 'WriteCopy'
+
+<#
+.Description
+Creates a case insensitive XPath attribute match since they are case sensitive by default.
+#>
 function EqualsIgnoreCase([string] $attribute, [string] $value)
 {
+    # convert all the upper case characters in the string to their lower case and then compare to lower case version
     $upperCaseValue = $value.ToUpper()
     $lowerCaseValue = $value.ToLower()
     return "translate($attribute,`"$upperCaseValue`",`"$lowerCaseValue`")=`"$lowerCaseValue`""
 }
 
+<#
+.Description
+Creates a case insensitive full xappl xpath for the given path.
+
+$prefix - the xappl xpath prefix to be prepended to the generated xpath 
+          (ie. "Configuration/Layers/Layer[@name="Default"]/Filesystem" if we're talking about a filesystem path
+$segmentName - the xml node name of each segment of the $path (ie. "Directory" for "<Directory><Directory>...</Directory></Directory>" nodes. 
+               assumes there is only one... which is valid for registry/filesystem paths. this says nothing about the name of the last node in the path (ie. so can select a "file" node).
+$path - the friendly path to be processed into xpath format (ie. "@SYSTEM@\file.dll", assuming the prefix is as above).
+#>
 function Get-XPath($prefix, $segmentName, $path)
 {
     $xpath = $prefix
@@ -30,6 +49,10 @@ function Get-XPath($prefix, $segmentName, $path)
     return $xpath
 }
 
+<#
+.Description
+Returns the layer name from a path (ie. "mylayer" from "mylayer\@SYSTEM@\file.dll" or "default" for "@SYSTEM@\file.dll").
+#>
 function Get-Layer($path)
 {
     if($path.StartsWith('@'))
@@ -46,6 +69,10 @@ function Get-Layer($path)
     return $path.Substring(0, $firstBackslashIndex)
 }
 
+<#
+.Description
+Removes the layer name from the path (ie. "mylayer\@SYSTEM@\file.dll" becomes "@SYSTEM@\file.dll")
+#>
 function Skip-Layer($path)
 {
     if($path.StartsWith('@'))
@@ -66,26 +93,39 @@ function Skip-Layer($path)
     return $path.Substring($firstBackslashIndex + 1)
 }
 
+<#
+.Description
+Gets the xpath for a directory or file with the given path (ie. "mylayer\@SYSTEM@" or "@SYSTEM@\file.dll")
+#>
 function Get-FileSystemXPath($path)
 {
     $layerName = Get-Layer $path
     return (Get-XPath "Configuration/Layers/Layer[@name=`"$layerName`"]/Filesystem" 'Directory' (Skip-Layer $path))
 }
 
+<#
+.Description
+Gets the xpath for a key or value with the given path (ie. "mylayer\@HKCU@\software" or "@HKLM@\SOFTWARE\Microsoft\.NETFramework\InstallRoot")
+#>
 function Get-RegistryXPath($path)
 {
     $layerName = Get-Layer $path
     return (Get-XPath "Configuration/Layers/Layer[@name=`"$layerName`"]/Registry" 'Key' (Skip-Layer $path))
 }
 
+<#
+.Description
+Gets the xpath for a service in the DEFAULT layer.
+#>
 function Get-ServiceXPath($serviceName)
 {
     return (Get-XPath "Configuration/Layers/Layer[@name=`"Default`"]/Services" 'Service' $serviceName )
 }
 
-Set-Variable -Name FullIsolation -Option ReadOnly -Value 'Full'
-Set-Variable -Name MergeIsolation -Option ReadOnly -Value 'Merge'
-
+<#
+.Description
+Load xappl as xml object from a path.
+#>
 function Read-XAPPL($filePath)
 {
     $xappl = New-Object XML
@@ -93,23 +133,39 @@ function Read-XAPPL($filePath)
     return $xappl
 }
 
+<#
+.Description
+Save xappl modifications to path.
+#>
 function Save-XAPPL($xappl, $filepath)
 {
     $xappl.Save($filePath)
 }
 
+<#
+.Description
+Set the isolation for a directory or file. valid isolation is "Merge", "Full", "WriteCopy".
+#>
 function Set-FileSystemIsolation($xappl, $path, $isolationMode)
 {
     $xpath = Get-FileSystemXPath($path)
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.isolation = $isolationMode }
 }
 
+<#
+.Description
+Set the isolation for a key or value. valid isolation is "Merge", "Full", "WriteCopy".
+#>
 function Set-RegistryIsolation($xappl, $path, $isolationMode)
 {
     $xpath = Get-RegistryXPath($path)
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.isolation = $isolationMode }
 }
 
+<#
+.Description
+Removes items from the specified directory, leaving the directory.
+#>
 function Remove-FileSystemDirectoryItems($xappl, $path)
 {
     $xpath = Get-FileSystemXPath($path)
@@ -120,18 +176,32 @@ function Remove-FileSystemDirectoryItems($xappl, $path)
     }
 }
 
+<#
+.Description
+Removes the specified directory or file.
+#>
 function Remove-FileSystemItems($xappl, $path)
 {
     $xpath = Get-FileSystemXPath $path
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
 }
 
+<#
+.Description
+Removes the specified registry or value.
+#>
 function Remove-RegistryItems($xappl, $path)
 {
     $xpath = Get-RegistryXPath $path
     $xappl.SelectNodes($xpath) | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null } 
 }
 
+<#
+.Description
+Removes the specified service FROM THE DEFAULT LAYER.
+
+todo: should support removing services from non-default layer.
+#>
 function Remove-Service($xappl, $service)
 {
     $xpath = Get-ServiceXPath $service
@@ -142,6 +212,10 @@ function Remove-Service($xappl, $service)
     }
 }
 
+<#
+.Description
+Sets the properties on a registry value object (creating if not present?).
+#>
 function Set-RegistryValue
 {
     [CmdletBinding()]
@@ -165,11 +239,26 @@ function Set-RegistryValue
     }
 }
 
+<#
+.Description
+Disables auto-start on all services in all layers.
+#>
 function Disable-Services($xappl)
 {
     $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.autoStart = "false" }
 }
 
+<#
+.Description
+Creates a node in the xappl.
+
+$xappl - xml object to add the node to.
+$root - the root xml node where the path segments are relative to
+$segments - path segments of the node to create (ie. path split on '\').
+$nodeSelector - a function which returns the xpath based on a path. this is a little wonky as it doesn't take the root as a param so there are big assumptions about how these params are used together.
+$nodeName - the name of the xml node to create.
+$attrs - the element attributes to add to the new node.
+#>
 function Add-Node($Xappl, $root, $segments, $nodeSelector, $nodeName, $attrs)
 {
      function Add-Attribute($element, $name, $value)
@@ -210,6 +299,10 @@ function Add-Node($Xappl, $root, $segments, $nodeSelector, $nodeName, $attrs)
     return $result
 }
 
+<#
+.Description
+Add a registry key with the specified attributes.
+#>
 function Add-RegistryKey
 {
     [CmdletBinding()]
@@ -244,6 +337,10 @@ function Add-RegistryKey
     }
 }
 
+<#
+.Description
+Add a directory with the specified attributes.
+#>
 function Add-Directory
 {
     [CmdletBinding()]
@@ -278,6 +375,10 @@ function Add-Directory
     }
 }
 
+<#
+.Description
+Add a file with the specified attributes.
+#>
 function Add-File
 {
     [CmdletBinding()]
@@ -357,6 +458,10 @@ function Add-File
     }
 }
 
+<#
+.Description
+Add a startup file with the specified attributes.
+#>
 function Add-StartupFile
 {
     [CmdletBinding()]
@@ -405,6 +510,10 @@ function Add-StartupFile
     }
 }
 
+<#
+.Description
+Add an object map entry to DEFAULT layer with the specified attributes.
+#>
 function Add-ObjectMap
 {
     [CmdletBinding()]
@@ -427,16 +536,28 @@ function Add-ObjectMap
     }
 }
 
+<#
+.Description
+Removes all startup files
+#>
 function Remove-StartupFiles($xappl)
 {
     $xappl.SelectNodes('Configuration/StartupFiles/*') | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
 }
 
+<#
+.Description
+Removes the layer with the specified name.
+#>
 function Remove-Layer($xappl, $layer)
 {
     $xappl.SelectNodes("Configuration/Layers/Layer[@name=`"$layer`"]") | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
 }
 
+<#
+.Description
+Copies the files in the specified directory to the snapshot directory path and adds to the xappl accordingly.
+#>
 function Import-Files
 {
     [CmdletBinding()]
@@ -573,7 +694,7 @@ function Rename-ProgId
 
 <#
 .Description
-Moves ProgId to the top of OpenWithProgIds list for all registered file associations
+Moves ProgId to the top of OpenWithProgIds list for all registered file associations so that it is used by default.
 #>
 function Set-DefaultProgId
 {
@@ -611,6 +732,10 @@ function Set-DefaultProgId
     }
 }
 
+<#
+.Description
+Creates or modifies an environment variable with the specified attributes.
+#>
 function Set-EnvironmentVariable
 {
     [CmdletBinding()]
@@ -653,6 +778,10 @@ function Set-EnvironmentVariable
     }
 }
 
+<#
+.Description
+Removes the environment variable with the specified name.
+#>
 function Remove-EnvironmentVariable
 {
     [CmdletBinding()]
@@ -673,6 +802,10 @@ function Remove-EnvironmentVariable
     }
 }
 
+<#
+.Description
+Adds a route ObjectMap entry.
+#>
 function Add-Route
 {
     [CmdletBinding()]
@@ -695,6 +828,9 @@ function Add-Route
     }
 }
 
+#
+# specify exports
+#
 Export-ModuleMember -Function 'Add-Directory'
 Export-ModuleMember -Function 'Add-File'
 Export-ModuleMember -Function 'Add-ObjectMap'
@@ -722,4 +858,5 @@ Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-RegistryValue'
 
 Export-ModuleMember -Variable FullIsolation
+Export-ModuleMember -Variable WriteCopyIsolation
 Export-ModuleMember -Variable MergeIsolation
