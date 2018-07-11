@@ -144,22 +144,142 @@ function Save-XAPPL($xappl, $filepath)
 
 <#
 .Description
-Set the isolation for a directory or file. valid isolation is "Merge", "Full", "WriteCopy".
+Internal helper fuinction to set the isolation for a directory or file.
+-Recurse - Switch for whether to set the isolation on the entire node tree.
+-RecurseDepth - Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
 #>
-function Set-FileSystemIsolation($xappl, $path, $isolationMode)
+function Set-FileSystemIsolationInternal
 {
-    $xpath = Get-FileSystemXPath($path)
-    $xappl.SelectNodes($xpath) | ForEach-Object { $_.isolation = $isolationMode }
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$False,Position=3)]
+        [string] $Isolation = $FullIsolation,
+        [Parameter(Mandatory=$True,Position=4)]
+        [int] $Depth,
+        [Parameter(Mandatory=$True,Position=5)]
+        [switch] $Recurse,
+        [Parameter(Mandatory=$True,Position=6)]
+        [int] $RecurseDepth = $([int]::MaxValue)
+    )
+    process
+    {
+        $xpath = Get-FileSystemXPath($Path)
+        
+        $node = $Xappl.SelectSingleNode($xpath)
+        if($node)
+        {
+            $node.isolation = $Isolation
+            
+            if($Recurse -And $Depth -lt $RecurseDepth) 
+            {
+                $node.ChildNodes | ForEach-Object { 
+                    Set-FileSystemIsolationInternal $Xappl "$Path\$($_.name)" $Isolation ($Depth + 1) $Recurse $RecurseDepth
+                }
+            }
+        }
+    }
+}
+
+<#
+.Description
+Set the isolation for a directory or file. valid isolation is "Merge", "Full", "WriteCopy".
+-Recurse - Switch for whether to set the isolation on the entire node tree.
+-RecurseDepth - Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
+#>
+function Set-FileSystemIsolation
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$False,Position=3)]
+        [string] $Isolation = $FullIsolation,
+        [Parameter(Mandatory=$False)]
+        [switch] $Recurse,
+        [Parameter(Mandatory=$False)]
+        [int] $RecurseDepth = $([int]::MaxValue)
+    )
+    process
+    {
+        Set-FileSystemIsolationInternal $Xappl $Path $Isolation 0 $Recurse $RecurseDepth
+    }
+}
+
+<#
+.Description
+Internal helper fuinction to set the isolation for a registry key or value.
+-Recurse - Switch for whether to set the isolation on the entire node tree.
+-RecurseDepth - Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
+#>
+function Set-RegistryIsolationInternal
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$True,Position=3)]
+        [string] $Isolation = $FullIsolation,
+        [Parameter(Mandatory=$True,Position=4)]
+        [int] $Depth,
+        [Parameter(Mandatory=$True,Position=5)]
+        [switch] $Recurse,
+        [Parameter(Mandatory=$True,Position=6)]
+        [int] $RecurseDepth = $([int]::MaxValue)
+    )
+    process
+    {
+        $xpath = Get-RegistryXPath($Path)
+        
+        $node = $Xappl.SelectSingleNode($xpath)
+        if($node)
+        {
+            $node.isolation = $Isolation
+            
+            if($Recurse -And $Depth -lt $RecurseDepth) 
+            {
+                $node.ChildNodes | ForEach-Object { 
+                    Set-RegistryIsolationInternal $Xappl "$Path\$($_.name)" $Isolation ($Depth + 1) $Recurse $RecurseDepth
+                }
+            }
+        }
+    }
 }
 
 <#
 .Description
 Set the isolation for a key or value. valid isolation is "Merge", "Full", "WriteCopy".
 #>
-function Set-RegistryIsolation($xappl, $path, $isolationMode)
+function Set-RegistryIsolation
 {
-    $xpath = Get-RegistryXPath($path)
-    $xappl.SelectNodes($xpath) | ForEach-Object { $_.isolation = $isolationMode }
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$False,Position=3)]
+        [string] $Isolation = $FullIsolation,
+        [Parameter(Mandatory=$False)]
+        [switch] $Recurse,
+        [Parameter(Mandatory=$False)]
+        [int] $RecurseDepth = $([int]::MaxValue)
+    )
+    process
+    {
+        Set-RegistryIsolationInternal $Xappl $Path $Isolation 0 $Recurse $RecurseDepth
+    }
 }
 
 <#
@@ -214,7 +334,7 @@ function Remove-Service($xappl, $service)
 
 <#
 .Description
-Sets the value on an existing registry value.
+Sets the value on an existing registry value. Assumes the data type doesn't change.
 #>
 function Set-RegistryValue
 {
@@ -375,6 +495,124 @@ function Add-Directory
     }
 }
 
+<#
+.Description
+Updates a directory or file with the specified attributes. Passing empty value for the attribute empty will leave it unchanged.
+
+NOTE: NoSync attribute only valid on a Directory
+#>
+function Update-FileSystemObject
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$False)]
+        [string] $Isolation,
+        [Parameter(Mandatory=$False)]
+        [string] $ReadOnly,
+        [Parameter(Mandatory=$False)]
+        [string] $Hide,
+        [Parameter(Mandatory=$False)]
+        [string] $NoSync
+    )
+    process
+    {
+        $xpath = Get-FileSystemXPath($Path)        
+        $node = $Xappl.SelectSingleNode($xpath)
+        if($node)
+        {
+            if($Isolation -ne "") { $node.isolation = $Isolation }
+            if($ReadOnly -ne "") { $node.readOnly = $ReadOnly }
+            if($Hide -ne "") { $node.hide = $Hide }
+            if($NoSync -ne "" -and $node.noSync) { $node.noSync = $NoSync }
+        }
+    }
+}
+
+<#
+.Description
+Updates a registry key or value with the specified attributes. Passing empty value for the attribute empty will leave it unchanged.
+
+NOTE: NoSync attribute only valid on a key
+#>
+function Update-RegistryObject
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Path,
+        [Parameter(Mandatory=$False)]
+        [string] $Isolation,
+        [Parameter(Mandatory=$False)]
+        [string] $ReadOnly,
+        [Parameter(Mandatory=$False)]
+        [string] $Hide,
+        [Parameter(Mandatory=$False)]
+        [string] $NoSync
+    )
+    process
+    {
+        $xpath = Get-RegistryXPath($Path)        
+        $node = $Xappl.SelectSingleNode($xpath)
+        if($node)
+        {
+            if($Isolation -ne "") { $node.isolation = $Isolation }
+            if($ReadOnly -ne "") { $node.readOnly = $ReadOnly }
+            if($Hide -ne "") { $node.hide = $Hide }
+            if($NoSync -ne "" -and $node.noSync) { $node.noSync = $NoSync }
+        }
+    }
+}
+
+<#
+.Description
+Sets properties of standard metadata.
+#>
+function Set-StandardMetadata
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $PropertyName,
+        [Parameter(Mandatory=$True,Position=3)]
+        [string] $PropertyValue
+    )
+    process
+    {
+        function Add-Attribute($element, $name, $value)
+        {
+            $attribute = $Xappl.CreateAttribute($name)
+            $attribute.Value = $value
+            $element.Attributes.Append($attribute) | Out-Null
+        }
+         
+        $meta = $Xappl.Configuration.StandardMetadata
+        $xpath = "*[$(EqualsIgnoreCase `"@property`" `"$PropertyName`")]"
+        $prop = $meta.SelectSingleNode($xpath)
+        if($prop)
+        {
+            $prop.value = $PropertyValue
+        }
+        else
+        {
+            $prop = $Xappl.CreateElement("StandardMetadataItem")
+            $meta.AppendChild($prop) | Out-Null
+            
+            Add-Attribute $prop 'property' $PropertyName   
+            Add-Attribute $prop 'value' $PropertyValue
+        }
+    }
+}
 <#
 .Description
 Add a file with the specified attributes.
@@ -856,6 +1094,9 @@ Export-ModuleMember -Function 'Set-EnvironmentVariable'
 Export-ModuleMember -Function 'Set-FileSystemIsolation'
 Export-ModuleMember -Function 'Set-RegistryIsolation'
 Export-ModuleMember -Function 'Set-RegistryValue'
+Export-ModuleMember -Function 'Update-FileSystemObject'
+Export-ModuleMember -Function 'Update-RegistryObject'
+Export-ModuleMember -Function 'Set-StandardMetadata'
 
 Export-ModuleMember -Variable FullIsolation
 Export-ModuleMember -Variable WriteCopyIsolation
