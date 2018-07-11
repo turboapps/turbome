@@ -12,6 +12,15 @@
 Import-Module Turbo
 
 $XappPath = 'C:\output\Snapshot.xappl'
+
+$xapplText = Get-Content $XappPath -Raw
+$regex = '(?<=<Directory name="@APPDATALOCAL@".*noSync=)"True"'
+$xapplText = $xapplText -replace $regex, '"False"'
+$regex = '(?<=<Directory name="@APPDATALOCALLOW@".*noSync=)"True"'
+$xapplText = $xapplText -replace $regex, '"False"'
+$xapplText = $xapplText -replace "<MachineSid />", "<MachineSid>S-1-5-21-992951991-166803189-1664049914</MachineSid>"
+$xapplText | Out-File $XappPath -Encoding utf8
+
 $xappl = Read-XAPPL $XappPath
 
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
