@@ -224,7 +224,7 @@ function Set-RegistryValue
         [Parameter(Mandatory=$True,Position=1)]
         [XML] $Xappl,
         [Parameter(Mandatory=$True,Position=2)]
-        [string] $Path,
+        [string] $KeyPath,
         [Parameter(Mandatory=$True,Position=3)]
         [string] $ValueName,
         [Parameter(Mandatory=$True,Position=4)]
@@ -233,7 +233,7 @@ function Set-RegistryValue
     )
     process
     {
-        $propertyXPath = Get-RegistryXPath($path)
+        $propertyXPath = Get-RegistryXPath($KeyPath)
         $valueXPath = "$propertyXPath/Value[@name=`"$ValueName`"]"
         $xappl.SelectNodes($valueXPath) | ForEach-Object { $_.value = $Value }
     }
