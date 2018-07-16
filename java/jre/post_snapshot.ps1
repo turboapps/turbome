@@ -26,15 +26,15 @@ Set-EnvironmentVariable $xappl 'path' "@PROGRAMFILESX86@\java\jre1.$version.0_$u
 Set-EnvironmentVariable $xappl 'JAVA_HOME' "@PROGRAMFILESX86@\java\jre1.$version.0_$update"
 
 
-Set-RegistryIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData" $MergeIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18" $MergeIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components" $MergeIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products" $MergeIsolation
 
-Set-RegistryIsolation $xappl "@HKLM@\Software\Classes\Installer" $MergeIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software\Classes\Installer\Features" $MergeIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software\Classes\Installer\Products" $MergeIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software\Classes\Installer\UpgradeCodes" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Installer" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Installer\Features" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Installer\Products" $MergeIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Installer\UpgradeCodes" $MergeIsolation
 
 Remove-StartupFiles $xappl
 

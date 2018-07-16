@@ -20,12 +20,11 @@ $virtualizationSettings.launchChildProcsAsUser = [string]$true
 
 # set net.spoon.chromenativehost key to merge isolation, so Turbo VM Extension is able to establish connection with a message host installed natively
 $NativeMessageHostKey = "@HKCU@\SOFTWARE\Google\Chrome\NativeMessagingHosts\net.spoon.chromenativehost"
-Add-RegistryKey $xappl $NativeMessageHostKey $FullIsolation
-Set-RegistryIsolation $xappl $NativeMessageHostKey $MergeIsolation
+Set-RegistryKeyIsolation $xappl $NativeMessageHostKey $MergeIsolation
 
-Set-FileSystemIsolation $xappl "@APPDATACOMMON@\Microsoft" $FullIsolation
-Set-FileSystemIsolation $xappl "@APPDATALOCAL@\Google" $FullIsolation
-Set-FileSystemIsolation $xappl "@PROGRAMFILESX86@\Google" $FullIsolation
+Set-DirectoryIsolation $xappl "@APPDATACOMMON@\Microsoft" $FullIsolation
+Set-DirectoryIsolation $xappl "@APPDATALOCAL@\Google" $FullIsolation
+Set-DirectoryIsolation $xappl "@PROGRAMFILESX86@\Google" $FullIsolation
 
 Remove-FileSystemDirectoryItems $xappl "@SYSDRIVE@"
 Write-Host 'Removing Google Update'
@@ -35,8 +34,8 @@ $chromeVersion = Get-Content "X:\install\version.txt"
 Remove-FileSystemDirectoryItems $xappl "${env:PROGRAMFILES}\Google\Chrome\Application\$chromeVersion\Installer"
 
 
-Set-RegistryIsolation $xappl "@HKCU@\Software\Google" $FullIsolation
-Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE\Wow6432Node\Google" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKCU@\Software\Google" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE\Wow6432Node\Google" $FullIsolation
 
 Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
