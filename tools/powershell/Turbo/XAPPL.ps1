@@ -453,12 +453,7 @@ Disables auto-start on all services in all layers.
 #>
 function Disable-Services($xappl)
 {
-    $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { 
-        if($_.start -eq "AutoLoad")
-        {
-            $_.start = "LoadOnDemand" 
-        }
-    }
+    $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.start = "Disabled" }
 }
 
 <#
