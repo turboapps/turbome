@@ -8,6 +8,25 @@ Set-Variable -Name FullIsolation -Option ReadOnly -Value 'Full'
 Set-Variable -Name MergeIsolation -Option ReadOnly -Value 'Merge'
 Set-Variable -Name WriteCopyIsolation -Option ReadOnly -Value 'WriteCopy'
 
+# registry value types
+Set-Variable -Name StringValueType -Option ReadOnly -Value 'String'
+Set-Variable -Name StringArrayValueType -Option ReadOnly -Value 'StringArray'
+Set-Variable -Name ExpandStringValueType -Option ReadOnly -Value 'ExpandString'
+Set-Variable -Name DWORDValueType -Option ReadOnly -Value 'DWORD'
+Set-Variable -Name QWORDValueType -Option ReadOnly -Value 'QWORD'
+Set-Variable -Name BinaryValueType -Option ReadOnly -Value 'Binary'
+
+<#
+.Description
+Adds an attribute to the specified node.
+#>
+function Add-Attribute($xappl, $element, $name, $value)
+{
+    $attribute = $Xappl.CreateAttribute($name)
+    $attribute.Value = $value
+    $element.Attributes.Append($attribute) | Out-Null
+}
+
 <#
 .Description
 Creates a case insensitive XPath attribute match since they are case sensitive by default.
@@ -24,11 +43,14 @@ function EqualsIgnoreCase([string] $attribute, [string] $value)
 .Description
 Creates a case insensitive full xappl xpath for the given path.
 
-$prefix - the xappl xpath prefix to be prepended to the generated xpath 
-          (ie. "Configuration/Layers/Layer[@name="Default"]/Filesystem" if we're talking about a filesystem path
-$segmentName - the xml node name of each segment of the $path (ie. "Directory" for "<Directory><Directory>...</Directory></Directory>" nodes. 
-               assumes there is only one... which is valid for registry/filesystem paths. this says nothing about the name of the last node in the path (ie. so can select a "file" node).
-$path - the friendly path to be processed into xpath format (ie. "@SYSTEM@\file.dll", assuming the prefix is as above).
+.PARAMETER prefix
+The xappl xpath prefix to be prepended to the generated xpath (ie. "Configuration/Layers/Layer[@name="Default"]/Filesystem" if we're talking about a filesystem path
+
+.PARAMETER segmentName 
+The xml node name of each segment of the $path (ie. "Directory" for "<Directory><Directory>...</Directory></Directory>" nodes. Assumes there is only one... which is valid for registry/filesystem paths. this says nothing about the name of the last node in the path (ie. so can select a "file" node).
+
+.PARAMETER path
+The friendly path to be processed into xpath format (ie. "@SYSTEM@\file.dll", assuming the prefix is as above).
 #>
 function Get-XPath($prefix, $segmentName, $path)
 {
@@ -144,11 +166,15 @@ function Save-XAPPL($xappl, $filepath)
 
 <#
 .Description
-Internal helper fuinction to set the isolation for a directory or file.
--Recurse - Switch for whether to set the isolation on the entire node tree.
--RecurseDepth - Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
+Internal helper function to set the isolation for a directory.
+
+.PARAMETER Recurse
+Switch for whether to set the isolation on the entire node tree.
+
+.PARAMETER RecurseDepth 
+Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
 #>
-function Set-FileSystemIsolationInternal
+function Set-DirectoryIsolationInternal
 {
     [CmdletBinding()]
     param
@@ -164,7 +190,7 @@ function Set-FileSystemIsolationInternal
         [Parameter(Mandatory=$True,Position=5)]
         [switch] $Recurse,
         [Parameter(Mandatory=$True,Position=6)]
-        [int] $RecurseDepth = $([int]::MaxValue)
+        [int] $RecurseDepth
     )
     process
     {
@@ -178,20 +204,32 @@ function Set-FileSystemIsolationInternal
             if($Recurse -And $Depth -lt $RecurseDepth) 
             {
                 $node.ChildNodes | ForEach-Object { 
-                    Set-FileSystemIsolationInternal $Xappl "$Path\$($_.name)" $Isolation ($Depth + 1) $Recurse $RecurseDepth
+                    if($_.LocalName -eq "Directory")
+                    {
+                        Set-DirectoryIsolationInternal $Xappl "$Path\$($_.name)" $Isolation ($Depth + 1) $Recurse $RecurseDepth
+                    }
                 }
             }
+        }
+        else
+        {
+            # create the object
+            Add-Directory $Xappl $Path -Isolation $Isolation
         }
     }
 }
 
 <#
 .Description
-Set the isolation for a directory or file. valid isolation is "Merge", "Full", "WriteCopy".
--Recurse - Switch for whether to set the isolation on the entire node tree.
--RecurseDepth - Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
+Set the isolation for a directory. valid isolation is "Merge", "Full", "WriteCopy".
+
+.PARAMETER Recurse 
+Switch for whether to set the isolation on the entire node tree.
+
+.PARAMETER RecurseDepth 
+Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
 #>
-function Set-FileSystemIsolation
+function Set-DirectoryIsolation
 {
     [CmdletBinding()]
     param
@@ -209,17 +247,24 @@ function Set-FileSystemIsolation
     )
     process
     {
-        Set-FileSystemIsolationInternal $Xappl $Path $Isolation 0 $Recurse $RecurseDepth
+        Set-DirectoryIsolationInternal $Xappl $Path $Isolation 0 $Recurse $RecurseDepth
     }
 }
 
 <#
 .Description
-Internal helper fuinction to set the isolation for a registry key or value.
--Recurse - Switch for whether to set the isolation on the entire node tree.
--RecurseDepth - Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
+Internal helper fuinction to set the isolation for a registry key.
+
+.PARAMETER Recurse 
+Switch for whether to set the isolation on the entire node tree.
+
+.PARAMETER RecurseDepth 
+Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
+
+.PARAMETER IsKeyPath 
+Whether the path points to a key or value.
 #>
-function Set-RegistryIsolationInternal
+function Set-RegistryKeyIsolationInternal
 {
     [CmdletBinding()]
     param
@@ -249,18 +294,32 @@ function Set-RegistryIsolationInternal
             if($Recurse -And $Depth -lt $RecurseDepth) 
             {
                 $node.ChildNodes | ForEach-Object { 
-                    Set-RegistryIsolationInternal $Xappl "$Path\$($_.name)" $Isolation ($Depth + 1) $Recurse $RecurseDepth
+                    if($_.LocalName -eq "Key")
+                    {
+                        Set-RegistryKeyIsolationInternal $Xappl "$Path\$($_.name)" $Isolation ($Depth + 1) $Recurse $RecurseDepth
+                    }
                 }
             }
+        }
+        else
+        {
+            # create the object
+            Add-RegistryKey $Xappl $Path -Isolation $Isolation
         }
     }
 }
 
 <#
 .Description
-Set the isolation for a key or value. valid isolation is "Merge", "Full", "WriteCopy".
+Set the isolation for a key. valid isolation is "Merge", "Full", "WriteCopy".
+
+.PARAMETER Recurse 
+Switch for whether to set the isolation on the entire node tree.
+
+.PARAMETER RecurseDepth 
+Set the depth of recursion (0 == only top level, 1 == top level and children, etc). Default is as deep as it can.
 #>
-function Set-RegistryIsolation
+function Set-RegistryKeyIsolation
 {
     [CmdletBinding()]
     param
@@ -278,7 +337,7 @@ function Set-RegistryIsolation
     )
     process
     {
-        Set-RegistryIsolationInternal $Xappl $Path $Isolation 0 $Recurse $RecurseDepth
+        Set-RegistryKeyIsolationInternal $Xappl $Path $Isolation 0 $Recurse $RecurseDepth
     }
 }
 
@@ -334,7 +393,7 @@ function Remove-Service($xappl, $service)
 
 <#
 .Description
-Sets the value on an existing registry value. Assumes the data type doesn't change.
+Sets the value on an existing registry value. Assumes that the value already exists and that the data type doesn't change.
 #>
 function Set-RegistryValue
 {
@@ -349,13 +408,42 @@ function Set-RegistryValue
         [string] $ValueName,
         [Parameter(Mandatory=$True,Position=4)]
         [AllowEmptyString()]
-        [string] $Value
+        [string] $Value,
+        [Parameter(Mandatory=$False,Position=5)]
+        [string] $ValueType=$StringValueType
     )
     process
     {
-        $propertyXPath = Get-RegistryXPath($KeyPath)
-        $valueXPath = "$propertyXPath/Value[@name=`"$ValueName`"]"
-        $xappl.SelectNodes($valueXPath) | ForEach-Object { $_.value = $Value }
+        # todo: fix for type=StringArray as it uses child nodes
+        if($ValueType -eq $StringArrayValueType)
+        {
+            throw "StringArray value type not implemented"
+        }
+
+        $keyXPath = Get-RegistryXPath($KeyPath)
+        $valueXPath = "$keyXPath/Value[@name=`"$ValueName`"]"
+        $node = $xappl.SelectSingleNode($valueXPath)
+        if($node)
+        {
+            $node.value = $Value
+            $node.type = $ValueType
+        }
+        else
+        {
+            # value node doesn't exist so create it
+            Add-RegistryKey $Xappl $KeyPath | Out-Null
+            $key = $Xappl.SelectSingleNode($keyXPath)
+
+            $node = $Xappl.CreateElement("Value")
+            $key.AppendChild($node) | Out-Null
+            
+            Add-Attribute $Xappl $node "name" $ValueName
+            Add-Attribute $Xappl $node "isolation" $FullIsolation
+            Add-Attribute $Xappl $node "readOnly" $False
+            Add-Attribute $Xappl $node "hide" $False
+            Add-Attribute $Xappl $node "type" $ValueType
+            Add-Attribute $Xappl $node "value" $Value
+        }
     }
 }
 
@@ -365,29 +453,38 @@ Disables auto-start on all services in all layers.
 #>
 function Disable-Services($xappl)
 {
-    $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { $_.autoStart = "false" }
+    $xappl.SelectNodes("Configuration/Layers/Layer/Services/Service") | ForEach-Object { 
+        if($_.start -eq "AutoLoad")
+        {
+            $_.start = "LoadOnDemand" 
+        }
+    }
 }
 
 <#
 .Description
-Creates a node in the xappl.
+Creates a node in the xappl. If the key already exists then no changes will be made.
 
-$xappl - xml object to add the node to.
-$root - the root xml node where the path segments are relative to
-$segments - path segments of the node to create (ie. path split on '\').
-$nodeSelector - a function which returns the xpath based on a path. this is a little wonky as it doesn't take the root as a param so there are big assumptions about how these params are used together.
-$nodeName - the name of the xml node to create.
-$attrs - the element attributes to add to the new node.
+.PARAMETER xappl 
+Xml object to add the node to.
+
+.PARAMETER root 
+The root xml node where the path segments are relative to
+
+.PARAMETER segments 
+Path segments of the node to create (ie. path split on '\').
+
+.PARAMETER nodeSelector 
+A function which returns the xpath based on a path. this is a little wonky as it doesn't take the root as a param so there are big assumptions about how these params are used together.
+
+.PARAMETER nodeName 
+The name of the xml node to create.
+
+.PARAMETER attrs 
+The element attributes to add to the new node.
 #>
 function Add-Node($Xappl, $root, $segments, $nodeSelector, $nodeName, $attrs)
 {
-     function Add-Attribute($element, $name, $value)
-     {
-        $attribute = $Xappl.CreateAttribute($name)
-        $attribute.Value = $value
-        $element.Attributes.Append($attribute) | Out-Null
-     }
-     
      $result = $False
      $parent = $root
      $currentPath = ""
@@ -402,10 +499,10 @@ function Add-Node($Xappl, $root, $segments, $nodeSelector, $nodeName, $attrs)
             $node = $Xappl.CreateElement($nodeName)
             $parent.AppendChild($node) | Out-Null
             
-            Add-Attribute $node 'name' $segment       
+            Add-Attribute $Xappl $node 'name' $segment       
             foreach($entry in $attrs.GetEnumerator())
             {
-                Add-Attribute $node $entry.key $entry.value   
+                Add-Attribute $Xappl $node $entry.key $entry.value   
             }
 
             $parent = $node
@@ -421,7 +518,8 @@ function Add-Node($Xappl, $root, $segments, $nodeSelector, $nodeName, $attrs)
 
 <#
 .Description
-Add a registry key with the specified attributes.
+Add a registry key with the specified attributes. If the key already exists then no changes will be made.
+Returns whether the key was added.
 #>
 function Add-RegistryKey
 {
@@ -459,7 +557,8 @@ function Add-RegistryKey
 
 <#
 .Description
-Add a directory with the specified attributes.
+Add a directory with the specified attributes. If the directory already exists then no changes will be made.
+Returns whether the directory was added.
 #>
 function Add-Directory
 {
@@ -468,7 +567,7 @@ function Add-Directory
     (
         [Parameter(Mandatory=$True,Position=1)]
         [XML] $Xappl,
-        [Parameter(Mandatory=$True)]
+        [Parameter(Mandatory=$True,Position=2)]
         [string] $Path,
         [Parameter(Mandatory=$False)]
         [string] $Isolation = $FullIsolation,
@@ -501,7 +600,7 @@ Updates a directory or file with the specified attributes. Passing empty value f
 
 NOTE: NoSync attribute only valid on a Directory
 #>
-function Update-FileSystemObject
+function Set-FileSystemObject
 {
     [CmdletBinding()]
     param
@@ -539,7 +638,7 @@ Updates a registry key or value with the specified attributes. Passing empty val
 
 NOTE: NoSync attribute only valid on a key
 #>
-function Update-RegistryObject
+function Set-RegistryObject
 {
     [CmdletBinding()]
     param
@@ -589,14 +688,7 @@ function Set-StandardMetadata
     )
     process
     {
-        function Add-Attribute($element, $name, $value)
-        {
-            $attribute = $Xappl.CreateAttribute($name)
-            $attribute.Value = $value
-            $element.Attributes.Append($attribute) | Out-Null
-        }
-         
-        $meta = $Xappl.Configuration.StandardMetadata
+        $meta = $Xappl.SelectSingleNode("/Configuration/StandardMetadata");
         $xpath = "*[$(EqualsIgnoreCase `"@property`" `"$PropertyName`")]"
         $prop = $meta.SelectSingleNode($xpath)
         if($prop)
@@ -608,8 +700,8 @@ function Set-StandardMetadata
             $prop = $Xappl.CreateElement("StandardMetadataItem")
             $meta.AppendChild($prop) | Out-Null
             
-            Add-Attribute $prop 'property' $PropertyName   
-            Add-Attribute $prop 'value' $PropertyValue
+            Add-Attribute $Xappl $prop 'property' $PropertyName   
+            Add-Attribute $Xappl $prop 'value' $PropertyValue
         }
     }
 }
@@ -677,20 +769,13 @@ function Add-File
 
         $fileElement = $Xappl.CreateElement('File')
         $parentDir.AppendChild($fileElement) | Out-Null
-
-        function Add-Attribute($name, $value)
-        {
-            $attribute = $Xappl.CreateAttribute($name)
-            $attribute.Value = $value
-            $fileElement.Attributes.Append($attribute) | Out-Null
-        }
-
-        Add-Attribute 'name' $fileName
-        Add-Attribute 'isolation' $Isolation
-        Add-Attribute 'readOnly' $ReadOnly
-        Add-Attribute 'hide' $Hide
-        Add-Attribute 'upgradeable' $Upgradeable
-        Add-Attribute 'source' $Source
+        
+        Add-Attribute $Xappl $fileElement 'name' $fileName
+        Add-Attribute $Xappl $fileElement 'isolation' $Isolation
+        Add-Attribute $Xappl $fileElement 'readOnly' $ReadOnly
+        Add-Attribute $Xappl $fileElement 'hide' $Hide
+        Add-Attribute $Xappl $fileElement 'upgradeable' $Upgradeable
+        Add-Attribute $Xappl $fileElement 'source' $Source
 
         return $True
     }
@@ -724,27 +809,21 @@ function Add-StartupFile
 
         $startupFile = $Xappl.CreateElement('StartupFile')
         $startupFileGroup.AppendChild($startupFile) | Out-Null
-
-        function Add-Attribute($name, $value) {
-            $attribute = $Xappl.CreateAttribute($name)
-            $attribute.Value = $value
-            $startupFile.Attributes.Append($attribute) | Out-Null
-        }
-
-        Add-Attribute 'node' $File
-        Add-Attribute 'tag' $Name
+        
+        Add-Attribute $Xappl $startupFile 'node' $File
+        Add-Attribute $Xappl $startupFile 'tag' $Name
 
         if($CommandLine)
         {
-            Add-Attribute 'commandLine' $CommandLine
+            Add-Attribute $Xappl $startupFile 'commandLine' $CommandLine
         }
 
         if($AutoStart)
         {
-            Add-Attribute 'default' 'True'
+            Add-Attribute $Xappl $startupFile 'default' 'True'
         }
 
-        Add-Attribute 'architecture' $Architecture
+        Add-Attribute $Xappl $startupFile 'architecture' $Architecture
     }
 }
 
@@ -999,19 +1078,12 @@ function Set-EnvironmentVariable
         } else {
             $environmentVariable = $Xappl.CreateElement('VariableEx')
             $environmentVariablesRootNode.AppendChild($environmentVariable) | Out-Null
-
-            function Add-Attribute($name, $value)
-            {
-                $attribute = $Xappl.CreateAttribute($name)
-                $attribute.Value = $value
-                $environmentVariable.Attributes.Append($attribute) | Out-Null
-            }
-
-            Add-Attribute 'name' $Name
-            Add-Attribute 'isolation' 'Inherit'
-            Add-Attribute 'value' $Value
-            Add-Attribute 'mergeMode' $MergeNode
-            Add-Attribute 'mergeString' $MergeString
+            
+            Add-Attribute $Xappl $environmentVariable 'name' $Name
+            Add-Attribute $Xappl $environmentVariable 'isolation' 'Inherit'
+            Add-Attribute $Xappl $environmentVariable 'value' $Value
+            Add-Attribute $Xappl $environmentVariable 'mergeMode' $MergeNode
+            Add-Attribute $Xappl $environmentVariable 'mergeString' $MergeString
         }
     }
 }
@@ -1091,13 +1163,20 @@ Export-ModuleMember -Function 'Remove-Service'
 Export-ModuleMember -Function 'Save-XAPPL'
 Export-ModuleMember -Function 'Set-DefaultProgId'
 Export-ModuleMember -Function 'Set-EnvironmentVariable'
-Export-ModuleMember -Function 'Set-FileSystemIsolation'
-Export-ModuleMember -Function 'Set-RegistryIsolation'
+Export-ModuleMember -Function 'Set-DirectoryIsolation'
+Export-ModuleMember -Function 'Set-RegistryKeyIsolation'
 Export-ModuleMember -Function 'Set-RegistryValue'
-Export-ModuleMember -Function 'Update-FileSystemObject'
-Export-ModuleMember -Function 'Update-RegistryObject'
+Export-ModuleMember -Function 'Set-FileSystemObject'
+Export-ModuleMember -Function 'Set-RegistryObject'
 Export-ModuleMember -Function 'Set-StandardMetadata'
 
 Export-ModuleMember -Variable FullIsolation
 Export-ModuleMember -Variable WriteCopyIsolation
 Export-ModuleMember -Variable MergeIsolation
+
+Export-ModuleMember -Variable StringValueType
+Export-ModuleMember -Variable StringArrayValueType
+Export-ModuleMember -Variable ExpandStringValueType
+Export-ModuleMember -Variable DWORDValueType
+Export-ModuleMember -Variable QWORDValueType
+Export-ModuleMember -Variable BinaryValueType
