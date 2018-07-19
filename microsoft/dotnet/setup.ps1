@@ -8,10 +8,14 @@
 Param(
 
     [Parameter(HelpMessage="The version of the .net framework to download. Default is latest version.")]
-    [string]$version = "4.7.2" # todo: default should discover latest version
+    [string]$version
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+$page = Invoke-WebRequest -Uri https://www.microsoft.com/net/download/windows
+$page -match "(?<=.NET Framework )[0-9]\.[0-9]\.[0-9]" | Out-Null
+$version = $Matches[0]
 
 # the download link was found here: https://www.microsoft.com/net/download/all
 $downloadKey = $version.Replace(".", "")
