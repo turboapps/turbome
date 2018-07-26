@@ -291,7 +291,7 @@ function Import-SVM {
     & turbo import svm "$workspacePath\share\output\image.svm" -n=microsoft/dotnet:$version
 }
 
-Import-Module D:\Projekty\GitRepositories\turbome\tools\powershell\Turbo
+Import-Module Turbo
 
 Clean-Workspace
 Sleep -s 5
