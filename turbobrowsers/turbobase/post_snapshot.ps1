@@ -14,22 +14,22 @@ Remove-Layer $xappl 'Xenocode'
 
 Remove-FileSystemDirectoryItems $xappl '@SYSTEM@'
 
-Remove-RegistryItems $xappl '@HKLM@\SYSTEM'
-Remove-RegistryItems $xappl '@HKCU@\SOFTWARE\Microsoft'
-Remove-RegistryItems $xappl '@HKLM@\SOFTWARE\Microsoft\TelemetryClient'
+Remove-RegistryKeyItems $xappl '@HKLM@\SYSTEM'
+Remove-RegistryKeyItems $xappl '@HKCU@\SOFTWARE\Microsoft'
+Remove-RegistryKeyItems $xappl '@HKLM@\SOFTWARE\Microsoft\TelemetryClient'
 
-Set-RegistryIsolation $xappl "@HKCU@\SOFTWARE\Classes" $FullIsolation
-Set-RegistryIsolation $xappl "@HKCU@\SOFTWARE\Clients" $FullIsolation
-Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE\Classes" $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Microsoft\Windows' $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKCU@\SOFTWARE\Classes" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKCU@\SOFTWARE\Clients" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE\Classes" $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Microsoft\Windows' $FullIsolation
 @("", "\Wow6432Node") | ForEach-Object {
-    Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE$_\Microsoft" $FullIsolation
-    Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE$_\Mozilla" $FullIsolation
-    Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE$_\mozilla.org" $FullIsolation
-    Set-RegistryIsolation $xappl "@HKLM@\SOFTWARE$_\RegisteredApplications" $FullIsolation
+    Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE$_\Microsoft" $FullIsolation
+    Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE$_\Mozilla" $FullIsolation
+    Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE$_\mozilla.org" $FullIsolation
+    Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE$_\RegisteredApplications" $FullIsolation
 }
 
-Set-RegistryValue $xappl -Path '@HKLM@\SOFTWARE\Wow6432Node\Mozilla\Firefox\TaskBarIDs' -Key '@PROGRAMFILESX86@\Mozilla Firefox' -Value ''
+Set-RegistryValue $xappl -KeyPath '@HKLM@\SOFTWARE\Wow6432Node\Mozilla\Firefox\TaskBarIDs' -ValueName '@PROGRAMFILESX86@\Mozilla Firefox' -Value ''
 
 Add-ObjectMap $xappl -Name 'Window://firefoxMessageWindow:0'
 

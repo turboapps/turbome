@@ -15,11 +15,11 @@ Import-Module Turbo
 $XappPath = '.\output\Snapshot.xappl'
 $xappl = Read-XAPPL $XappPath
 
-Set-FileSystemIsolation $xappl '@PROGRAMFILESX86@\Mozilla Firefox' $FullIsolation
+Set-DirectoryIsolation $xappl '@PROGRAMFILESX86@\Mozilla Firefox' $FullIsolation
 
-Set-RegistryIsolation $xappl '@HKCU@\Software\Microsoft' $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Microsoft' $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Microsoft' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKCU@\Software\Microsoft' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Microsoft' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Microsoft' $FullIsolation
 
 #This key is removed due to illegal character it brings to xappl. This line may be removed if xappl is moved from XML 1.0 to 1.1 or higher.
 Remove-RegistryItems $xappl '@HKLM@\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products'

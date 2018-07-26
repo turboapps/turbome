@@ -18,8 +18,8 @@ $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
 $virtualizationSettings.isolateWindowClasses = [string]$true
 $virtualizationSettings.launchChildProcsAsUser = [string]$true
 
-Set-RegistryIsolation $xappl "@HKLM@\System" $FullIsolation
-Set-RegistryIsolation $xappl "@HKLM@\Software" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\System" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\Software" $FullIsolation
 
 Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"

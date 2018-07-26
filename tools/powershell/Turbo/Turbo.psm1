@@ -6,6 +6,7 @@
 $cmdlets = @(
     "$PSScriptRoot\Close-MainWindow.ps1",
     "$PSScriptRoot\Get-LatestChocoVersion.ps1",
+    "$PSScriptRoot\Get-LatestHubVersion.ps1",
     "$PSScriptRoot\Get-FileVersion.ps1",
     "$PSScriptRoot\Get-NextTag.ps1",
     "$PSScriptRoot\Install-FirefoxPlugin.ps1",

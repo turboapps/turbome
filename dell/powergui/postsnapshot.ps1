@@ -15,11 +15,11 @@ $XappPath = '.\output\Snapshot.xappl'
 $xappl = Read-XAPPL $XappPath
 
 
-Set-RegistryIsolation $xappl '@HKCU@\Software\Microsoft' $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Microsoft' $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Microsoft' $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Quest Software' $FullIsolation
-Set-RegistryIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Quest Software' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKCU@\Software\Microsoft' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Microsoft' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Microsoft' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Quest Software' $FullIsolation
+Set-RegistryKeyIsolation $xappl '@HKLM@\SOFTWARE\Wow6432Node\Quest Software' $FullIsolation
 
 Remove-FileSystemItems $xappl '@APPDATACOMMON@\chocolatey'
 Remove-FileSystemItems $xappl '@APPDATALOCAL@\NuGet'

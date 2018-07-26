@@ -1,0 +1,1 @@
+To use these modules, update your "PSModulePath" environment variable to point to the directory (ie. "set PSModulePath=c:\turboapps\turbome\tools\powershell")
