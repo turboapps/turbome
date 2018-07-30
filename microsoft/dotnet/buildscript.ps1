@@ -79,7 +79,8 @@ function Download-Installer($version) {
 
     if(Get-LatestHubVersion "microsoft/dotnet" $version)
     {
-        throw "Version $version already on the hub."
+        Write-Host "Version $version already on the hub."
+        Stop-JenkinsJob
     }
 
     # the download link was found here: https://www.microsoft.com/net/download/all
@@ -329,6 +330,7 @@ while(-Not ($vmstate -match "powered off"))
 }
 
 Sleep -s 5
+
 Restore-VirtualMachine
 
 Invoke-PostSnapshotScript
