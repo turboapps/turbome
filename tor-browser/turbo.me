@@ -3,6 +3,14 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+
+###################################
+# Set Requirements
+###################################
+
+# Run TurboScript in elevated command prompt
+requires privilege:admin
+
 ###################################
 # Set metadata
 ###################################
@@ -63,7 +71,10 @@ batch cmd
 # Clean up
 ###################################
 
-cmd powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+batch cmd
+  powershell -NoProfile -ExecutionPolicy Unrestricted -Command "Import-Module Turbo; Remove-BuildTools"
+  reg delete HKLM\Software\Microsoft\Windows\CurrentVersion\SideBySide /v PublisherPolicyChangeTime /f
+  reg delete HKLM\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\SideBySide /v PublisherPolicyChangeTime /f
 
 workdir @SYSDRIVE@\
 cmd rmdir @SYSDRIVE@\Workspace /s /q
