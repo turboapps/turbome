@@ -29,10 +29,16 @@ cmd wget --no-check-certificate --no-verbose -O atom.exe https://atom.io/downloa
 
 # Install
 batch cmd
-  start /WAIT atom.exe
-# Sleep for 20 seconds
-  ping localhost -n 21 >NUL
-  taskkill /F /T /im atom.exe
+  echo Start-Process atom.exe >> script.ps1
+  echo $proc = Get-Process -Name atom >> script.ps1
+  echo $proc.WaitForExit() >> script.ps1
+  echo Sleep -s 20 >> script.ps1
+  echo $proc = Get-Process -Name atom >> script.ps1
+  echo Stop-Process -InputObject $proc >> script.ps1
+  echo $proc = Get-Process -Name node >> script.ps1
+  echo Stop-Process -InputObject $proc >> script.ps1
+# Node processes were left and kept the job hanging
+cmd powershell -File script.ps1
 
 #Config
 cmd del %userprofile%\.atom\config.cson
