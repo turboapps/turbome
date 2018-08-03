@@ -66,7 +66,8 @@ function FirstLaunch-Office {
 function Get-OfficeVersion {
     $officeExePath = Find-OfficeExe
     $officeExe = Get-Item -path $officeExePath
-    $officeExe.VersionInfo.FileVersion | Out-File c:\share\output\version.txt
+    $version = $officeExe.VersionInfo.FileVersion
+    [System.IO.File]::WriteAllLines("c:\share\output\version.txt", $version)
 }
 
 function Enable-OfficeUpdatesInWinUpdate {
