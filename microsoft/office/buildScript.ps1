@@ -67,7 +67,7 @@ function Get-OfficeVersion {
     $officeExePath = Find-OfficeExe
     $officeExe = Get-Item -path $officeExePath
     $version = $officeExe.VersionInfo.FileVersion
-    [System.IO.File]::WriteAllLines("c:\share\output\version.txt", $version)
+    [System.IO.File]::WriteAllLines("c:\share\output\version.txt", "2016.$version")
 }
 
 function Enable-OfficeUpdatesInWinUpdate {
