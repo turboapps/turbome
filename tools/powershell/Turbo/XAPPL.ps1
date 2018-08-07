@@ -41,7 +41,56 @@ function EqualsIgnoreCase([string] $attribute, [string] $value)
 
 <#
 .Description
+Creates a case insensitive XPath attribute wildcard match. Supports one wildcard char instance, "*".
+#>
+function MatchIgnoreCase([string] $attribute, [string] $pattern)
+{
+    $patternSplit = $pattern.split("*")
+    if($patternSplit.length -eq 1)
+    {
+        # not a pattern
+        return EqualsIgnoreCase $attribute $pattern
+    }
+    elseif($patternSplit.length -ne 2)
+    {
+        # todo: implement multiple wildcard support... though not sure how one would do that in xpath 1.0
+        Write-Error "Only one wildcard character '*' is allowed in a pattern"
+    }
+
+    $preMatch = $patternSplit[0]
+    $postMatch = $patternSplit[1]
+         
+    $xpath = ""               
+    $havePrefixMatch = ($preMatch.length -gt 0)
+    if($havePrefixMatch)
+    {
+        # reminder: string indexes start at 1 for xpath substring
+        $prePatchUpper = $preMatch.ToUpper()
+        $prePatchLower = $preMatch.ToLower()        
+        $xpath += "translate(substring(@name, 1, $($preMatch.length)),""$prePatchUpper"",""$prePatchLower"")=""$prePatchLower"""
+    }
+
+    if($postMatch.length -gt 0)
+    {
+        if($havePrefixMatch)
+        {
+            $xpath += " and "
+        }
+                    
+        # reminder: string indexes start at 1 for xpath substring
+        $postMatchUpper = $postMatch.ToUpper()
+        $postMatchLower = $postMatch.ToLower()       
+        $xpath += "translate(substring(@name, string-length(@name) - $($postMatch.length) + 1),""$postMatchUpper"",""$postMatchLower"")=""$postMatchLower"""
+    }
+
+    return $xpath
+}
+
+<#
+.Description
 Creates a case insensitive full xappl xpath for the given path.
+
+A path segment can support a single wildcard character ("*") so "@SYSTEM@\*\d3*.dll.mui" would match "@SYSTEM@\en-us\d3d1.dll.mui" but not "@SYSTEM@\en-us\foobar\d3d1.dll.mui"
 
 .PARAMETER prefix
 The xappl xpath prefix to be prepended to the generated xpath (ie. "Configuration/Layers/Layer[@name="Default"]/Filesystem" if we're talking about a filesystem path
@@ -53,19 +102,36 @@ The xml node name of each segment of the $path (ie. "Directory" for "<Directory>
 The friendly path to be processed into xpath format (ie. "@SYSTEM@\file.dll", assuming the prefix is as above).
 #>
 function Get-XPath($prefix, $segmentName, $path)
-{
+{    
     $xpath = $prefix
     $segments = $path.Split("\")
 
-    $lastIndex = $segments.length - 1
-    for($index = 0; $index -lt $lastIndex; $index += 1)
+    for($index = 0; $index -lt $segments.length; $index += 1)
     {
-        $xpath += "/$segmentName[$(EqualsIgnoreCase "@name" "$($segments[$index])")]"
-    }
-    
-    if($lastIndex -ge 0)
-    {
-        $xpath += "/*[$(EqualsIgnoreCase "@name" "$($segments[$index])")]"
+        if($index -eq $segments.length - 1)
+        {
+            # the last segment can be any type that matches the name
+            $segmentName = "*"
+        }
+
+        $segment = $segments[$index]
+        if($segment.contains("*"))        
+        {
+            # handle wildcard in path segment
+            if($segment.length -eq 1)
+            {
+                # only wildcard, so no constraints
+                $xpath += "/$segmentName"
+            }
+            else
+            {
+                $xpath += "/$segmentName[$(MatchIgnoreCase "@name" $segment)]"
+            }
+        }
+        else
+        {
+            $xpath += "/$segmentName[$(EqualsIgnoreCase "@name" $segment)]"
+        }
     }
 
     return $xpath
@@ -393,7 +459,7 @@ function Remove-Service($xappl, $service)
 
 <#
 .Description
-Sets the value on an existing registry value. Assumes that the value already exists and that the data type doesn't change.
+Sets or adds the registry value to th specified key. 
 #>
 function Set-RegistryValue
 {
@@ -700,6 +766,7 @@ function Set-StandardMetadata
         }
     }
 }
+
 <#
 .Description
 Add a file with the specified attributes.
@@ -787,14 +854,14 @@ function Add-StartupFile
     (
         [Parameter(Mandatory=$True,Position=1)]
         [XML] $Xappl,
-        [Parameter(Mandatory=$True)]
+        [Parameter(Mandatory=$True,Position=2)]
         [string] $File,
         [Parameter(Mandatory=$False)]
         [string] $CommandLine = $null,
         [Parameter(Mandatory=$False)]
         [string] $Architecture = "AnyCpu",
-        [Parameter(Mandatory=$False)]
-        [string] $Name = $null,
+        [Parameter(Mandatory=$False,HelpMessage="The startup file trigger")]
+        [string] $Name = $null, # todo: bad name, fix this and all scripts which reference this.
         [Parameter(Mandatory=$False)]
         [switch] $Autostart = $False
     )
@@ -824,6 +891,15 @@ function Add-StartupFile
 
 <#
 .Description
+Removes all startup files
+#>
+function Remove-StartupFiles($xappl)
+{
+    $xappl.SelectNodes('Configuration/StartupFiles/*') | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
+}
+
+<#
+.Description
 Add an object map entry to DEFAULT layer with the specified attributes.
 #>
 function Add-ObjectMap
@@ -846,15 +922,6 @@ function Add-ObjectMap
         $valueAttribute.Value = $Name
         $objectMap.Attributes.Append($valueAttribute) | Out-Null
     }
-}
-
-<#
-.Description
-Removes all startup files
-#>
-function Remove-StartupFiles($xappl)
-{
-    $xappl.SelectNodes('Configuration/StartupFiles/*') | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
 }
 
 <#
@@ -1133,6 +1200,16 @@ function Add-Route
     }
 }
 
+<#
+.Description
+Sets the VM setting to the specified value
+#>
+function Set-VirtualizationSetting($xappl, $property, $value)
+{
+    $settings = $xappl.SelectSingleNode("Configuration/VirtualizationSettings")
+    $settings.Attributes[$property].value = $value
+}
+
 #
 # specify exports
 #
@@ -1164,6 +1241,7 @@ Export-ModuleMember -Function 'Set-RegistryValue'
 Export-ModuleMember -Function 'Set-FileSystemObject'
 Export-ModuleMember -Function 'Set-RegistryObject'
 Export-ModuleMember -Function 'Set-StandardMetadata'
+Export-ModuleMember -Function 'Set-VirtualizationSetting'
 
 Export-ModuleMember -Variable FullIsolation
 Export-ModuleMember -Variable WriteCopyIsolation
