@@ -16,13 +16,15 @@ function Get-LatestHubVersion
     )
     process
     {
-        $hubResponse = turbo releases $imageToCheck
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $hubResponse = Invoke-WebRequest -Uri "https://turbo.net/io/_hub/repo/$imageToCheck"
+        $tags = $hubResponse | ConvertFrom-Json | Select -expand tags
 
         if($versionToCheck) {
-            return ([string]$hubResponse) -match $versionToCheck
+            return ([string]$tags[0]) -match $versionToCheck
         }
         else {
-            return $hubResponse[2]
+            return $tags[0]
         }
     }
 }
