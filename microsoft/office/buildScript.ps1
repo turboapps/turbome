@@ -33,14 +33,17 @@ function Find-OfficeExe {
     if (Test-Path "$officeExeDirectory\EXCEL.EXE")
     {
         $exeToLaunch = "EXCEL"
+        [System.IO.File]::WriteAllLines("c:\share\output\image_name.txt", "excel")
     }
     if (Test-Path "$officeExeDirectory\POWERPNT.EXE")
     {
         $exeToLaunch = "POWERPNT"
+        [System.IO.File]::WriteAllLines("c:\share\output\image_name.txt", "powerpoint")
     }
     if (Test-Path "$officeExeDirectory\WINWORD.EXE")
     {
         $exeToLaunch = "WINWORD"
+        [System.IO.File]::WriteAllLines("c:\share\output\image_name.txt", "word")
     }
 
     return "$officeExeDirectory\$exeToLaunch.EXE"

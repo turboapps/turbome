@@ -91,6 +91,7 @@ function Prepare-BatFile {
     copy /b/v/y C:\share\output\logStd.txt X:\output\logStd.txt
     copy /b/v/y C:\share\output\logErr.txt X:\output\logErr.txt
     copy /b/v/y C:\share\output\version.txt X:\output\version.txt
+    copy /b/v/y C:\share\output\image_name.txt X:\output\image_name.txt
     goto loop"
     $installScript = "net use x: \\vboxsrv\turboBuild
     xcopy X:\ C:\share /se /I /y
@@ -167,6 +168,13 @@ Write-Host "Wait for the build to finish"
 while (!(Test-Path "$workspacePath\share\output\version.txt"))
 {
     Sleep 30
+}
+
+$version = Get-Content "$workspacePath\share\output\version.txt"
+$imageName = Get-Content "$workspacePath\share\output\image_name.txt"
+if(Get-LatestHubVersion "microsoft/$image_name" $version)
+{
+    Stop-JenkinsJob
 }
 
 Write-Host "Running export script from $workspacePath\exportScript.bat on $machine"
