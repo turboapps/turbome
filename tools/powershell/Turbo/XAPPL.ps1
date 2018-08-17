@@ -769,6 +769,30 @@ function Set-StandardMetadata
 
 <#
 .Description
+Sets working directory property.
+#>
+function Set-WorkingDirectory
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$True,Position=1)]
+        [XML] $Xappl,
+        [Parameter(Mandatory=$True,Position=2)]
+        [string] $Option,
+        [Parameter(Mandatory=$True,Position=3)]
+        [string] $SpecificDirectory
+    )
+    process
+    {
+        $meta = $Xappl.SelectSingleNode("/Configuration/WorkingDirectory");
+        $meta.option = $Option
+        $meta.specifiedDirectory = $SpecificDirectory
+    }
+}
+
+<#
+.Description
 Add a file with the specified attributes.
 #>
 function Add-File
@@ -1241,6 +1265,7 @@ Export-ModuleMember -Function 'Set-RegistryValue'
 Export-ModuleMember -Function 'Set-FileSystemObject'
 Export-ModuleMember -Function 'Set-RegistryObject'
 Export-ModuleMember -Function 'Set-StandardMetadata'
+Export-ModuleMember -Function 'Set-WorkingDirectory'
 Export-ModuleMember -Function 'Set-VirtualizationSetting'
 
 Export-ModuleMember -Variable FullIsolation

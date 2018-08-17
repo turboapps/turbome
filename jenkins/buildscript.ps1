@@ -101,8 +101,15 @@ function Configure-VirtualMachine {
 
 function Download-Installer {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $link = "http://mirrors.jenkins-ci.org/windows-stable/latest"
+    $link = "http://mirrors.jenkins-ci.org/windows/latest"
     (New-Object System.Net.WebClient).DownloadFile($link, "$workspacePath\share\install\install.zip")
+}
+
+function Get-JenkinsVersion {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $web = Invoke-WebRequest -Uri https://jenkins.io/changelog/
+    $web -match "(?<=new in )[0-9]\.[0-9]+" | Out-Null
+    return $Matches[0]
 }
 
 function Extract-Installer {
@@ -130,12 +137,31 @@ function Prepare-BatFile {
     echo Install plugins
     xcopy /sy /e /I X:\install\plugins ""%PROGRAMFILES%\jenkins\plugins\""
     sc stop jenkins
-    ""%PROGRAMFILES%\jenkins\jenkins.exe"" version > X:\output\version.txt
     echo Capturing after snapshot
     X:\tools\XStudio.exe /after /beforepath X:\output\snapshot /o X:\output
     shutdown -s -f"
 
     [System.IO.File]::WriteAllLines("$workspacePath\script.bat", $batScript)
+}
+
+function Configure-Image {
+    $xappl = Read-XAPPL "$workspacePath\share\output\Snapshot.xappl"
+    Set-StandardMetadata $xappl "Title" "Jenkins"
+    Set-StandardMetadata $xappl "Publisher" "Jenkins"
+    Set-StandardMetadata $xappl "Description" "Jenkins is an open source automation server with an unparalleled plugin ecosystem to support practically every tool as part of your delivery pipelines."
+    Set-StandardMetadata $xappl "Website" "http://jenkins.io"
+    Set-StandardMetadata $xappl "Version" "$version"
+
+    Remove-StartupFiles $xappl
+    Add-StartupFile $xappl "cmd" -CommandLine "/c start http://localhost:8080" -Architecture "AnyCpu" -Name "configure"
+    Add-StartupFile $xappl "cmd" -CommandLine "/k echo Starting Jenkins (15 seconds)... &amp; ping localhost -n 15 &gt; nul &amp; start http://localhost:8080 &amp; echo Visit http://localhost:8080 to configure Jenkins (default user is admin : password)" -Architecture "AnyCpu" -Name "startconfigure"
+    Add-StartupFile $xappl "cmd" -CommandLine "/k echo Visit http://localhost:8080 to configure Jenkins (default user is admin : password)" -Architecture "AnyCpu" -Name "start"
+
+    Set-EnvironmentVariable $xappl "JENKINS_HOME" "@PROGRAMFILESX86@\Jenkins\" 'Replace' ""
+
+    Set-WorkingDirectory $xappl "SpecificDirectory" "@PROGRAMFILESX86@\Jenkins"
+
+    Save-XAPPL $xappl "$workspacePath\share\output\Snapshot.xappl"
 }
 
 function Build-Image {
@@ -148,6 +174,15 @@ function Import-SVM {
 
 Import-Module Turbo
 $imageName = "jenkinsci/jenkins"
+
+$version = Get-JenkinsVersion
+Write-Host "Built version is: $version. Checking the lastest version available on the hub."
+
+if(Get-LatestHubVersion $imageName $version)
+{
+    Write-Host "Version $version already on the hub."
+    Stop-JenkinsJob
+}
 
 Clean-Workspace
 Sleep -s 5
@@ -194,16 +229,7 @@ Sleep -s 5
 
 Restore-VirtualMachine
 
-$version = Get-Content "$workspacePath\share\output\version.txt"
-$version = $version -replace '[a-zA-Z ]',''
-
-Write-Host "Built version is: $version. Checking the lastest version available on the hub."
-
-if(Get-LatestHubVersion $imageName $version)
-{
-    Write-Host "Version $version already on the hub."
-    Stop-JenkinsJob
-}
+Configure-Image
 
 Build-Image
 
