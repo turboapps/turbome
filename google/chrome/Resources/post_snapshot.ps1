@@ -23,6 +23,9 @@ $xapplText | Out-File $XappPath -Encoding utf8
 
 $xappl = Read-XAPPL $XappPath
 
+# Adds this directory to have it noSync set to False - default option
+Add-Directory $xappl "@APPDATALOCAL@\Googiel\Chrome"
+
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
 $virtualizationSettings.isolateWindowClasses = [string]$true
 $virtualizationSettings.launchChildProcsAsUser = [string]$true
