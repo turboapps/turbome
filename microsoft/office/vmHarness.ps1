@@ -172,9 +172,13 @@ while (!(Test-Path "$workspacePath\share\output\version.txt"))
 
 $version = Get-Content "$workspacePath\share\output\version.txt"
 $imageName = Get-Content "$workspacePath\share\output\image_name.txt"
-if(Get-LatestHubVersion "microsoft/$image_name" $version)
+if(Get-LatestHubVersion "microsoft/$imageName" $version)
 {
+    Write-Host "Image microsoft/$imageName:$version is available on the hub, aborting the build."
     Stop-JenkinsJob
+} else 
+{
+    Write-Host "Image microsoft/$imageName:$version is not available on the hub, continuing  the build."
 }
 
 Write-Host "Running export script from $workspacePath\exportScript.bat on $machine"
