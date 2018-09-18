@@ -47,6 +47,7 @@ Remove-FileSystemDirectoryItems $xappl "${env:PROGRAMFILES}\Google\Chrome\Applic
 
 
 Set-RegistryKeyIsolation $xappl "@HKCU@\Software\Google" $FullIsolation
+Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE\Wow6432Node" $MergeIsolation
 Set-RegistryKeyIsolation $xappl "@HKLM@\SOFTWARE\Wow6432Node\Google" $FullIsolation
 
 Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft"
