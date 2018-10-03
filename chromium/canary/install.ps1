@@ -32,7 +32,7 @@ Import-Module ".\Turbo"
 # Perform the first launch
 try
     {
-        $chromeExecutable = "C:\Chromium\chrome-win32\chrome.exe"
+        $chromeExecutable = "C:\Chromium\chrome-win\chrome.exe"
         Start-Process $chromeExecutable
 
         $counter = 0
