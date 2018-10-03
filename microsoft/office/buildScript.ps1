@@ -56,9 +56,7 @@ function FirstLaunch-Office {
     [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
     Sleep -s 30
     Send-Keystroke " "
-    Sleep -Milliseconds 100
-    Send-Keystroke "{DOWN}"
-    Sleep -Milliseconds 100
+    Sleep -Milliseconds 500
     Send-Keystroke "{ENTER}"
     Sleep -Milliseconds 500
 
@@ -158,9 +156,9 @@ Capture-Before
 
 Install-Office
 
-FirstLaunch-Office
-
 Update-Office
+
+FirstLaunch-Office
 
 Capture-After
 
