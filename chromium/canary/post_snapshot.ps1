@@ -26,6 +26,6 @@ Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Wow6432Node\Microsoft"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft"
 
 Remove-StartupFiles $xappl
-Add-StartupFile $xappl -File "@SYSDRIVE@\Chromium\chrome-win32\chrome.exe" -AutoStart
+Add-StartupFile $xappl -File "@SYSDRIVE@\Chromium\chrome-win\chrome.exe" -AutoStart
 
 Save-XAPPL $xappl $XappPath
