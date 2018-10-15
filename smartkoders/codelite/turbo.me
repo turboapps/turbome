@@ -1,0 +1,70 @@
+#
+# Code Lite turbo.me file
+# https://github.com/turboapps/turbome/tree/master/smartkoders/codelite
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Code Lite"
+meta namespace="smartkoders"
+meta name="codelite"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget,7-zip
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+# Download and Install
+batch 
+  wget.exe --no-check-certificate -O codelite.7z https://downloads.codelite.org/downloads.php?windows_weekly_64
+  7z x codelite.7z -oC:\workspace\installer
+  cd C:\workspace\installer
+  dir /b > tmpfile
+  set /p installer=< tmpfile
+  del tmpfile
+  %installer% /SILENT /DIR="C:\CodeLite"
+
+  
+###################################
+# Get version
+###################################
+batch cmd
+  echo $content = Invoke-WebRequest -Uri https://downloads.codelite.org/ >> getVersion.ps1
+  echo $regex = '(?^<=CodeLite )[0-9]*\.[0-9]*\.[0-9]*' >> getVersion.ps1
+  echo $content -match $regex ^| Out-Null >> getVersion.ps1
+  echo $Matches[0] >> getVersion.ps1
+cmd powershell -File getVersion.ps1
+
+var tag=last
+meta tag=tag
+
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @SYSDRIVE@\wget /s /q
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("@SYSDRIVE@\Codelite\codelite.exe")
