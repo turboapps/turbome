@@ -26,30 +26,27 @@ workdir @SYSDRIVE@\Workspace
 
 # Fetch version
 batch
- echo import sys > getRelease.py
- echo import requests >> getRelease.py
- echo import re >> getRelease.py
- echo host = 'http://www.eclipse.org/downloads/packages/' >> getRelease.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host, headers=headers, timeout=2000) >> getRelease.py
- echo filename, release, codename = re.findall("a href='.*?(eclipse-java-(\w+)-(\w+)-win32\.zip)'", r.text)[0] >> getRelease.py
- echo r = requests.get('https://projects.eclipse.org/releases/' + release, headers=headers, timeout=2000) >> getRelease.py
- echo version = re.findall("/projects/eclipse/releases/(\d+(?:\.\d+)*)", r.text)[0] >> getRelease.py
- echo download_url = "/".join(["http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/technology/epp/downloads/release", release, codename, filename]) >> getRelease.py
- echo print([download_url, release, codename, version]) >> getRelease.py
+  echo $content = Invoke-WebRequest -Uri http://www.eclipse.org/downloads/packages/ >> getUrl.ps1
+  echo $regex = "http://www.eclipse.org/downloads/download.php\?file=/technology/epp/downloads/release/.*win32.zip" >> getUrl.ps1
+  echo $content -match $regex ^| Out-Null >> getUrl.ps1
+  echo $webUrl = $Matches[0] >> getUrl.ps1
+  echo $linkPart = $webUrl.Split("=")[1] >> getUrl.ps1
+  echo Write-Host "http://mirror.switch.ch/eclipse$linkPart" >> getUrl.ps1
 
-cmd python getRelease.py
-var res = last
-
-cmd "python -c ""print(%res%[0])"""
+cmd powershell -File getUrl.ps1
 var url = last
 
-cmd "python -c ""print(%res%[3])"""
+batch
+  echo $content = Invoke-WebRequest -Uri http://www.eclipse.org/downloads/packages/ >> getTag.ps1
+  echo $regex = "(?<= \()[0-9]+\.[0-9]+(?=\))" >> getTag.ps1
+  echo $content -match $regex ^| Out-Null >> getTag.ps1
+  echo $Matches[0] >> getTag.ps1
+cmd powershell -File getTag.ps1
 var tag = last
 
 # Download and install last version
 cmd "wget -O eclipse.zip --no-verbose ""%url%"""
-cmd "7z x eclipse.zip -oc:\ | find /v ""ing  """
+cmd "7z x eclipse.zip -oc:\"
 
 # Set startup file
 startup file ("@SYSDRIVE@\eclipse\eclipse.exe")
