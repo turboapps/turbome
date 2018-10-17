@@ -25,6 +25,12 @@ param
     [Parameter(Mandatory=$True)]
     [string] $pass,
 
+    [Parameter(Mandatory=$True)]
+    [string] $snapshotToRestoreName,
+
+    [Parameter(Mandatory=$True)]
+    [string] $postSnapshotScriptPath,
+
     [Parameter(Mandatory=$False,HelpMessage="The version of the .net framework to download. Leave empty for latest version.")]
     [string] $version,
 
@@ -40,7 +46,6 @@ function Prepare-SharedDirectory {
     New-Item "$workspacePath\share" -type directory
     New-Item "$workspacePath\share\install" -type directory
     New-Item "$workspacePath\share\tools" -type directory
-    New-Item "$workspacePath\share\output" -type directory
 
     #Copy files to shared directory
     Copy-Item "$studioHomePath\xstudio.exe" "$workspacePath\share\tools\xstudio.exe"
@@ -61,7 +66,7 @@ function Configure-VirtualMachine {
     
     Sleep -s 5
     Write-Host "Restoring snapshot"
-    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore "turboBuildNoNET"
+    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore $snapshotToRestoreName
     Sleep -s 5
     Write-Host "Adding shared directory"
     & "$virtualboxDir\VBoxManage.exe" sharedfolder add $machine --name turboBuild --hostpath (Get-Item "$workspacePath\share").FullName
@@ -94,10 +99,11 @@ function Download-Installer($version) {
 
 function Prepare-BatFile {
     $batScript ="net use /y x: \\vboxsrv\turboBuild
+    xcopy /sy /e /I x:\ C:\share
     echo Capturing before snapshot
-    X:\tools\XStudio.exe /before /beforepath X:\output\snapshot
+    C:\share\tools\XStudio.exe /before /beforepath C:\share\output\snapshot
     echo Installing dotnet
-    START /WAIT X:\install\install.exe /norestart /q
+    START /WAIT C:\share\install\install.exe /norestart /q
     echo Configuring the installation
     c:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\CasPol.exe -q -m -cg All_Code FullTrust
     c:\WINDOWS\Microsoft.NET\Framework64\v4.0.30319\CasPol.exe -q -m -cg All_Code FullTrust
@@ -135,7 +141,8 @@ function Prepare-BatFile {
     c:\windows\microsoft.net\framework64\v4.0.30319\regtlibv12.exe C:\windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.tlb
     c:\windows\microsoft.net\framework64\v4.0.30319\regtlibv12.exe C:\windows\Microsoft.NET\Framework64\v4.0.30319\System.Web.tlb
     echo Capturing after snapshot
-    X:\tools\XStudio.exe /after /beforepath X:\output\snapshot /o X:\output
+    C:\share\tools\XStudio.exe /after /beforepath C:\share\output\snapshot /o C:\share\output
+    xcopy /sy /e /I c:\share\output x:\output
     shutdown -s -f"
 
     [System.IO.File]::WriteAllLines("$workspacePath\script.bat", $batScript)
@@ -173,115 +180,7 @@ function Wait-VirtualMachine {
 
 function Restore-VirtualMachine {
     Write-Host "Restoring $machine to the base snapshot"
-    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore "turboBuildNoNET"
-}
-
-function Invoke-PostSnapshotScript {
-    $xapplPath = "$workspacePath\share\output\Snapshot.xappl"
-    $xappl = Read-XAPPL $xapplPath
-
-    Remove-FileSystemItems $xappl "@SYSTEM@\CodeIntegrity"
-    Remove-FileSystemItems $xappl "@SYSTEM@\restore"
-    Remove-FileSystemItems $xappl "@WINDIR@\assembly\NativeImages_v4.0.30319_32"
-    Remove-FileSystemItems $xappl "@WINDIR@\assembly\NativeImages_v4.0.30319_64"
-    Remove-FileSystemItems $xappl "@WINDIR@\Migration"
-    Remove-FileSystemItems $xappl "@WINDIR@\Microsoft.NET\Framework\v4.0.30319\SetupCache"
-    Remove-FileSystemItems $xappl "@WINDIR@\Microsoft.NET\Framework64\v4.0.30319\SetupCache"
-    Remove-FileSystemItems $xappl "@WINDIR@\Microsoft.net\Framework\v2.0.50727"
-    Remove-FileSystemItems $xappl "@WINDIR@\Microsoft.net\Framework64\v2.0.50727"
-
-    Remove-RegistryItems $xappl "@HKCU@"
-    Remove-RegistryItems $xappl "@HKLM@\Software\Policies"
-    Remove-RegistryItems $xappl "@HKLM@\SYSTEM"
-    Remove-RegistryItems $xappl "@HKLM@\Software\Microsoft\EnterpriseCertificates"
-    Remove-RegistryItems $xappl "@HKLM@\Software\Wow6432Node\Microsoft\EnterpriseCertificates"
-
-    Set-RegistryValue $xappl "@HKLM@\Software\Microsoft\.NETFramework" "InstallRoot" "@WINDIR@\Microsoft.NET\Framework64\"
-    Set-RegistryValue $xappl "@HKLM@\Software\Wow6432Node\Microsoft\.NETFramework" "InstallRoot" "@WINDIR@\Microsoft.NET\Framework\"
-    Set-RegistryValue $xappl "@HKLM@\Software\Microsoft\.NETFramework" "Enable64Bit" "1" $DwordValueType
-
-    Set-DirectoryIsolation $xappl "@APPDATA@\Microsoft\CLR Security Config" $WriteCopyIsolation
-    Set-DirectoryIsolation $xappl "@APPDATA@\Microsoft\CLR Security Config\v4.0.30319" $FullIsolation
-    Set-DirectoryIsolation $xappl "@APPDATA@\Microsoft\.NET Framework Config" $FullIsolation
-    Set-DirectoryIsolation $xappl "@APPDATACOMMON@\Microsoft\NetFramework" $FullIsolation
-    Set-DirectoryIsolation $xappl "@PROGRAMFILESX86@\Microsoft.NET" $FullIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\assembly" $WriteCopyIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\assembly\NativeImages_v4.0.30319_32" $FullIsolation 
-    Set-DirectoryIsolation $xappl "@WINDIR@\assembly\NativeImages_v4.0.30319_64" $FullIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\assembly\temp" $FullIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\assembly\tmp" $FullIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\Microsoft.net" $FullIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\Microsoft.net\Framework\v4.0.30319" $FullIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\Microsoft.net\Framework64\v4.0.30319" $FullIsolation
-
-    Set-DirectoryIsolation $xappl "@WINDIR@\Microsoft.net\Framework" $WriteCopyIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\Microsoft.net\Framework64" $WriteCopyIsolation
-    Set-DirectoryIsolation $xappl "@WINDIR@\Microsoft.net\assembly" $FullIsolation -Recurse
-
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes" $FullIsolation -Recurse -RecurseDepth 1
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\AppID" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\AppID" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\CLSID" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\CLSID" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Installer" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Installer" $MergeIsolation -Recurse -RecurseDepth 1
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Interface" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Interface" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Record" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Record" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\TypeLib" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\TypeLib" $MergeIsolation
-
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node" $FullIsolation -Recurse -RecurseDepth 1
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\AppID" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\AppID" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\CLSID" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\CLSID" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\Installer" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\Installer" $MergeIsolation -Recurse -RecurseDepth 1
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\Interface" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\Interface" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\Record" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\Record" $MergeIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\TypeLib" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Classes\Wow6432Node\TypeLib" $MergeIsolation
-
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\.NETFramework" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\.NETFramework\v4.0.30319" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\ASP.NET" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\ASP.NET\4.0.30319.0" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\NET Framework Setup" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\MSBuild" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Microsoft\MSBuild\4.0" $FullIsolation -Recurse
-
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\.NETFramework" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\.NETFramework\v4.0.30319" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\ASP.NET" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\ASP.NET" $WriteCopyIsolation
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\NET Framework Setup" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\MSBuild" $WriteCopyIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\MSBuild\4.0" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\devDiv\netfx" $FullIsolation -Recurse
-    Set-RegistryKeyIsolation $xappl "@HKLM@\Software\Wow6432Node\Microsoft\devDiv\netfx" $WriteCopyIsolation
-
-    Set-FileSystemObject $xappl "@WINDIR@\assembly" -NoSync $True
-
-    Set-StandardMetadata $xappl "Title" "Microsoft .NET Runtime Version $version"
-    Set-StandardMetadata $xappl "Publisher" "Microsoft Corporation"
-    Set-StandardMetadata $xappl "Description" "The .NET Framework is an integral Windows component that supports building and running the next generation of applications and XML Web services."
-    Set-StandardMetadata $xappl "Website" "http://www.microsoft.com"
-    Set-StandardMetadata $xappl "Version" $version
-
-    Disable-Services $xappl
-
-    # todo: need ability to set service properties #########################################
-    # Set WPF Font Cache service to use 32-bit executable
-    # - I didn't see this service in my testing so maybe no longer present
-    ########################################################################################
-
-    Save-XAPPL $xappl $xapplPath
+    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore $snapshotToRestoreName
 }
 
 function Build-Image {
@@ -314,6 +213,8 @@ Write-Host "Start VM"
 
 Wait-VirtualMachine
 
+Sleep -s 20
+
 #Write-Host "Running log script from $workspacePath\logForwardScript.bat on $machine"
 #& $PsExecPath "\\$machineIp" -u $user -p $pass -i -h -d -c "$workspacePath\logForwardScript.bat"
 
@@ -333,7 +234,9 @@ Sleep -s 5
 
 Restore-VirtualMachine
 
-Invoke-PostSnapshotScript
+$xapplPath = "$workspacePath\share\output\Snapshot.xappl"
+. $postSnapshotScriptPath
+Invoke-PostSnapshotScript $version $xapplPath
 
 Build-Image
 
