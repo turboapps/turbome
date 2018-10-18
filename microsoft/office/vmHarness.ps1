@@ -28,6 +28,9 @@ param
     [Parameter(Mandatory=$True)]
     [string] $pass,
 
+    [Parameter(Mandatory=$True)]
+    [string] $snapshotToRestoreName,
+
     [Parameter(Mandatory=$True,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
     [string] $buildScript,
 
@@ -74,13 +77,13 @@ function Configure-VirtualMachine {
     
     Sleep -s 5
     Write-Host "Restoring snapshot"
-    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore "turboBuildNetworking"
+    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore $snapshotToRestoreName
     Sleep -s 5
     Write-Host "Adding shared directory"
     & "$virtualboxDir\VBoxManage.exe" sharedfolder add $machine --name turboBuild --hostpath (Get-Item "$workspacePath\share").FullName
     Sleep -s 5
     Write-Host "Attaching ISO"
-    & "$virtualboxDir\VBoxManage.exe" storageattach $machine --storagectl "IDE Controller" --type dvddrive --medium $officeIsoPath --port 1 --device 0
+    & "$virtualboxDir\VBoxManage.exe" storageattach $machine --storagectl "IDE" --type dvddrive --medium $officeIsoPath --port 1 --device 0
     Sleep -s 5
 }
 
@@ -120,7 +123,7 @@ function Wait-VirtualMachine {
     }
 
     # just execute a prompt window and close it immediately as a test for connectivity
-    $p = Start-Process -FilePath $PsExecPath -ArgumentList "\\$machineIp -u $user -p $pass cmd.exe /c" -Wait -NoNewWindow -PassThru
+    $p = Start-Process -FilePath $PsExecPath -ArgumentList "\\$machineIp -u $user -p $pass -h cmd.exe /c" -Wait -NoNewWindow -PassThru
     If ($p.ExitCode -eq 0)
     {
       break
@@ -136,10 +139,10 @@ function Wait-VirtualMachine {
 
 function Restore-VirtualMachine {
     Write-Host "Restoring $machine to the base snapshot"
-    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore "turboBuild"
+    & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore $snapshotToRestoreName
 }
 
-Import-Module Turbo
+Import-Module $turboModulePath
 
 Clean-Workspace
 Sleep -s 5

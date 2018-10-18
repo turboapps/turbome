@@ -64,6 +64,10 @@ function FirstLaunch-Office {
     Get-Process $exeToStop | Stop-Process -Force
 }
 
+function Delete-Installer {
+    Remove-Item -Path "C:\Installer" -Recurse -Force
+}
+
 function Get-OfficeVersion {
     $officeExePath = Find-OfficeExe
     $officeExe = Get-Item -path $officeExePath
@@ -148,13 +152,26 @@ function Configure-Snapshot {
     $virtualizationSettings.launchChildProcsAsUser = [string]$true
     $virtualizationSettings.faultExecutablesIntoSandbox = [string]$true
 
+    Remove-FileSystemItem $xappl "@SYSDRIVE@\output"
+    Remove-FileSystemItem $xappl "@SYSDRIVE@\share"
+
+    $dependency = $xappl.CreateElement('Dependency')
+    $dependency.SetAttribute("Identifier","microsoft/universal-crt")
+    $dependency.SetAttribute("Hash","4aacde9ac183a14eb15d09761d6e9eab240b7802ebc71ae0d09e7367573093b4")
+
+    $dependencies = $xappl.SelectSingleNode("//Configuration/Dependencies")
+    $dependencies.AppendChild($dependency)
+
     Save-XAPPL $xappl $XappPath
+
 
 }
 
 Capture-Before
 
 Install-Office
+
+Delete-Installer
 
 Update-Office
 
