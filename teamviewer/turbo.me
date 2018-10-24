@@ -1,0 +1,60 @@
+# Teamviewer turbo.me file
+# https://github.com/turboapps/turbome/tree/master/teamviewer
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="teamviewer"
+meta namespace="teamviewer"
+meta name="teamviewer"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget
+
+###################################
+# Download and install
+###################################
+
+cmd "mkdir @SYSDRIVE@\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+cmd wget "https://download.teamviewer.com/download/TeamViewer_Setup.exe"
+cmd "@SYSDRIVE@\Workspace\TeamViewer_Setup.exe" /S
+
+cmd powershell Stop-Process -Name "TeamViewer*"
+
+batch 
+  echo $file=Get-Item -Path 'C:\Program Files (x86)\TeamViewer\TeamViewer.exe' >> getVersion.ps1
+  echo Write-Host $file.VersionInfo.FileVersion >> getVersion.ps1
+
+batch
+  reg add HKCU\Software\TeamViewer\MsgBoxDontShow /t REG_DWORD /d 1 /v PartnerListHint
+  reg add HKCU\Software\TeamViewer\MsgBoxDontShow /t REG_DWORD /d 1 /v InstantConnectHint
+  reg add HKCU\Software\TeamViewer\MsgBoxDontShow /t REG_DWORD /d 1 /v UpdateIconSwitch
+  reg add HKCU\Software\TeamViewer /t REG_DWORD /d 1 /v IntroShown
+  reg add HKCU\Software\TeamViewer /t REG_DWORD /d 1 /v LastCorrectorRun
+  reg add HKCU\Software\TeamViewer /t REG_DWORD /d 1 /v TryNewUICount
+  reg add HKCU\Software\TeamViewer /t REG_DWORD /d 1 /v UIModeManuallyChanged
+  reg add HKCU\Software\TeamViewer /t REG_DWORD /d 2 /v WhatsNewShown
+
+cmd powershell -File getVersion.ps1
+
+var tag = last
+
+startup file ("@PROGRAMFILESX86@\TeamViewer\TeamViewer.exe")
+
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd "rmdir @SYSDRIVE@\Workspace /s /q"
+cmd "rmdir @SYSDRIVE@\wget /s /q"
+
+meta tag=tag
