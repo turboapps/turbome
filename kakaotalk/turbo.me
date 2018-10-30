@@ -11,13 +11,6 @@ meta namespace="kakao"
 meta name="kakaotalk"
 
 ###################################
-# Install settings
-###################################
-
-var sigcheckUrl = "https://download.sysinternals.com/files/Sigcheck.zip"
-var url = "http://app.pc.kakao.com/talk/win32/KakaoTalk_Setup.exe"
-
-###################################
 # Pull dependency images
 ###################################
 
@@ -31,17 +24,15 @@ cmd "mkdir @SYSDRIVE@\Workspace"
 workdir @SYSDRIVE@\Workspace
 
 # Download and install the latest version
-cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""%url%"""
+cmd "wget -q -O install.exe --no-check-certificate --no-verbose ""http://app.pc.kakao.com/talk/win32/KakaoTalk_Setup.exe"""
 cmd install.exe /S
 
 # Get the latest version tag using sigcheck
 batch
-  wget -q -O sigcheck.zip --no-check-certificate --no-verbose "%sigcheckUrl%" && 7z x "sigcheck.zip"
-  echo @echo off > getv.bat
-  echo sigcheck.exe -q -n install.exe ^|^| exit /b 0 >> getv.bat
-  reg add "HKCU\Software\Sysinternals\Sigcheck" /v EulaAccepted /t REG_DWORD /d 1 /f
+  echo $file = Get-Item .\install.exe >> getVersion.ps1
+  echo $file.VersionInfo.FileVersion >> getVersion.ps1
 
-cmd getv.bat
+cmd powershell -File getVersion.ps1
 var tag = last
 
 # Set startup file
