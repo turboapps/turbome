@@ -1,0 +1,8 @@
+<buildconfig>
+<vmName>Turbo7x64</vmName>
+<installScriptPath>C:\spoon\spoonme\powerbi\powerbirs\install.ps1</installScriptPath>
+<preInstallScriptPath></preInstallScriptPath>
+<postSnapshotScriptPath>C:\spoon\spoonme\powerbi\powerbirs\post_snapshot.ps1</postSnapshotScriptPath>
+<mountDirectoryPath></mountDirectoryPath>
+<overwrite></overwrite>
+</buildconfig>
