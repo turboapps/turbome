@@ -39,8 +39,8 @@ batch
  echo host = "https://www.torproject.org/download/download.html.en" >> script.py
  echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> script.py
  echo r = requests.get(host , headers=headers, timeout=10) >> script.py
- echo filename = re.findall('href=".*/(torbrowser-install-.*_en-US.exe)"', r.text)[0] >> script.py
- echo version = re.findall('torbrowser-install-(.*)_en-US.exe', filename)[0] >> script.py
+ echo filename = re.findall('href=".*/(torbrowser-install-([\d.]+)_en-US.exe)"', r.text)[0][0] >> script.py
+ echo version = re.findall('href=".*/(torbrowser-install-([\d.]+)_en-US.exe)"', r.text)[0][1] >> script.py
  echo url = 'https://www.torproject.org/dist/torbrowser/'+version+'/'+filename >> script.py
  echo print([url, filename, version]) >> script.py
  
