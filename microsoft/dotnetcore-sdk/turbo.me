@@ -1,0 +1,71 @@
+#
+# dotnetcore-sdk turbo.me file
+# [https://github.com/turboapps/turbome/blob/master/microsoft/dotnetcore-sdk/turbo.me]
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Dotnet Core SDK"
+meta namespace="microsoft"
+meta name="dotnetcore-sdk"
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+requires architecture:x64
+require architecture:x64
+
+###################################
+# Pull dependency images
+###################################
+
+layer microsoft/vcredist:2015
+
+###################################
+# Download
+###################################
+
+# Set working directory
+cmd mkdir c:\workdir
+workdir c:\workdir
+
+cmd setx DOTNET_SKIP_FIRST_TIME_EXPERIENCE true
+
+batch cmd
+  echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> script.ps1
+  echo $page = (Invoke-WebRequest -URI "https://www.microsoft.com/net/download") >> script.ps1
+  echo $downloadPageLink = "https://www.microsoft.com"+($page.Links ^| where {$_.innerText -match "x64 installer" -and $_.href -match "windows"})[0].href >> script.ps1
+  echo $page = (Invoke-WebRequest -URI $downloadPageLink) >> script.ps1
+  echo $link = ($page.Links ^| where {$_.innerText -match "Try again"})[0].href >> script.ps1
+  echo (New-Object System.Net.WebClient).DownloadFile($link, "install.exe") >> script.ps1
+  echo $downloadPageLink -match "\d*\.\d*\.\d*" ^| Out-Null >> script.ps1
+  echo $Matches[0] >> script.ps1
+
+cmd powershell -File script.ps1
+
+var version = last
+
+###################################
+# Install
+###################################
+
+cmd install.exe /install /passive
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+cmd rmdir c:\workdir /S /Q
+
+###################################
+# Version
+###################################
+
+meta tag=version
