@@ -56,6 +56,21 @@ batch
   @ECHO Installing 7-zip 32-bit...
   x86.exe /S
 
+# Apply file Associations
+batch
+  assoc .7z=7-Zip.7z
+  ftype 7-Zip.7z="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  assoc .zip=7-Zip.zip
+  ftype 7-Zip.zip="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  assoc .bz2=7-Zip.bz2
+  ftype 7-Zip.bz2="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  assoc .gz=7-Zip.gz
+  ftype 7-Zip.gz="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  assoc .tar=7-Zip.tar
+  ftype 7-Zip.tar="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+  assoc .tgz=7-Zip.tgz
+  ftype 7-Zip.tgz="C:\Program Files\7-Zip\7zFM.exe" "%%1"
+
 # Get version of 7-zip app
 
 cmd "powershell (Get-Item (Join-Path $env:systemdrive 'Program Files\7-zip\7z.exe')).VersionInfo.FileVersion"
