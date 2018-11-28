@@ -1,0 +1,113 @@
+#
+# Adobe Reader DC turbo.me file
+# https://github.com/turboapps/turbome/tree/master/adobe/reader
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="Adobe Reader DC"
+meta namespace="adobe"
+meta name="adobereader"
+
+###################################
+# Pull dependency images
+###################################
+
+layer microsoft/universal-crt
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+
+batch
+  echo $uri = "ftp://ftp.adobe.com/pub/adobe/reader/win/AcrobatDC/" >> downloadScript.ps1
+  echo $ftprequest = [System.Net.FtpWebRequest]::create($uri) >> downloadScript.ps1
+  echo $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory >> downloadScript.ps1
+  echo $ftprequest.KeepAlive = $false >> downloadScript.ps1
+  echo $ftpresponse = $ftprequest.GetResponse() >> downloadScript.ps1
+  echo $responsestream = $ftpresponse.GetResponseStream() >> downloadScript.ps1
+  echo $buffer = new-object System.Byte[] 1024 >> downloadScript.ps1
+  echo $encoding = new-object System.Text.AsciiEncoding >> downloadScript.ps1
+  echo do  >> downloadScript.ps1
+  echo {  >> downloadScript.ps1
+      echo try  >> downloadScript.ps1
+      echo {  >> downloadScript.ps1
+          echo $read = $responsestream.Read($buffer, 0, 1024)  >> downloadScript.ps1
+          echo if($read -gt 0)  >> downloadScript.ps1
+          echo {  >> downloadScript.ps1
+              echo $foundmore = $true  >> downloadScript.ps1
+              echo $outputBuffer += ($encoding.GetString($buffer, 0, $read))  >> downloadScript.ps1
+          echo }  >> downloadScript.ps1
+      echo } catch { $foundMore = $false; $read = 0 }  >> downloadScript.ps1
+  echo } while($read -gt 0)  >> downloadScript.ps1
+  echo $array = $outputBuffer.Split("`n") >> downloadScript.ps1
+  echo $lastRelease = $array[$array.Count-19] >> downloadScript.ps1
+  echo $releaseUri = $uri + $lastRelease >> downloadScript.ps1
+  echo $outputBuffer = $nul >> downloadScript.ps1
+  echo $ftprequest = [System.Net.FtpWebRequest]::create($releaseUri) >> downloadScript.ps1
+  echo $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory >> downloadScript.ps1
+  echo $ftprequest.KeepAlive = $false >> downloadScript.ps1
+  echo $ftpresponse = $ftprequest.GetResponse() >> downloadScript.ps1
+  echo $responsestream = $ftpresponse.GetResponseStream() >> downloadScript.ps1
+  echo $buffer = new-object System.Byte[] 1024 >> downloadScript.ps1
+  echo $encoding = new-object System.Text.AsciiEncoding >> downloadScript.ps1
+  echo do  >> downloadScript.ps1
+  echo {  >> downloadScript.ps1
+      echo try  >> downloadScript.ps1
+      echo {  >> downloadScript.ps1
+          echo $read = $responsestream.Read($buffer, 0, 1024)  >> downloadScript.ps1
+          echo if($read -gt 0)  >> downloadScript.ps1
+          echo {  >> downloadScript.ps1
+              echo $foundmore = $true  >> downloadScript.ps1
+              echo $outputBuffer += ($encoding.GetString($buffer, 0, $read))  >> downloadScript.ps1
+          echo }  >> downloadScript.ps1
+      echo } catch { $foundMore = $false; $read = 0 }  >> downloadScript.ps1
+  echo } while($read -gt 0)  >> downloadScript.ps1
+  echo $array = $outputBuffer.Split("`n") >> downloadScript.ps1
+  echo $fileUri = $uri + ($array -match ".*US\.exe") >> downloadScript.ps1
+  echo (New-Object System.Net.WebClient).DownloadFile($fileUri, "install.exe") >> downloadScript.ps1
+
+cmd powershell -File downloadScript.ps1
+
+cmd install.exe /sPB
+
+# Configure Adobe Reader settings
+# Disable the Protected Sandbox Mode
+# Skip the EULA popup
+# Skip the "Set as default pdf reader" popup
+# Skip the "Welcome Tour" popup
+batch
+  reg add "HKCU\Software\Adobe\Acrobat Reader\DC\Privileged" /t REG_DWORD /d 0 /v bProtectedMode
+  reg add "HKLM\Software\Wow6432Node\Adobe\Acrobat Reader\DC\AdobeViewer" /t REG_DWORD /d 1 /v EULA
+  reg add "HKCU\Software\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v   iAppDoNotTakePDFOwnershipAtLaunchWin10
+  reg add "HKCU\Software\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v iAppDoNotTakePDFOwnershipAtLaunch
+  reg add "HKCU\Software\Adobe\Acrobat Reader\DC\FTEDialog" /t REG_DWORD /d 10 /v iFTEVersion
+  reg add "HKCU\Software\Adobe\Acrobat Reader\DC\FTEDialog" /t REG_DWORD /d 0 /v iLastCardShown
+
+# Get Version
+cmd "powershell (Get-Item 'C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe').VersionInfo.FileVersion"
+var tag=last
+meta tag=tag
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILESX86@\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
+
+###################################
+# Environment Variables
+###################################
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
