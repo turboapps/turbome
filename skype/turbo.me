@@ -54,6 +54,9 @@ cmd @SYSWOW64@\regsvr32.exe /s jscript9.dll
 
 cmd powershell -File closeOnX.ps1
 
+# This blocks Skype updates, there's no official setting for it
+cmd mkdir "%APPDATA%\Microsoft\Skype for Desktop\Skype-Setup.exe" 
+
 enable HttpUrlPassthrough
 enable ShutdownProcTree
 
