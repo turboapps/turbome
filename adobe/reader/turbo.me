@@ -90,6 +90,9 @@ batch
   reg add "HKCU\Software\Adobe\Acrobat Reader\DC\FTEDialog" /t REG_DWORD /d 10 /v iFTEVersion
   reg add "HKCU\Software\Adobe\Acrobat Reader\DC\FTEDialog" /t REG_DWORD /d 0 /v iLastCardShown
 
+cmd sc stop AdobeARMservice
+cmd sc delete AdobeARMservice
+
 # Get Version
 cmd "powershell (Get-Item 'C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe').VersionInfo.FileVersion"
 var tag=last
