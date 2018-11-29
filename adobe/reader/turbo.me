@@ -47,7 +47,7 @@ batch
       echo } catch { $foundMore = $false; $read = 0 }  >> downloadScript.ps1
   echo } while($read -gt 0)  >> downloadScript.ps1
   echo $array = $outputBuffer.Split("`n") >> downloadScript.ps1
-  echo $lastRelease = $array[$array.Count-19] >> downloadScript.ps1
+  echo $lastRelease = $array[$array.Count-3] >> downloadScript.ps1
   echo $releaseUri = $uri + $lastRelease >> downloadScript.ps1
   echo $outputBuffer = $nul >> downloadScript.ps1
   echo $ftprequest = [System.Net.FtpWebRequest]::create($releaseUri) >> downloadScript.ps1
