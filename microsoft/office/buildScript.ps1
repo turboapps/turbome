@@ -69,6 +69,9 @@ function Delete-Installer {
 }
 
 function Get-OfficeVersion {
+    # NOTE
+    # The version from exe is most of the time different than what is displayed in 'About' tab in Office app.
+    # But the version there does not change with every update, so we just stick with exe version.
     $officeExePath = Find-OfficeExe
     $officeExe = Get-Item -path $officeExePath
     $version = $officeExe.VersionInfo.FileVersion
