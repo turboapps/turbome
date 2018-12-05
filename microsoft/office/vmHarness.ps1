@@ -38,7 +38,7 @@ param
     [string] $configurationMSPFilePath,
 
     [Parameter(Mandatory=$False,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
-    [bool] $overwrite = $false,
+    [string] $overwrite = "false",
 
     [Parameter(Mandatory=$False)]
     [string] $officeIsoPath = "C:\CI\ISO\Office2016_ProPlus.ISO",
@@ -180,7 +180,7 @@ $version = Get-Content "$workspacePath\share\output\version.txt"
 $imageName = Get-Content "$workspacePath\share\output\image_name.txt"
 if(Get-LatestHubVersion "microsoft/$imageName" $version)
 {
-    if(-not $overwrite)
+    if($overwrite -eq "false")
     {
         Write-Host "Image microsoft/$imageName`:$version is available on the hub, aborting the build."
         Stop-JenkinsJob
