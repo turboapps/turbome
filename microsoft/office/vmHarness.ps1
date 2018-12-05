@@ -38,7 +38,7 @@ param
     [string] $configurationMSPFilePath,
 
     [Parameter(Mandatory=$False,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
-    [string] $overwrite,
+    [bool] $overwrite = $false,
 
     [Parameter(Mandatory=$False)]
     [string] $officeIsoPath = "C:\CI\ISO\Office2016_ProPlus.ISO",
@@ -188,8 +188,8 @@ if(Get-LatestHubVersion "microsoft/$imageName" $version)
     else {
         Write-Host "Image microsoft/$imageName`:$version is available on the hub, but the overwrite flag is 'true', continuing the build."
     }
-    
-}
+   
+ }
 else {
     Write-Host "Image microsoft/$imageName`:$version is not available on the hub, continuing the build."
 }
