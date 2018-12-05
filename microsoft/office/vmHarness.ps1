@@ -37,6 +37,9 @@ param
     [Parameter(Mandatory=$True,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
     [string] $configurationMSPFilePath,
 
+    [Parameter(Mandatory=$False,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
+    [string] $overwrite,
+
     [Parameter(Mandatory=$False)]
     [string] $officeIsoPath = "C:\CI\ISO\Office2016_ProPlus.ISO",
 
@@ -177,11 +180,18 @@ $version = Get-Content "$workspacePath\share\output\version.txt"
 $imageName = Get-Content "$workspacePath\share\output\image_name.txt"
 if(Get-LatestHubVersion "microsoft/$imageName" $version)
 {
-    Write-Host "Image microsoft/$imageName`:$version is available on the hub, aborting the build."
-    Stop-JenkinsJob
-} else 
-{
-    Write-Host "Image microsoft/$imageName`:$version is not available on the hub, continuing  the build."
+    if(-not $overwrite)
+    {
+        Write-Host "Image microsoft/$imageName`:$version is available on the hub, aborting the build."
+        Stop-JenkinsJob
+    }
+    else {
+        Write-Host "Image microsoft/$imageName`:$version is available on the hub, but the overwrite flag is 'true', continuing the build."
+    }
+    
+}
+else {
+    Write-Host "Image microsoft/$imageName`:$version is not available on the hub, continuing the build."
 }
 
 Write-Host "Running export script from $workspacePath\exportScript.bat on $machine"
