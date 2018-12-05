@@ -157,6 +157,7 @@ function Configure-Snapshot {
 
     Remove-FileSystemItem $xappl "@SYSDRIVE@\output"
     Remove-FileSystemItem $xappl "@SYSDRIVE@\share"
+    Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft\Office\Common\UserInfo"
 
     $dependency = $xappl.CreateElement('Dependency')
     $dependency.SetAttribute("Identifier","microsoft/universal-crt")
