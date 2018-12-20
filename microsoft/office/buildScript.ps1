@@ -160,8 +160,8 @@ function Configure-Snapshot {
     Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft\Office\Common\UserInfo"
 
     $dependency = $xappl.CreateElement('Dependency')
-    $dependency.SetAttribute("Identifier","microsoft/universal-crt")
-    $dependency.SetAttribute("Hash","4aacde9ac183a14eb15d09761d6e9eab240b7802ebc71ae0d09e7367573093b4")
+    $dependency.SetAttribute("Identifier","microsoft/universal-crt:10.0.14393.795")
+    $dependency.SetAttribute("Hash","95f3ba19ad8a46723f8a6ca5bdfc10444d3f4465a6739f6f0dd4c2fe39e908b7")
 
     $dependencies = $xappl.SelectSingleNode("//Configuration/Dependencies")
     $dependencies.AppendChild($dependency)
