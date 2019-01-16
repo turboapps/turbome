@@ -184,7 +184,7 @@ Sleep -s 5
 Prepare-SharedDirectory
 Sleep -s 5
 
-Configure-VirtualMachine
+Configure-VirtualMachineBefore
 Sleep -s 5
 
 Prepare-BatFile
