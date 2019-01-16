@@ -34,14 +34,8 @@ param
     [Parameter(Mandatory=$True,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
     [string] $buildScript,
 
-    [Parameter(Mandatory=$True,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
-    [string] $configurationMSPFilePath,
-
     [Parameter(Mandatory=$False,ValueFromPipeline=$False,ValueFromPipelineByPropertyName=$False,HelpMessage="Build script path")]
     [string] $overwrite = "false",
-
-    [Parameter(Mandatory=$False)]
-    [string] $officeIsoPath = "C:\CI\ISO\Office2016_ProPlus.ISO",
 
     [Parameter(Mandatory=$False)]
     [string] $virtualboxDir = "C:\Program Files\Oracle\VirtualBox"
@@ -63,8 +57,6 @@ function Prepare-SharedDirectory {
     Copy-Item "$studioHomePath\StudioDependencies.svm" "$workspacePath\share\tools\StudioDependencies.svm"
     Copy-Item "$studioHomePath\$studioLicenseFile" "$workspacePath\share\tools\license.txt"
     Copy-Item "$turboModulePath" "$workspacePath\share\tools" -Recurse
-
-    Copy-Item "$configurationMSPFilePath" "$workspacePath\share\install"
 }
 
 function Configure-VirtualMachine {
@@ -84,9 +76,6 @@ function Configure-VirtualMachine {
     Sleep -s 5
     Write-Host "Adding shared directory"
     & "$virtualboxDir\VBoxManage.exe" sharedfolder add $machine --name turboBuild --hostpath (Get-Item "$workspacePath\share").FullName
-    Sleep -s 5
-    Write-Host "Attaching ISO"
-    & "$virtualboxDir\VBoxManage.exe" storageattach $machine --storagectl "IDE" --type dvddrive --medium $officeIsoPath --port 1 --device 0
     Sleep -s 5
 }
 
@@ -126,7 +115,7 @@ function Wait-VirtualMachine {
     }
 
     # just execute a prompt window and close it immediately as a test for connectivity
-    $p = Start-Process -FilePath $PsExecPath -ArgumentList "\\$machineIp -u $user -p $pass -h cmd.exe /c" -Wait -NoNewWindow -PassThru
+    $p = Start-Process -FilePath $PsExecPath -ArgumentList "\\$machineIp -nobanner -u $user -p $pass -h cmd.exe /c" -Wait -NoNewWindow -PassThru
     If ($p.ExitCode -eq 0)
     {
       break
@@ -143,6 +132,34 @@ function Wait-VirtualMachine {
 function Restore-VirtualMachine {
     Write-Host "Restoring $machine to the base snapshot"
     & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore $snapshotToRestoreName
+}
+
+function Check-ImageVersion {
+    if(Get-LatestHubVersion "microsoft/$imageName" $version)
+    {
+        if($overwrite -eq "false")
+        {
+            Write-Host "Image microsoft/$imageName`:$version is available on the hub, aborting the build."
+            Stop-JenkinsJob
+        }
+        else {
+            Write-Host "Image microsoft/$imageName`:$version is available on the hub, but the overwrite flag is 'true', continuing the build."
+        }
+       
+     }
+    else {
+        Write-Host "Image microsoft/$imageName`:$version is not available on the hub, continuing the build."
+    }
+}
+
+function Write-Logs {
+    $logStd = Get-Content "$workspacePath\share\output\logStd.txt"
+    $logErr = Get-Content "$workspacePath\share\output\logErr.txt"
+
+    Write-Host "### Standard Output:"
+    Write-Host $logStd
+    Write-Host "### Error Output:"
+    Write-Host $logErr
 }
 
 Import-Module $turboModulePath
@@ -165,10 +182,10 @@ Write-Host "Start VM"
 Wait-VirtualMachine
 
 Write-Host "Running log script from $workspacePath\logForwardScript.bat on $machine"
-& $PsExecPath "\\$machineIp" -u $user -p $pass -i -h -d -c "$workspacePath\logForwardScript.bat"
+& $PsExecPath "\\$machineIp" -nobanner -u $user -p $pass -i -h -d -c -f "$workspacePath\logForwardScript.bat"
 
 Write-Host "Running install script from $workspacePath\installScript.bat on $machine"
-& $PsExecPath "\\$machineIp" -u $user -p $pass -i -h -c "$workspacePath\installScript.bat"
+& $PsExecPath "\\$machineIp" -nobanner -u $user -p $pass -i -h -c -f "$workspacePath\installScript.bat"
 
 Write-Host "Wait for the build to finish"
 while (!(Test-Path "$workspacePath\share\output\version.txt"))
@@ -178,27 +195,16 @@ while (!(Test-Path "$workspacePath\share\output\version.txt"))
 
 $version = Get-Content "$workspacePath\share\output\version.txt"
 $imageName = Get-Content "$workspacePath\share\output\image_name.txt"
-if(Get-LatestHubVersion "microsoft/$imageName" $version)
-{
-    if($overwrite -eq "false")
-    {
-        Write-Host "Image microsoft/$imageName`:$version is available on the hub, aborting the build."
-        Stop-JenkinsJob
-    }
-    else {
-        Write-Host "Image microsoft/$imageName`:$version is available on the hub, but the overwrite flag is 'true', continuing the build."
-    }
-   
- }
-else {
-    Write-Host "Image microsoft/$imageName`:$version is not available on the hub, continuing the build."
-}
+
+Check-ImageVersion
 
 Write-Host "Running export script from $workspacePath\exportScript.bat on $machine"
-& $PsExecPath "\\$machineIp" -u $user -p $pass -i -h -c "$workspacePath\exportScript.bat"
+& $PsExecPath "\\$machineIp" -nobanner -u $user -p $pass -i -h -c "$workspacePath\exportScript.bat"
 
 Write-Host "Shutdown the $machine VM"
 & "$virtualboxDir\VBoxManage.exe" controlvm $machine poweroff
 
 Sleep -s 5
 Restore-VirtualMachine
+
+Write-Logs

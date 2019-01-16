@@ -1,6 +1,3 @@
-function Capture-Before {
-    & "c:\share\tools\XStudio.exe" /before /beforepath c:\output\snapshot
-}
 function Capture-After {
     & "c:\share\tools\XStudio.exe" /after /beforepath c:\output\snapshot /o c:\output
 }
@@ -18,15 +15,6 @@ function Send-Keystroke{
     [Windows.Forms.Sendkeys]::SendWait($Keystroke)
 }
 
-function Install-Office {
-    $opticalDrivePath = (Get-CimInstance -class cim_cdromdrive).Drive
-    $officeInstallerPath = "C:\Installer"
-    New-Item $officeInstallerPath -type directory
-    Copy-Item "$opticalDrivePath\*" $officeInstallerPath -Recurse
-    Copy-Item "c:\share\install\*.msp" "$officeInstallerPath\updates"
-
-    & "$officeInstallerPath\setup.exe" | Out-Null
-}
 function Find-OfficeExe {
     $programFiles86Dir = (${env:ProgramFiles(x86)}, ${env:ProgramFiles} -ne $null)[0]
     $officeExeDirectory = "$programFiles86Dir\Microsoft Office\Office16"
@@ -56,16 +44,12 @@ function FirstLaunch-Office {
     [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
     Sleep -s 30
     Send-Keystroke " "
-    Sleep -Milliseconds 500
+    Sleep -Milliseconds 1000
     Send-Keystroke "{ENTER}"
-    Sleep -Milliseconds 500
+    Sleep -Milliseconds 1000
 
     $exeToStop = $officeExe.split('\.')[-2]
     Get-Process $exeToStop | Stop-Process -Force
-}
-
-function Delete-Installer {
-    Remove-Item -Path "C:\Installer" -Recurse -Force
 }
 
 function Get-OfficeVersion {
@@ -167,15 +151,7 @@ function Configure-Snapshot {
     $dependencies.AppendChild($dependency)
 
     Save-XAPPL $xappl $XappPath
-
-
 }
-
-Capture-Before
-
-Install-Office
-
-Delete-Installer
 
 Update-Office
 
