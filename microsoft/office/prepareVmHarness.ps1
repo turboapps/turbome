@@ -113,14 +113,14 @@ function Configure-VirtualMachineAfter {
         & "$virtualboxDir\VBoxManage.exe" controlvm $machine poweroff
         Sleep -s 15
     }
-    Write-Host "Take snapshot of the $machine VM"
-    & "$virtualboxDir\VBoxManage.exe" snapshot $machine take $snapshotToTakeName
-    Sleep -s 5
-    Write-Host "Adding shared directory"
+    Write-Host "Removing shared directory"
     & "$virtualboxDir\VBoxManage.exe" sharedfolder remove $machine --name turboBuild
     Sleep -s 5
-    Write-Host "Attaching ISO"
-    & "$virtualboxDir\VBoxManage.exe" storageattach $machine --storagectl "IDE" --type dvddrive --medium --port 1 --device 0
+    Write-Host "Detaching ISO"
+    & "$virtualboxDir\VBoxManage.exe" storageattach $machine --storagectl "IDE" --type dvddrive --medium none --port 1 --device 0
+    Sleep -s 5
+    Write-Host "Take snapshot of the $machine VM"
+    & "$virtualboxDir\VBoxManage.exe" snapshot $machine take $snapshotToTakeName
     Sleep -s 5
 }
 
