@@ -139,8 +139,8 @@ function Configure-Snapshot {
     $virtualizationSettings.launchChildProcsAsUser = [string]$true
     $virtualizationSettings.faultExecutablesIntoSandbox = [string]$true
 
-    Remove-FileSystemItem $xappl "@SYSDRIVE@\output"
-    Remove-FileSystemItem $xappl "@SYSDRIVE@\share"
+    Remove-FileSystemItems $xappl "@SYSDRIVE@\output"
+    Remove-FileSystemItems $xappl "@SYSDRIVE@\share"
     Remove-RegistryItems $xappl "@HKCU@\Software\Microsoft\Office\Common\UserInfo"
 
     $dependency = $xappl.CreateElement('Dependency')

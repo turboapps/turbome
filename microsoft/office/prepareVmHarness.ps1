@@ -76,12 +76,22 @@ function Configure-VirtualMachineBefore {
     if(-Not ($vmstate -match "powered off"))
     {
         #Turn virtual machine off
-        "Virtual Machine is not powered off. Doing it now."
+        Write-Host "Virtual Machine is not powered off. Doing it now."
         & "$virtualboxDir\VBoxManage.exe" controlvm $machine poweroff
         Sleep -s 15
     }
-    
-    Sleep -s 5
+    if((& "$virtualboxDir\VBoxManage.exe" snapshot $machine list) -match "$snapshotToTakeName Old")
+    {
+        Write-Host "Delete old snapshot-to-take copy"
+        & "$virtualboxDir\VBoxManage.exe" snapshot $machine delete "$snapshotToTakeName Old"
+        Sleep -s 5
+    }
+    if((& "$virtualboxDir\VBoxManage.exe" snapshot $machine list) -match $snapshotToTakeName)
+    {
+        Write-Host "Rename previous snapshot-to-take version"
+        & "$virtualboxDir\VBoxManage.exe" snapshot $machine edit $snapshotToTakeName --name  "$snapshotToTakeName Old"
+        Sleep -s 5
+    }
     Write-Host "Restoring snapshot"
     & "$virtualboxDir\VBoxManage.exe" snapshot $machine restore $snapshotToRestoreName
     Sleep -s 5
@@ -103,7 +113,6 @@ function Configure-VirtualMachineAfter {
         & "$virtualboxDir\VBoxManage.exe" controlvm $machine poweroff
         Sleep -s 15
     }
-
     Write-Host "Take snapshot of the $machine VM"
     & "$virtualboxDir\VBoxManage.exe" snapshot $machine take $snapshotToTakeName
     Sleep -s 5
