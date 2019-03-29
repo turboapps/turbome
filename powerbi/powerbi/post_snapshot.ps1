@@ -17,4 +17,7 @@ $xappl = Read-XAPPL $XappPath
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
 $virtualizationSettings.httpUrlPassthrough = [string]$true
 
+Add-Directory $xappl "@APPDATALOCAL@\Microsoft" -NoSync $True
+Add-Directory $xappl "@APPDATALOCAL@\Microsoft\Power BI Desktop" -NoSync $False
+
 Save-XAPPL $xappl $XappPath
