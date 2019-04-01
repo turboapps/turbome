@@ -12,6 +12,11 @@
 Import-Module Turbo
 
 $XappPath = 'C:\output\Snapshot.xappl'
+
+$xapplText = Get-Content $XappPath -Raw
+$xapplText = $xapplText -replace "<MachineSid />", "<MachineSid>S-1-5-21-992951991-166803189-1664049914</MachineSid>"
+$xapplText | Out-File $XappPath -Encoding ascii
+
 $xappl = Read-XAPPL $XappPath
 
 $virtualizationSettings = $xappl.Configuration.VirtualizationSettings
