@@ -1,0 +1,31 @@
+#
+# Python 3 turbo.me file
+# https://github.com/turboapps/turbome/tree/master/python
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+
+
+###################################
+# Meta tags
+###################################
+
+meta title="Python IDLE"
+meta namespace="python"
+meta name="pythonidle"
+meta release="3.7.3"
+
+
+###################################
+# Pull dependency images
+###################################
+
+layer python/python:3.7.3
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("c:\ProgramData\Microsoft\Windows\Start Menu\Programs\Python 3.7\IDLE (Python 3.7 32-bit).lnk")
