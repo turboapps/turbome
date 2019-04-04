@@ -94,7 +94,15 @@ cmd sc stop AdobeARMservice
 cmd sc delete AdobeARMservice
 
 # Get Version
-cmd "powershell (Get-Item 'C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe').VersionInfo.FileVersion"
+batch
+  echo if(Test-Path "C:\Program Files (x86)") { >> getVersion.ps1
+    echo $programs = "C:\Program Files (x86)" >> getVersion.ps1
+  echo } else { >> getVersion.ps1
+    echo $programs = "C:\Program Files" >> getVersion.ps1
+  echo } >> getVersion.ps1
+  echo (Get-Item "$programs\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe").VersionInfo.FileVersion >> getVersion.ps1
+
+cmd powershell -File getVersion.ps1
 var tag=last
 meta tag=tag
 
@@ -114,3 +122,5 @@ startup file ("@PROGRAMFILESX86@\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
 
 workdir @SYSDRIVE@\
 cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir @WINDIR@\Installer /s /q
+cmd rmdir @APPDATACOMMON@\Adobe /s /q
