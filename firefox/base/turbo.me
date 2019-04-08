@@ -42,7 +42,7 @@ batch cmd
 
 var url = "https://download.mozilla.org/?product=firefox-latest&os=win&lang=en-US"
 
-cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"""
+cmd "wget -O firefox.exe --no-check-certificate --no-verbose ""%url%"" 2> NUL"
 cmd "firefox.exe /INI=c:\Workspace\install.ini"
 
 cmd "echo if (${env:ProgramFiles(x86)} -ne $null) {$dir=${env:ProgramFiles(x86)}} else {$dir=${env:ProgramFiles}} >> GetVersion.ps1"
@@ -56,14 +56,15 @@ meta tag=tag
 batch
  if "%programfiles(x86)%" == "" ( cd "%programfiles%" ) else ( cd "%programfiles(x86)%" )
  cd "Mozilla Firefox"
- wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg
+ wget --no-check-certificate --no-verbose -O mozilla.cfg https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/mozilla.cfg 2> NUL
  pushd browser
- wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini
+ wget --no-check-certificate --no-verbose -O override.ini https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/override.ini 2> NUL
  mkdir defaults\preferences & cd defaults\preferences
- wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js
+ wget --no-check-certificate --no-verbose -O local-settings.js https://raw.githubusercontent.com/turboapps/turbome/master/firefox/config/browser/defaults/preferences/local-settings.js 2> NUL
  popd
  pushd uninstall
  helper.exe /SetAsDefaultAppUser
+ helper.exe /SetAsDefaultAppGlobal
  popd
 
 
