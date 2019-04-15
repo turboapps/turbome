@@ -122,5 +122,7 @@ startup file ("@PROGRAMFILESX86@\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
 
 workdir @SYSDRIVE@\
 cmd rmdir @SYSDRIVE@\Workspace /s /q
-cmd rmdir @WINDIR@\Installer /s /q
+# rmdir /s /q sometime still fails to delete, complaining on folder non empty
+# it's a known windows issue
+cmd powershell Remove-Item -Recurse -Force "@WINDIR\Installer"
 cmd rmdir @APPDATACOMMON@\Adobe /s /q
