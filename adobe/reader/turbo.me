@@ -85,6 +85,7 @@ cmd install.exe /sPB
 batch
   reg add "HKCU\Software\Adobe\Acrobat Reader\DC\Privileged" /t REG_DWORD /d 0 /v bProtectedMode
   reg add "HKLM\Software\Wow6432Node\Adobe\Acrobat Reader\DC\AdobeViewer" /t REG_DWORD /d 1 /v EULA
+  reg add "HKLM\SOFTWARE\WOW6432Node\Policies\Adobe\Acrobat Reader\DC\FeatureLockdown /t REG_DWORD /d 0 /v bUpdater
   reg add "HKCU\Software\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v   iAppDoNotTakePDFOwnershipAtLaunchWin10
   reg add "HKCU\Software\Adobe\Acrobat Reader\DC\AVAlert\cCheckbox" /t REG_DWORD /d 1 /v iAppDoNotTakePDFOwnershipAtLaunch
   reg add "HKCU\Software\Adobe\Acrobat Reader\DC\FTEDialog" /t REG_DWORD /d 10 /v iFTEVersion
