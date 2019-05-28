@@ -11,56 +11,58 @@ meta title="jre"
 meta namespace="oracle"
 meta name="jre"
 
-using wget,python:3.4.1
+###################################
+# Download and install
+###################################
 
-cmd pip install requests --quiet
-
-workdir c:\
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 batch
- echo import sys > getRelease.py
- echo import requests >> getRelease.py
- echo import re >> getRelease.py
- echo host = 'http://java.com/en/download/manual.jsp' >> getRelease.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo version = list(re.findall('Recommended Version (\d*) Update (\d*)', r.text)[0]) >> getRelease.py
- echo url = [re.findall('for Windows Offline^" href=^"(.*)^"', r.text)[0]] >> getRelease.py
- echo print(version + url) >> getRelease.py
+  echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> script.ps1
+  echo $content = Invoke-WebRequest https://www.java.com/en/download/manual.jsp >> script.ps1
+  echo $urlPattern = '^<a title="Download Java software for Windows Offline" href="(?<url>[a-zA-Z0-9._/?:=]+)"^>' >> script.ps1
+  echo $versionPattern = "Recommended Version (?<version>[\d]+) Update (?<update>[\d]+)" >> script.ps1
+  echo $content -match $urlPattern ^| Out-Null >> script.ps1
+  echo $DownloadLink = $Matches['url'] >> script.ps1
+  echo $content -match $versionPattern ^| Out-Null >> script.ps1
+  echo $Matches['version']+"."+$Matches['update'] ^| Out-File -NoNewLine -Encoding Ascii .\release.txt >> script.ps1
+  echo "@PROGRAMFILESX86@\java\jre1." + $Matches['version'] + ".0_" + $Matches['update'] ^| Out-File -NoNewLine -Encoding Ascii .\javaHome.txt >> script.ps1
+  echo (New-Object System.Net.WebClient).DownloadFile($DownloadLink,"C:\Workspace\installer.exe") >> script.ps1
 
-cmd python getRelease.py
+cmd powershell -File script.ps1
 
-var data = last
-
-cmd "python -c ""print(%data%[0])"""
-var version = last
-
-cmd "python -c ""print(%data%[1])"""
-var update = last
-
-cmd "python -c ""print(%data%[2])"""
-var url = last
-
-var tag = version + "." + update
-
-cmd "wget -O setup.exe --no-check-certificate %url%"
-
-cmd "setup.exe /s"
-
-workdir c:\
-
-cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
+cmd installer.exe /s
 
 # this path contains symlinks and currenlty they are not properly supported in vm
 # so remove it 
-cmd rmdir c:\ProgramData\Oracle /s /q
+# cmd rmdir c:\ProgramData\Oracle /s /q
 
-var rootPath = "@PROGRAMFILESX86@\java\jre1." + version + ".0_" + update
-env path=rootPath + "\bin\"
-env JAVA_HOME=rootPath
+cmd type C:\Workspace\release.txt
+var tag = last
+cmd type C:\Workspace\javaHome.txt
+var javaHome = last
 
 meta tag=tag
+
+###################################
+# Startup File
+###################################
+
+# Nothing here
+
+###################################
+# Environment Variables
+###################################
+
+env path=javaHome + "\bin\"
+env JAVA_HOME=javaHome
+
+###################################
+# Clean up
+###################################
+
+workdir C:\
+cmd rmdir c:\ProgramData\Oracle /s /q
+cmd rmdir C:\Windows\Installer /s /q
+cmd rmdir c:\Workspace /s /q
