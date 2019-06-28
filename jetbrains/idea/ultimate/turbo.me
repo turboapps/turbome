@@ -1,6 +1,6 @@
 #
 # IntelliJ IDEA Ultimate turbo.me file
-# https://github.com/turboapps/turbome/tree/master/intellij/ultimate
+# https://github.com/turboapps/turbome/tree/master/intellij]
 #
 # Created with Turbo CMD version 1.4.1085.0
 #
@@ -15,64 +15,49 @@ meta title="IntelliJ IDEA Ultimate"
 meta namespace="jetbrains"
 meta name="intellij-ultimate"
 
-###################################
-# Pull dependency images
-###################################
-
-using turbo/turboscript-tools:2016.8.31
-
-###################################
-# Download and install
-###################################
 
 # Set working directory
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Download
-batch cmd
-    echo import requests > getLink.py
-    echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getLink.py
-    echo response = requests.get("https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&type=release", headers=headers, timeout=10) >> getLink.py
-    echo response.raise_for_status() >> getLink.py
-    echo json = response.json() >> getLink.py
-    echo print(json['IIU'][0]['downloads']['windows']['link']) >> getLink.py
-cmd python getLink.py
-var url = last
+###################################
+# Download and install
+###################################
 
-cmd "wget --no-check-certificate --quiet -Ointellij.exe ""%url%"""
+batch
+  echo $site = Invoke-Webrequest "https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&type=release" >> downloadInstaller.ps1
+  echo $link = ($site ^| ConvertFrom-Json).IIU.downloads.windows.link >> downloadInstaller.ps1
+  echo (New-Object System.Net.WebClient).DownloadFile($link, "intellij.exe") >> downloadInstaller.ps1
 
-# Install
-cmd intellij.exe /S
-cmd dir "c:\Program Files (x86)\JetBrains" /b > image.txt
-cmd findstr "." image.txt 
-var installDir = "c:\Program Files (x86)\JetBrains\" + last 
-var exePath = installDir + "\bin\idea64.exe"
+cmd powershell -File downloadInstaller.ps1
 
-# Get product version
-cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Get-FileVersion ""%exePath%"""
+batch
+  echo mode=user >> silent.config
+  echo launcher32=0 >> silent.config
+  echo launcher64=1 >> silent.config
+  echo updatePATH=0 >> silent.config
+  echo updateContextMenu=0 >> silent.config
+  echo jre32=1 >> silent.config
+  echo regenerationSharedArchive=0 >> silent.config
+  echo .java=1 >> silent.config
+  echo .groovy=1 >> silent.config
+  echo .kt=1 >> silent.config
+
+cmd "intellij.exe /S /CONFIG=C:\Workspace\silent.config /D=C:\IntelliJ"
+
+batch
+  echo $productInfo = Get-Content "C:\IntelliJ\product-info.json" >> getVersion.ps1
+  echo ($productInfo ^| ConvertFrom-Json).version >> getVersion.ps1
+
+cmd powershell -File getVersion.ps1
 var version = last
-
-batch cmd
-    echo $productVersion = [version] "%version%" > versionContract.ps1
-    echo Write-Output $productVersion.Major >> versionContract.ps1
-cmd powershell -ExecutionPolicy Unrestricted -NoProfile -ExecutionPolicy Unrestricted -File versionContract.ps1
-var versionMajor = last
-var conifgPath = ".IntelliJIdea" + versionMajor + "\config\options"
-
-batch cmd
-    cd "%homepath%"
-    mkdir "%conifgPath%"
 
 ###################################
 # Clean up
 ###################################
 
-cmd powershell -ExecutionPolicy Unrestricted -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
-
 workdir c:\
 cmd rmdir c:\Workspace /s /q
-cmd rmdir c:\TurboBuildTools /s /q
 
 
 ###################################
@@ -86,4 +71,5 @@ meta tag=version
 # Startup File
 ###################################
  
-startup file (exePath)
+startup file ("C:\IntelliJ\bin\idea.exe")
+startup file x64=("C:\IntelliJ\bin\idea64.exe")
