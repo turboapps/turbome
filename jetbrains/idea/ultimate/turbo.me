@@ -46,7 +46,7 @@ batch
 cmd "intellij.exe /S /CONFIG=C:\Workspace\silent.config /D=C:\IntelliJ"
 
 batch
-  echo $productInfo = Get-Content "C:\IntelliJ\product-info.json" >> getVersion.ps1
+  echo $productInfo = Get-Content "C:\IntelliJ\product-info.json" -Raw >> getVersion.ps1
   echo ($productInfo ^| ConvertFrom-Json).version >> getVersion.ps1
 
 cmd powershell -File getVersion.ps1
