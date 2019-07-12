@@ -32,8 +32,14 @@ batch cmd
   7z x vscode.zip -oC:\vscode
 
 batch cmd
-	mkdir %APPDATA%\Code\User
-    wget -q -O %APPDATA%\Code\User\settings.json --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/visual-studio-code/settings.json
+  mkdir %APPDATA%\Code\User
+  wget -q -O %APPDATA%\Code\User\settings.json --no-check-certificate --no-verbose https://raw.githubusercontent.com/turboapps/turbome/master/visual-studio-code/settings.json
+
+batch
+  start cmd /c C:\vscode\code.exe
+  ping -n 15 127.0.0.1
+  taskkill /F /IM code.exe
+
 
 ###################################
 #Get version
