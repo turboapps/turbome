@@ -1,0 +1,52 @@
+#
+# OpenJDK turbo.me file
+# https://github.com/turboapps/turbome/tree/master/openjdk
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+requires privilege:admin
+
+meta title="openjdk"
+meta namespace="openjdk"
+meta name="openjdk"
+
+###################################
+# Download and install
+###################################
+
+cmd mkdir @SYSDRIVE@\Workspace
+workdir @SYSDRIVE@\Workspace
+
+batch
+  echo $baseUrl = "https://jdk.java.net" >> script.ps1
+  echo $web = Invoke-WebRequest -Uri $baseUrl >> script.ps1
+  echo [regex]$gareleaseRegex = "(?<=Ready for use:\s*<a href=`")(?^<link^>[\w+/].*)(?=`">)" >> script.ps1
+  echo $garelease = ($gareleaseRegex.Match($web)).Groups['link'].Value >> script.ps1
+  echo $gareleaseUrl = $baseUrl + $garelease >> script.ps1
+  echo $web = Invoke-WebRequest -Uri $gareleaseUrl >> script.ps1
+  echo $jdkUrl = ($web.Links ^| where {$_.innerText -match "zip"}).href >> script.ps1
+  echo [regex]$releaseRegex = "(?<=<h1>JDK )(?<release>[\d+\.]*)(?#= General-Availability Release</h1>)" >> script.ps1
+  echo $release = ($releaseRegex.Match($web)).Groups['release'].Value >> script.ps1
+  echo (New-Object System.Net.WebClient).DownloadFile($jdkUrl, "jdk.zip") >> script.ps1
+  echo $jdkExtractPath = "$env:PROGRAMFILES\Java" >> script.ps1
+  echo Add-Type -AssemblyName System.IO.Compression.FileSystem >> script.ps1
+  echo [System.IO.Compression.ZipFile]::ExtractToDirectory(".\jdk.zip", $jdkExtractPath) >> script.ps1
+  echo $javaHomeVariable = (Get-ChildItem $jdkExtractPath).FullName >> script.ps1
+  echo [Environment]::SetEnvironmentVariable("JAVA_HOME",$javaHomeVariable,"Machine") >> script.ps1
+  echo [Environment]::SetEnvironmentVariable("JDK_HOME",$javaHomeVariable,"Machine") >> script.ps1
+  echo [Environment]::SetEnvironmentVariable("Path","$env.Path;$javaHomeVariable\bin","Machine") >> script.ps1
+  echo [Environment]::SetEnvironmentVariable("CLASSPATH",".;$javaHomeVariable\lib","Machine") >> script.ps1
+  echo $release >> script.ps1
+
+cmd powershell -File script.ps1
+
+var tag=last
+meta tag=tag
+
+###################################
+# Clean up
+###################################
+
+workdir @SYSDRIVE@\
+cmd rmdir @SYSDRIVE@\Workspace /s /q
