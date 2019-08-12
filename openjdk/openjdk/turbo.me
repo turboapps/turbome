@@ -19,6 +19,7 @@ cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
 
 batch
+  echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> script.ps1
   echo $baseUrl = "https://jdk.java.net" >> script.ps1
   echo $web = Invoke-WebRequest -Uri $baseUrl >> script.ps1
   echo [regex]$gareleaseRegex = "(?<=Ready for use:\s*<a href=`")(?^<link^>[\w+/].*)(?=`">)" >> script.ps1
