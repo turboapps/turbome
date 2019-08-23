@@ -62,6 +62,8 @@ batch cmd
     cd C:\Jetty
     wget -O jetty-runner.jar http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.9.v20180320/jetty-runner-9.4.9.v20180320.jar
 
+# isolate directories so they don't get faulted in to the native machine (VM-1999)
+isolate file:@SYSDRIVE@\jetty\ full
 
 ###################################
 # Environment Variables
@@ -74,11 +76,15 @@ env JETTY_HOME="C:\Jetty\"
 # Clean up
 ###################################
 
+# reset workdir so can delete c:\workspace
+workdir c:\
+
 cmd powershell -NoProfile -Command "Import-Module Turbo; Remove-BuildTools"
 
 batch
     cd C:\
     rmdir c:\Workspace /s /q
+    rmdir c:\Python34 /s /q
+    rmdir c:\wget /s /q
     rmdir c:\TurboBuildTools /s /q
-
 
