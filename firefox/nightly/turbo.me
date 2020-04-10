@@ -9,7 +9,7 @@ meta title="Firefox Nightly"
 meta namespace="mozilla"
 meta name="firefox-nightly"
 
-using python:3.4.1,wget,7-zip
+using python:3.4.1,wget,7-zip,powershell
 
 cmd mkdir c:\Workspace
 workdir c:\Workspace
@@ -41,6 +41,12 @@ batch cmd
  rmdir c:\Workspace /s /q
  rmdir c:\wget /s /q
  rmdir c:\Python34 /s /q
+ 
+# disable the launcher process (APPQ-3093)
+cmd powershell -command " New-Item -Path 'HKCU:\Software' -Name Mozilla -Force "
+cmd powershell -command " New-Item -Path 'HKCU:\Software\Mozilla' -Name Firefox -Force "
+cmd powershell -command " New-Item -Path 'HKCU:\Software\Mozilla\Firefox' -Name Launcher -Force "
+cmd powershell -command " Set-ItemProperty -Path 'HKCU:\Software\Mozilla\Firefox\Launcher' -name 'c:\FirefoxNightly\firefox.exe|Browser' -type qword -value 0 "
 
 workdir c:\
 

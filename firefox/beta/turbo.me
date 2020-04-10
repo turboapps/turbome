@@ -6,7 +6,7 @@ meta name="firefox-beta"
 # Pull dependency images
 ###################################
 
-using wget
+using powershell,wget
 
 cmd  mkdir c:\Workspace
 workdir c:\Workspace
@@ -55,6 +55,10 @@ batch
  mkdir %APPDATA%\Mozilla\Firefox\
  copy C:\Workspace\profiles.ini %APPDATA%\Mozilla\Firefox\profiles.ini
  xcopy /sy /e /I C:\Workspace\Profiles %APPDATA%\Mozilla\Firefox\Profiles
+ 
+# disable the launcher process (APPQ-3093)
+cmd "echo Set-ItemProperty -Path 'HKCU:\Software\Mozilla\Firefox\Launcher' -name 'c:\FirefoxBeta\firefox.exe^|Browser' -type qword -value 0 >> DisableLauncher.ps1"
+cmd powershell -executionpolicy remotesigned -File DisableLauncher.ps1
 
  
 workdir c:\
