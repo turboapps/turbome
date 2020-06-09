@@ -1,0 +1,11 @@
+# AdventureWorks 2014 with ssms2016
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="SQL Server Express with SSMS"
+meta namespace="sqlserver"
+meta name="ssms-sqlserver"
+
+layer sqlserver/sqlserver-express:2016,sqlserver/ssms:2017
+startup file ("@PROGRAMFILESX86@\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Ssms.exe", "-S", "\\.\pipe\MSSQL$SQLEXPRESS\sql\query")
