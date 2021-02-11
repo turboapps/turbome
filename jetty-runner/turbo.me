@@ -20,8 +20,8 @@ meta name="jetty-runner"
 ###################################
 
 # Basic dependencies and tools
-layer jre:8
-using turbo/turboscript-tools:2016.8.31
+layer oracle/jre:8.281
+using turbo/turboscript-tools:2021.2.11
 
 
 ###################################
@@ -31,36 +31,11 @@ using turbo/turboscript-tools:2016.8.31
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Fetch version
-batch
- echo import sys > getRelease.py
- echo import requests >> getRelease.py
- echo import re >> getRelease.py
- echo import distutils.version >> getRelease.py
- echo host = 'http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/' >> getRelease.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo version = max(re.findall('a href="(\d+(?:\.\d*)*\.v\d+)/"', r.text), key=lambda version: distutils.version.LooseVersion(version)) >> getRelease.py
- echo r = requests.get(host + version, headers=headers, timeout=10) >> getRelease.py
- echo executableJar = re.findall('a href="(.*?'+version+'\.jar)"', r.text) >> getRelease.py
- echo url = executableJar[0] >> getRelease.py
- echo print([version, host + version + '/' + url]) >> getRelease.py
-cmd type getRelease.py
-cmd python getRelease.py
-
-var res = last
-cmd "python -c ""print(%res%[0])"""
-var tag = last
-meta tag=tag
-
-cmd "python -c ""print(%res%[1])"""
-var url = last
-
 # Prepare Jetty
 batch cmd 
     mkdir C:\Jetty
     cd C:\Jetty
-    wget -O jetty-runner.jar http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.9.v20180320/jetty-runner-9.4.9.v20180320.jar
+    wget -O jetty-runner.jar https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.9.v20180320/jetty-runner-9.4.9.v20180320.jar
 
 # isolate directories so they don't get faulted in to the native machine (VM-1999)
 isolate file:@SYSDRIVE@\jetty\ full
@@ -87,4 +62,3 @@ batch
     rmdir c:\Python34 /s /q
     rmdir c:\wget /s /q
     rmdir c:\TurboBuildTools /s /q
-
