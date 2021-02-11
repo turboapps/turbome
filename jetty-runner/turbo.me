@@ -20,7 +20,10 @@ meta name="jetty-runner"
 ###################################
 
 # Basic dependencies and tools
-layer oracle/jre:8.281
+
+# Use the latest jre:8, it is recommended that any projects using this are built using the same jre:8 update.
+# When updating to a newer jre:8.xxx the build should pull to the latest version.
+layer oracle/jre:8
 using turbo/turboscript-tools:2021.2.11
 
 
