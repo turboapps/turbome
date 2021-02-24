@@ -60,6 +60,16 @@ batch
 cmd "echo Set-ItemProperty -Path 'HKCU:\Software\Mozilla\Firefox\Launcher' -name 'c:\FirefoxBeta\firefox.exe^|Browser' -type qword -value 0 >> DisableLauncher.ps1"
 cmd powershell -executionpolicy remotesigned -File DisableLauncher.ps1
 
+copy "firefox.cfg" "C:\Workspace\firefox.cfg"
+copy "autoconfig.js" "C:\Workspace\autoconfig.js"
+
+batch
+ cd c:\FirefoxBeta\
+ copy C:\Workspace\firefox.cfg 
+ 
+ cd defaults\pref
+ copy C:\Workspace\autoconfig.js
+
  
 workdir c:\
 

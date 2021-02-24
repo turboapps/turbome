@@ -66,6 +66,15 @@ batch
 # disable the launcher process (APPQ-3093)
 cmd powershell -command " Set-ItemProperty -Path 'HKCU:\Software\Mozilla\Firefox\Launcher' -name 'c:\FirefoxDeveloper\firefox.exe|Browser' -type qword -value 0 "
 
+copy "firefox.cfg" "C:\Workspace\firefox.cfg"
+copy "autoconfig.js" "C:\Workspace\autoconfig.js"
+
+batch
+ cd c:\FirefoxDeveloper\
+ copy C:\Workspace\firefox.cfg 
+ 
+ cd defaults\pref
+ copy C:\Workspace\autoconfig.js
  
 workdir c:\
 

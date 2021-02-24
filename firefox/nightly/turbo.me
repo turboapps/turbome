@@ -48,6 +48,16 @@ cmd powershell -command " New-Item -Path 'HKCU:\Software\Mozilla' -Name Firefox 
 cmd powershell -command " New-Item -Path 'HKCU:\Software\Mozilla\Firefox' -Name Launcher -Force "
 cmd powershell -command " Set-ItemProperty -Path 'HKCU:\Software\Mozilla\Firefox\Launcher' -name 'c:\FirefoxNightly\firefox.exe|Browser' -type qword -value 0 "
 
+copy "firefox.cfg" "C:\Workspace\firefox.cfg"
+copy "autoconfig.js" "C:\Workspace\autoconfig.js"
+
+batch
+ cd c:\FirefoxNightly
+ copy C:\Workspace\firefox.cfg
+ 
+ cd defaults\pref
+ copy C:\Workspace\autoconfig.js
+
 workdir c:\
 
 meta website="%DOWNLOAD_URL%"
