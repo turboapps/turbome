@@ -1,0 +1,25 @@
+layer gnu/mingw
+
+using wget
+
+workdir c:\
+cmd mkdir c:\qt2
+workdir c:\qt2
+
+cmd wget --no-check-certificate --no-verbose -Osetup.exe http://ftp.jaist.ac.jp/pub/qtproject/archive/qt/5.7/5.7.1/qt-opensource-windows-x86-mingw530-5.7.1.exe
+cmd (wget, "--no-check-certificate", "--no-verbose", "-Oscript.qs",  "https://drive.google.com/uc?export=download&id=0B4pWowUejoAOcmdseEZRM2R1akk")
+
+cmd setup.exe --script script.qs 
+#cmd qt-opensource-windows-x86-msvc2015_64-5.7.1.exe --script script.qs
+
+workdir c:\
+#cmd rmdir c:\qt2 /S /Q
+
+meta title="Qt 5.7.1"
+meta namespace=Quintonn
+meta name=Qt
+meta tag="5.7.1"
+
+startup file ("C:\Qt\Tools\QtCreator\bin\qtcreator.exe")
+
+#startup file ("cmd.exe", "c:\")
