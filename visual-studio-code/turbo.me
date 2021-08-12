@@ -18,6 +18,9 @@ using wget,7-zip
 cmd mkdir @SYSDRIVE@\Workspace
 workdir @SYSDRIVE@\Workspace
 
+# enable chrome sandbox support
+enable ChromiumSupport
+
 ###################################
 # Download
 ###################################
@@ -25,7 +28,7 @@ workdir @SYSDRIVE@\Workspace
 cmd "wget -O vscode.zip https://go.microsoft.com/fwlink/?Linkid=850641"
 
 ###################################
-#Unpack
+# Unpack
 ###################################
 
 batch cmd
@@ -42,7 +45,7 @@ batch
 
 
 ###################################
-#Get version
+# Get version
 ###################################
 
 cmd powershell "(Get-Item C:\vscode\Code.exe).VersionInfo.ProductVersion"
