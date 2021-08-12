@@ -37,8 +37,9 @@ batch cmd
   echo Stop-Process -InputObject $proc >> script.ps1
   echo $proc = Get-Process -Name node >> script.ps1
   echo Stop-Process -InputObject $proc >> script.ps1
+  
 # Node processes were left and kept the job hanging
-cmd powershell -File script.ps1
+cmd powershell -ExecutionPolicy RemoteSigned -File script.ps1
 
 #Config
 cmd del %userprofile%\.atom\config.cson
