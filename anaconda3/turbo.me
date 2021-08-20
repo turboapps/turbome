@@ -33,16 +33,16 @@ batch
   echo [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 >> getUrlAndVersion.ps1
   echo $page = Invoke-WebRequest -Uri "https://www.anaconda.com/download/" >> getUrlAndVersion.ps1
   echo $link = ($page.Links ^| where {$_.href -like "*Anaconda3*Windows-x86.exe"}).href >> getUrlAndVersion.ps1
-  echo $link -match "[0-9]\.[0-9]\.[0-9]" ^| Out-Null>> getUrlAndVersion.ps1
+  echo $link -match "[0-9]+\.[0-9]+" ^| Out-Null>> getUrlAndVersion.ps1
   echo $version = $Matches[0] >> getUrlAndVersion.ps1
   echo if($arg -ne "link") {Write-Host $version; Exit 0} >> getUrlAndVersion.ps1
   echo Write-Host $link >> getUrlAndVersion.ps1
 
 # Get url
-cmd powershell -File getUrlAndVersion.ps1 -arg "link"
+cmd powershell -executionpolicy remotesigned -File getUrlAndVersion.ps1 -arg "link"
 var url=last
 
-cmd powershell -File getUrlAndVersion.ps1 -arg "version"
+cmd powershell -executionpolicy remotesigned -File getUrlAndVersion.ps1 -arg "version"
 var tag=last
 meta tag=tag
 

@@ -29,7 +29,7 @@ batch
   echo $link = ($site ^| ConvertFrom-Json).IIU.downloads.windows.link >> downloadInstaller.ps1
   echo (New-Object System.Net.WebClient).DownloadFile($link, "intellij.exe") >> downloadInstaller.ps1
 
-cmd powershell -File downloadInstaller.ps1
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File downloadInstaller.ps1
 
 batch
   echo mode=user >> silent.config
@@ -49,7 +49,7 @@ batch
   echo $productInfo = Get-Content "C:\IntelliJ\product-info.json" -Raw >> getVersion.ps1
   echo ($productInfo ^| ConvertFrom-Json).version >> getVersion.ps1
 
-cmd powershell -File getVersion.ps1
+cmd powershell -NoProfile -ExecutionPolicy Unrestricted -File getVersion.ps1
 var version = last
 
 ###################################
