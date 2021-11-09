@@ -17,4 +17,6 @@ $xappl = Read-XAPPL $XappPath
 Remove-StartupFiles $xappl
 Add-StartupFile $xappl -File "@APPDATALOCAL@\GitHubDesktop\GitHubDesktop.exe" -AutoStart
 
+Set-VirtualizationSetting($xappl, "chromiumSupport", "True")
+
 Save-XAPPL $xappl $XappPath
