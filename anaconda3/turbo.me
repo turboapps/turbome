@@ -52,6 +52,9 @@ cmd wget.exe %url% -OAnaconda3.exe
 cmd ("Anaconda3.exe", "/S", "/D=C:\Anaconda3")
 
 # Configure navigator
+# note: in the most recent version I tested, this is not the location of the settings file.
+#       it was at %appdata%\.anaconda\navigator\.anaconda\navigator\anaconda-navigator.ini.
+#       this is obviously a bug in their app which presumably will be fixed at some point.
 batch
   mkdir %USERPROFILE%\.anaconda\navigator
   cd %USERPROFILE%\.anaconda\navigator
