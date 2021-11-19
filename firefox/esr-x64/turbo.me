@@ -88,6 +88,12 @@ batch cmd
   echo $Firefox= Join-Path $env:SYSTEMDRIVE 'Program Files\Mozilla Firefox\firefox.exe' >> GetVersion.ps1
   echo (Get-Item $Firefox).VersionInfo.ProductVersion >> GetVersion.ps1
 
+# disable the launcher process (APPQ-3093)
+cmd "echo $Firefox= Join-Path $env:SYSTEMDRIVE 'Program Files\Mozilla Firefox\firefox.exe' >> DisableLauncher.ps1"
+cmd "echo $valueName=$Firefox + '^|Browser' >> DisableLauncher.ps1"
+cmd "echo Set-ItemProperty -Path 'HKCU:\Software\Mozilla\Firefox\Launcher' -name $valueName -type qword -value 0 >> DisableLauncher.ps1"
+cmd powershell -executionpolicy remotesigned -File DisableLauncher.ps1
+
 # Get app version
 cmd powershell -executionpolicy remotesigned -File GetVersion.ps1
 var tag = last
