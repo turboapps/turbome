@@ -47,7 +47,7 @@ batch cmd
   @REM Copy settings for crash handler prompt
   mkdir "%LOCALAPPDATA%\RStudio"
   pushd "%LOCALAPPDATA%\RStudio"
-  wget --no-check-certificate --no-verbose -O rash-handler-permission https://raw.githubusercontent.com/turboapps/turbome/master/rstudio/crash-handler-permission 2> NUL
+  wget --no-check-certificate --no-verbose -O crash-handler-permission https://raw.githubusercontent.com/turboapps/turbome/master/rstudio/crash-handler-permission 2> NUL
 
   @REM Copy settings for crash handler and auto update check.
   mkdir "%APPDATA%\RStudio"
