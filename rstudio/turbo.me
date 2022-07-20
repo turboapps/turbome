@@ -1,0 +1,76 @@
+#
+# R Studio turbo.me file
+# https://github.com/turboapps/turbome/tree/master/rstudio/
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Preconfigured RStudio image:
+# * Disabled update check
+# * Disabled crash reporting
+# * Requires the R runtime (add the r/r-project layer or your own custom R image)
+# 
+
+requires privilege:admin
+
+###################################
+# Meta tags
+###################################
+
+meta title="RStudio"
+meta namespace="rstudio"
+meta name="rstudio"
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell,wget
+
+###################################
+# Download and install
+###################################
+
+cmd  mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download RStudio
+cmd "wget --no-check-certificate --no-verbose -O Download-Rstudio.ps1 https://raw.githubusercontent.com/turboapps/turbome/master/rstudio/Download-Rstudio.ps1 2> NUL"
+cmd "powershell -executionpolicy remotesigned -File Download-Rstudio.ps1"
+var rstudiofilename = last
+
+# Install and configure RStudio
+batch cmd
+  @REM Install RStudio
+  %rstudiofilename% /S
+
+  @REM Copy settings for crash handler prompt
+  mkdir "%LOCALAPPDATA%\RStudio"
+  pushd "%LOCALAPPDATA%\RStudio"
+  wget --no-check-certificate --no-verbose -O rash-handler-permission https://raw.githubusercontent.com/turboapps/turbome/master/rstudio/crash-handler-permission 2> NUL
+
+  @REM Copy settings for crash handler and auto update check.
+  mkdir "%APPDATA%\RStudio"
+  pushd "%APPDATA%\RStudio"
+  wget --no-check-certificate --no-verbose -O rstudio-prefs.json https://raw.githubusercontent.com/turboapps/turbome/master/rstudio/rstudio-prefs.json 2> NUL
+  wget --no-check-certificate --no-verbose -O crash-handler.conf https://raw.githubusercontent.com/turboapps/turbome/master/rstudio/crash-handler.conf 2> NUL
+  
+  @REM Delete Uninstall shortcut
+  del "%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs\rstudio\uninstall.lnk"
+
+# Set RStudio version meta
+## Unformatted version
+## cmd "powershell ((Get-Item 'C:\Program Files\rstudio\bin\rstudio.exe').VersionInfo.FileVersionRaw).ToString()"
+## Use formatted version instead
+cmd "powershell $version = (Get-Item 'C:\Program Files\rstudio\bin\rstudio.exe').VersionInfo.FileVersionRaw; ''+$version.Major+'.'+$version.Minor+'.'+$version.Build"
+var rstudioversion = last
+meta tag = rstudioversion
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir c:\wget /s /q
