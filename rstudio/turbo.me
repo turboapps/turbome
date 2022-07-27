@@ -61,8 +61,9 @@ batch cmd
 # Set RStudio version meta
 ## Unformatted version
 ## cmd "powershell ((Get-Item 'C:\Program Files\rstudio\bin\rstudio.exe').VersionInfo.FileVersionRaw).ToString()"
+## cmd "powershell $version = (Get-Item 'C:\Program Files\rstudio\bin\rstudio.exe').VersionInfo.FileVersionRaw; ''+$version.Major+'.'+$version.Minor+'.'+$version.Build"
 ## Use formatted version instead
-cmd "powershell $version = (Get-Item 'C:\Program Files\rstudio\bin\rstudio.exe').VersionInfo.FileVersionRaw; ''+$version.Major+'.'+$version.Minor+'.'+$version.Build"
+cmd "powershell $version = ((Get-Item 'C:\Program Files\rstudio\bin\rstudio.exe').VersionInfo.FileVersion).Split(',');''+$version[0]+'.'+$version[1]+'.'+$version[2]"
 var rstudioversion = last
 meta tag = rstudioversion
 
