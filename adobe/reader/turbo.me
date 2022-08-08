@@ -73,7 +73,7 @@ batch
   echo $fileUri = $uri + ($array -match ".*US\.exe") >> downloadScript.ps1
   echo (New-Object System.Net.WebClient).DownloadFile($fileUri, "install.exe") >> downloadScript.ps1
 
-cmd powershell -File downloadScript.ps1
+cmd powershell -ExecutionPolicy remotesigned -File downloadScript.ps1
 
 cmd install.exe /sPB
 
@@ -105,7 +105,7 @@ batch
   echo } >> getVersion.ps1
   echo (Get-Item "$programs\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe").VersionInfo.FileVersion >> getVersion.ps1
 
-cmd powershell -File getVersion.ps1
+cmd powershell -ExecutionPolicy remotesigned -File getVersion.ps1
 var tag=last
 meta tag=tag
 
