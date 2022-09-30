@@ -1,0 +1,80 @@
+#
+# Zoom 32-bit turbo.me file
+# https://github.com/turboapps/turbome/tree/master/zoom
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Zoom image
+# * Uses MSI installer, so auto updates are disabled
+
+
+###################################
+# Requirements
+###################################
+
+requires privilege:admin
+
+###################################
+# Meta tags
+###################################
+
+meta namespace="zoomvideocommunications"
+meta name="zoom-x64"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using powershell,wget
+
+
+###################################
+# Download and install
+###################################
+
+# Create workspace folder
+cmd "mkdir %SYSTEMDRIVE%\Workspace"
+workdir @SYSDRIVE@\Workspace
+
+# Installer link
+var url = "https://zoom.us/client/latest/ZoomInstallerFull.msi?archType=x64"
+
+# Download, install, and configure app
+batch cmd
+  @ECHO Download installer
+  wget -O ZoomInstallerFull.msi --no-check-certificate --no-verbose "%url%"
+  
+  @ECHO Run installer
+  MSIEXEC /I ZoomInstallerFull.msi  /qn
+
+# Get app version
+cmd "powershell $version = ((Get-Item 'C:\Program Files\Zoom\bin\Zoom.exe').VersionInfo.FileVersion).Split(',');''+$version[0]+'.'+$version[1]+'.'+$version[2]+'.'+$version[3]"
+var appversion = last
+meta tag = appversion
+
+###################################
+# Shortcuts
+###################################
+
+workdir @PROGRAMSCOMMON@
+cmd "wget --no-check-certificate --no-verbose -O zoom.lnk https://raw.githubusercontent.com/turboapps/turbome/master/zoom/x64/zoom.lnk"
+
+workdir @DESKTOPCOMMON@
+cmd "wget --no-check-certificate --no-verbose -O zoom.lnk https://raw.githubusercontent.com/turboapps/turbome/master/zoom/x64/zoom.lnk"
+
+###################################
+# Startup File
+###################################
+
+startup file ("@PROGRAMFILES@\Zoom\bin\zoom.exe")
+
+###################################
+# Clean up
+###################################
+
+workdir c:\
+
+cmd rmdir @SYSDRIVE@\Workspace /s /q
+cmd rmdir c:\wget /s /q
