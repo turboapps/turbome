@@ -56,6 +56,7 @@ Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\Windows NT"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\CurrentVersion\Installer"
 Remove-RegistryItems $xappl "@HKLM@\SOFTWARE\Microsoft\CurrentVersion\Uninstaller"
 
+# Isolating this message window allows multiple Chrome instances to run side-by-side.
 Add-ObjectMap $xappl -Name 'window://Chrome_MessageWindow:0'
 
 Remove-Service $xappl 'gupdate'
