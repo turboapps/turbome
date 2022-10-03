@@ -13,7 +13,7 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Download app
-cmd "wget --no-check-certificate --no-verbose -O Download-App.ps1 https://raw.githubusercontent.com/turboapps/turbome/master/notepad%2B%2B/Download-App.ps1 2> NUL"
+cmd "powershell wget -O Download-App.ps1 https://raw.githubusercontent.com/turboapps/turbome/master/notepad%2B%2B/Download-App.ps1 2> NUL"
 cmd "powershell -executionpolicy remotesigned -File Download-App.ps1"
 var appinstaller = last
 
