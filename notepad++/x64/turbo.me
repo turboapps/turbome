@@ -13,7 +13,7 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Download app
-cmd "powershell wget -O Download-App.ps1 https://raw.githubusercontent.com/turboapps/turbome/master/notepad%2B%2B/Download-App.ps1 2> NUL"
+cmd "powershell wget -O Download-App.ps1 https://raw.githubusercontent.com/turboapps/turbome/master/notepad%2B%2B/x64/Download-App.ps1 2> NUL"
 cmd "powershell -executionpolicy remotesigned -File Download-App.ps1"
 var appinstaller = last
 
@@ -22,14 +22,14 @@ batch
   %appinstaller% /S
 
 # Set app version meta
-cmd "powershell $version = ((Get-Item 'C:\Program Files (x86)\Notepad++\notepad++.exe').VersionInfo.FileVersionRaw);''+$version.Major+'.'+$version.Minor+'.'+$version.Build"
+cmd "powershell $version = ((Get-Item 'C:\Program Files\Notepad++\notepad++.exe').VersionInfo.FileVersionRaw);''+$version.Major+'.'+$version.Minor+'.'+$version.Build"
 var appversion = last
 meta tag = appversion
 
 # Disable auto updates
 batch
   @REM Start application to generate APPDATA\Notepad++\config.xml.
-  echo start "Notepad++" "C:\Program Files (x86)\Notepad++\notepad++" > generate-config.cmd
+  echo start "Notepad++" "C:\Program Files\Notepad++\notepad++" > generate-config.cmd
   
   @REM Wait a couple of seconds
   echo timeout /t 30 >> generate-config.cmd
@@ -59,7 +59,7 @@ batch
 # Startup File
 ###################################
 
-startup file ("C:\Program Files (x86)\Notepad++\notepad++.exe")
+startup file ("C:\Program Files\Notepad++\notepad++.exe")
 
 ###################################
 # Clean up
@@ -69,4 +69,4 @@ workdir c:\
 batch cmd
   rmdir c:\Workspace /s /q
   @REM Uncomment to disable updater and plugins
-  @REM rmdir "C:\Program Files (x86)\Notepad++\updater" /s /q 
+  @REM rmdir "C:\Program Files\Notepad++\updater" /s /q 
