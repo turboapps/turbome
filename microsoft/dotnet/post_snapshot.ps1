@@ -130,3 +130,12 @@ function Invoke-PostSnapshotScript {
 		Save-XAPPL $xappl $xapplPath
 	}
 }
+
+#You may run this script manually after a manual snapshot instead of the full build script which needs to be updated
+#Save the current value in the $p variable.
+#$p = [Environment]::GetEnvironmentVariable("PSModulePath")
+#Add the new path to the $p variable. Begin with a semi-colon separator.
+#$p += ";C:\{repoRoot}\turbome\tools\powershell"
+#Add the paths in $p to the PSModulePath value.
+#[Environment]::SetEnvironmentVariable("PSModulePath",$p)
+#Invoke-PostSnapshotScript -version 4.8 -xapplPath C:\{buildRoot}\Snapshot.xappl
