@@ -1,0 +1,59 @@
+# Whisper runtime turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="whisper-runtime"
+meta namespace="openai"
+meta name="whisper-runtime"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget:1.18,git
+
+layer python:3.9.6,ffmpeg
+
+###################################
+# Download and install
+###################################
+
+batch cmd
+ pip install torch
+ pip install transformers
+ pip install ffmpeg-python
+ pip install --upgrade --no-deps --force-reinstall git+https://github.com/openai/whisper.git
+
+cmd mkdir @APPDATACOMMON@\Whisper\
+cmd wget --no-check-certificate --no-verbose -O @APPDATACOMMON@\Whisper\main.py https://raw.githubusercontent.com/turboapps/turbome/master/whisper/resources/main.py
+cmd wget --no-check-certificate --no-verbose -O @APPDATACOMMON@\Whisper\whisper_caller.py https://raw.githubusercontent.com/turboapps/turbome/master/whisper/resources/whisper_caller.py
+
+# Batch script for making sure files are not empty
+cmd echo @echo off > checkZeroBytes.bat
+cmd echo if %~z1 lss 1 echo ERROR: %~n1 is 0 bytes >> checkZeroBytes.bat
+
+cmd checkZeroBytes.bat @APPDATACOMMON@\Whisper\main.py
+cmd checkZeroBytes.bat @APPDATACOMMON@\Whisper\whisper_caller.py
+
+###################################
+# Environment Variables
+###################################
+
+env path="@SYSDRIVE@\ffmpeg"
+
+###################################
+# Clean up
+###################################
+
+cmd del checkZeroBytes.bat
+
+###################################
+# Startup File
+###################################
+
+startup file @APPDATACOMMON@\Whisper\main.py

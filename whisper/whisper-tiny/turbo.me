@@ -1,0 +1,39 @@
+# Whisper tiny turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="whisper-tiny"
+meta namespace="openai"
+meta name="whisper-tiny"
+
+###################################
+# Pull dependency images
+###################################
+
+layer whisper-runtime
+
+###################################
+# Download and install
+###################################
+
+# Script to pre-install model
+batch
+ echo import sys > getModel.py
+ echo import os >> getModel.py
+ echo from whisper import _download, _MODELS >> getModel.py
+ echo download_root = os.path.join(os.getenv("XDG_CACHE_HOME", os.path.join(os.path.expanduser("~"), ".cache")), "whisper") >> getModel.py
+ echo _download(_MODELS["tiny"], download_root, False) >> getModel.py
+
+# Pre-install model so it doesn't get downloaded on container startup
+cmd python getModel.py
+
+###################################
+# Clean up
+###################################
+
+cmd del getModel.py
