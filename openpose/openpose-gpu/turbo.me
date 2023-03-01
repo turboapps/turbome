@@ -1,0 +1,48 @@
+# OpenPose turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="openpose-gpu"
+meta namespace="cmu"
+meta name="openpose-gpu"
+meta tag="1.7"
+
+###################################
+# Pull dependency images
+###################################
+
+using wget:1.18
+
+layer powershell
+
+###################################
+# Download and install
+###################################
+
+cmd wget --no-check-certificate --no-verbose -O openpose_archive.zip https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/download/v1.7.0/openpose-1.7.0-binaries-win64-gpu-python3.7-flir-3d_recommended.zip
+
+cmd "powershell" "-command" "if ((Get-Item openpose_archive.zip).Length -lt 1) { Write-Output 'ERROR: File is 0 bytes' }"
+
+cmd powershell -command Expand-Archive openpose_archive.zip
+cmd move @SYSDRIVE@\openpose_archive\openpose @SYSDRIVE@\openpose
+cmd cd @SYSDRIVE@\openpose\models & getBaseModels.bat
+
+###################################
+# Clean up
+###################################
+
+cmd rmdir openpose_archive
+cmd del openpose_archive.zip
+
+###################################
+# Startup File
+###################################
+
+# Need to set startup directory as openpose root directory otherwise openpose doesn't work
+setworkdir @SYSDRIVE@\openpose
+startup file @SYSDRIVE@\openpose\bin\OpenPoseDemo.exe
