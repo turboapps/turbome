@@ -1,4 +1,4 @@
-# OpenPose turbo.me file
+# OpenPose CPU version turbo.me file
 #
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -18,7 +18,8 @@ meta tag="1.7"
 
 using wget:1.18
 
-layer powershell
+# vcredist dlls were missing on server 2019, can remove once server updated
+layer vcredist:2019
 
 ###################################
 # Download and install
@@ -26,18 +27,21 @@ layer powershell
 
 cmd wget --no-check-certificate --no-verbose -O openpose_archive.zip https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/download/v1.7.0/openpose-1.7.0-binaries-win64-cpu-python3.7-flir-3d.zip
 
-cmd "powershell" "-command" "if ((Get-Item openpose_archive.zip).Length -lt 1) { Write-Output 'ERROR: File is 0 bytes' }"
+# Batch script for making sure files are not empty
+cmd echo @echo off > checkZeroBytes.bat
+cmd echo if %~z1 lss 1 echo ERROR: %~n1 is 0 bytes >> checkZeroBytes.bat
 
-cmd powershell -command Expand-Archive openpose_archive.zip
-cmd move @SYSDRIVE@\openpose_archive\openpose @SYSDRIVE@\openpose
+cmd checkZeroBytes.bat openpose_archive.zip
+
+cmd tar -xf openpose_archive.zip
 cmd cd @SYSDRIVE@\openpose\models & getBaseModels.bat
 
 ###################################
 # Clean up
 ###################################
 
-cmd rmdir openpose_archive
 cmd del openpose_archive.zip
+cmd del checkZeroBytes.bat
 
 ###################################
 # Startup File
