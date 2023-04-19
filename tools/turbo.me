@@ -21,10 +21,13 @@ meta name="turboscript-tools"
 ###################################
 
 layer chocolatey/chocolatey:0.9.9.11
-layer python/python:3.4.4
+layer python/python:3.9.6
 layer wget
 layer 7-zip/7-zip
 
+# The chocolately and wget images mistakenly set the PYTHONHOME environmental variable to value that is not supported by the Python 3.9.6 image.
+# This results in pip install commands to fail. Unset the variable here, as the Python 3.9.6 image expects it to be unset
+env PYTHONHOME=
 
 ###################################
 # Download and install
