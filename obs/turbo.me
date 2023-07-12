@@ -1,0 +1,44 @@
+#
+# OBS turbo.me file
+# https://github.com/turboapps/turbome/tree/master/obs
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+meta title="OBS Studio"
+meta namespace="obs"
+meta name="obs-studio"
+
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Download app
+cmd powershell "wget -Uri (((wget https://api.github.com/repos/obsproject/obs-studio/releases/latest).Content | ConvertFrom-Json).assets | Where-Object name -like 'OBS-Studio*.zip').browser_download_url -OutFile obs-studio.zip"
+# The above one-liner is the combination of the below PowerShell commands:
+# $latestRelease = wget https://api.github.com/repos/obsproject/obs-studio/releases/latest
+# $releaseContent = $latestRelease.Content | ConvertFrom-Json
+# $downloadUrl = ($releaseContent.assets | Where-Object name -like 'OBS-Studio*.zip').browser_download_url
+# wget -Uri $downloadUrl -OutFile obs-studio.zip
+
+# Install and configure app
+cmd "powershell Expand-Archive obs-studio.zip -DestinationPath 'C:\Program Files\obs-studio'"
+
+# Set app version meta
+cmd "powershell $version = ((Get-Item 'C:\Program Files\obs-studio\bin\64bit\obs64.exe').VersionInfo.FileVersionRaw);''+$version.Major+'.'+$version.Minor+'.'+$version.Build"
+var appversion = last
+meta tag = appversion
+  
+
+# ###################################
+# # Startup File
+# ###################################
+
+startup file ("C:\Program Files\obs-studio\bin\64bit\obs64.exe")
+
+# ###################################
+# # Clean up
+# ###################################
+
+workdir c:\
+batch cmd
+  rmdir c:\Workspace /s /q
