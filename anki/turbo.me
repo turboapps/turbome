@@ -1,0 +1,87 @@
+#
+# Anki turbo.me file
+# https://github.com/turboapps/turbome/tree/master/anki
+#
+
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="Anki"
+meta namespace="anki"
+meta name="anki"
+
+
+###################################
+# Pull dependency images
+###################################
+
+using gnu/wget
+
+
+###################################
+# Download and install
+###################################
+
+# Set working directory
+cmd mkdir c:\Workspace
+workdir c:\Workspace
+
+# Get version
+batch
+  echo $webpage = Invoke-WebRequest -Uri "https://apps.ankiweb.net/downloads/archive/" >> GetVersion.ps1
+  echo $releases = $webpage.Links.href ^| where {$_ -like "*windows-qt6.exe"} ^| sort >> GetVersion.ps1
+  echo $latest = $releases[-1] >> GetVersion.ps1
+  echo $version = [regex]::Match($latest, "\d+\.\d+\.\d+").Value >> GetVersion.ps1
+  echo $version >> GetVersion.ps1
+cmd "powershell -executionpolicy remotesigned -File ""GetVersion.ps1"" "
+var version = last
+
+# Download
+# there should be a better way to concatenate strings
+cmd "echo" "https://github.com/ankitects/anki/releases/download/2.1.65/anki-2.1.65-windows-qt6.exe"
+var url = last
+cmd wget --no-check-certificate --no-verbose -O Setup.exe %url%
+
+# Install
+cmd ("Setup.exe", "/S", "/D=c:\Anki")
+
+
+###################################
+# Environment Variables
+###################################
+
+enable ChromiumSupport
+
+
+###################################
+# Routes
+###################################
+
+# No routes needed
+
+
+###################################
+# Clean up
+###################################
+
+batch
+  rmdir c:\Workspace /S /Q
+  rmdir c:\wget /S /Q
+
+
+###################################
+# Version
+###################################
+
+meta tag=version
+
+
+###################################
+# Startup File
+###################################
+
+startup file ("c:\Anki\anki.exe")
