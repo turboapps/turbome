@@ -19,7 +19,7 @@ meta name="anki"
 # Pull dependency images
 ###################################
 
-using gnu/wget, microsoft/powershell
+using gnu/wget
 
 
 ###################################
@@ -71,8 +71,6 @@ cmd ("Setup.exe", "/S", "/D=c:\Anki")
 batch
   rmdir c:\Workspace /S /Q
   rmdir c:\wget /S /Q
-  rmdir "c:\Program Files (x86)\WindowsPowerShell" /S /Q
-  rmdir "c:\Program Files\WindowsPowerShell" /S /Q
 
 
 ###################################
