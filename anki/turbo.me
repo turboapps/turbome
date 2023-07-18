@@ -41,9 +41,7 @@ cmd "powershell -executionpolicy remotesigned -File ""GetVersion.ps1"" "
 var version = last
 
 # Download
-# there should be a better way to concatenate strings
-cmd "echo" "https://github.com/ankitects/anki/releases/download/2.1.65/anki-2.1.65-windows-qt6.exe"
-var url = last
+var url = "https://github.com/ankitects/anki/releases/download/" + version + "/anki-" + version + "-windows-qt6.exe"
 cmd wget --no-check-certificate --no-verbose -O Setup.exe %url%
 
 # Install
