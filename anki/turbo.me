@@ -42,7 +42,7 @@ var version = last
 
 # Download
 var url = "https://github.com/ankitects/anki/releases/download/" + version + "/anki-" + version + "-windows-qt6.exe"
-cmd wget --no-check-certificate --no-verbose -O Setup.exe %url%
+cmd wget --no-check-certificate --quiet --no-verbose -O Setup.exe %url%
 
 # Install
 cmd ("Setup.exe", "/S", "/D=c:\Anki")
