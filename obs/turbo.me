@@ -13,12 +13,14 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Download app
-cmd powershell "wget -Uri (((wget https://api.github.com/repos/obsproject/obs-studio/releases/latest).Content | ConvertFrom-Json).assets | Where-Object name -like 'OBS-Studio*.zip').browser_download_url -OutFile obs-studio.zip"
+cmd powershell "$ProgressPreference = 'SilentlyContinue'; wget -Uri (((wget https://api.github.com/repos/obsproject/obs-studio/releases/latest).Content | ConvertFrom-Json).assets | Where-Object name -like 'OBS-Studio*.zip').browser_download_url -OutFile obs-studio.zip; $ProgressPreference = 'Continue'"
 # The above one-liner is the combination of the below PowerShell commands:
+# $ProgressPreference = 'SilentlyContinue'; 
 # $latestRelease = wget https://api.github.com/repos/obsproject/obs-studio/releases/latest
 # $releaseContent = $latestRelease.Content | ConvertFrom-Json
 # $downloadUrl = ($releaseContent.assets | Where-Object name -like 'OBS-Studio*.zip').browser_download_url
 # wget -Uri $downloadUrl -OutFile obs-studio.zip
+# $ProgressPreference = 'Continue'
 
 # Install and configure app
 cmd "powershell Expand-Archive obs-studio.zip -DestinationPath 'C:\Program Files\obs-studio'"
