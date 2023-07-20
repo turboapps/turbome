@@ -10,16 +10,16 @@
 # Meta tags
 ###################################
 
-meta title="Anki"
-meta namespace="anki"
-meta name="anki"
+meta title = "Anki"
+meta namespace = "anki"
+meta name = "anki"
 
 
 ###################################
 # Pull dependency images
 ###################################
 
-using gnu/wget
+# No dependency needed
 
 
 ###################################
@@ -30,19 +30,13 @@ using gnu/wget
 cmd mkdir c:\Workspace
 workdir c:\Workspace
 
-# Get version
-batch
-  echo $webpage = Invoke-WebRequest -Uri "https://apps.ankiweb.net/downloads/archive/" >> GetVersion.ps1
-  echo $releases = $webpage.Links.href ^| where {$_ -like "*windows-qt6.exe"} ^| sort >> GetVersion.ps1
-  echo $latest = $releases[-1] >> GetVersion.ps1
-  echo $version = [regex]::Match($latest, "\d+\.\d+\.\d+").Value >> GetVersion.ps1
-  echo $version >> GetVersion.ps1
-cmd "powershell -executionpolicy remotesigned -File ""GetVersion.ps1"" "
-var version = last
-
 # Download
-var url = "https://github.com/ankitects/anki/releases/download/" + version + "/anki-" + version + "-windows-qt6.exe"
-cmd wget --no-check-certificate --quiet --no-verbose -O Setup.exe %url%
+cmd powershell "wget -Uri (((wget https://api.github.com/repos/ankitects/anki/releases/latest).Content | ConvertFrom-Json).assets | Where-Object name -like '*qt6.exe').browser_download_url -OutFile Setup.exe"
+# The above one-liner is the combination of the below PowerShell commands:
+# $latestRelease = wget https://api.github.com/repos/ankitects/anki/releases/latest
+# $releaseContent = $latestRelease.Content | ConvertFrom-Json
+# $downloadUrl = ($releaseContent.assets | Where-Object name -like '*qt6.exe').browser_download_url
+# wget -Uri $downloadUrl -OutFile Setup.exe
 
 # Install
 cmd ("Setup.exe", "/S", "/D=c:\Anki")
@@ -66,17 +60,17 @@ enable ChromiumSupport
 # Clean up
 ###################################
 
-batch
-  del c:\Workspace\Setup.exe /Q
-  del c:\Workspace\GetVersion.ps1 /Q
-  rmdir c:\wget /S /Q
+workdir c:\
+cmd rmdir c:\Workspace /S /Q
 
 
 ###################################
 # Version
 ###################################
 
-meta tag=version
+# cmd powershell "$version = ((Get-Item 'c:\Anki\anki.exe').VersionInfo.FileVersionRaw);''+$version.Major+'.'+$version.Minor+'.'+$version.Build" doesn't work
+cmd powershell "((wget https://api.github.com/repos/ankitects/anki/releases/latest).Content | ConvertFrom-Json).tag_name"
+meta tag = last
 
 
 ###################################
