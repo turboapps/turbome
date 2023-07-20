@@ -31,12 +31,7 @@ cmd mkdir c:\Workspace
 workdir c:\Workspace
 
 # Download
-cmd powershell "wget -Uri (((wget https://api.github.com/repos/ankitects/anki/releases/latest).Content | ConvertFrom-Json).assets | Where-Object name -like '*qt6.exe').browser_download_url -OutFile Setup.exe"
-# The above one-liner is the combination of the below PowerShell commands:
-# $latestRelease = wget https://api.github.com/repos/ankitects/anki/releases/latest
-# $releaseContent = $latestRelease.Content | ConvertFrom-Json
-# $downloadUrl = ($releaseContent.assets | Where-Object name -like '*qt6.exe').browser_download_url
-# wget -Uri $downloadUrl -OutFile Setup.exe
+cmd powershell "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri (((wget https://api.github.com/repos/ankitects/anki/releases/latest).Content | ConvertFrom-Json).assets | Where-Object name -like '*qt6.exe').browser_download_url -OutFile Setup.exe; $ProgressPreference = 'Continue'"
 
 # Install
 cmd ("Setup.exe", "/S", "/D=c:\Anki")
@@ -69,7 +64,7 @@ cmd rmdir c:\Workspace /S /Q
 ###################################
 
 # cmd powershell "$version = ((Get-Item 'c:\Anki\anki.exe').VersionInfo.FileVersionRaw);''+$version.Major+'.'+$version.Minor+'.'+$version.Build" doesn't work
-cmd powershell "((wget https://api.github.com/repos/ankitects/anki/releases/latest).Content | ConvertFrom-Json).tag_name"
+cmd powershell "((Invoke-WebRequest https://api.github.com/repos/ankitects/anki/releases/latest).Content | ConvertFrom-Json).tag_name"
 meta tag = last
 
 
