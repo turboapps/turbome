@@ -1,0 +1,56 @@
+# Pandoc turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="pandoc"
+meta namespace="pandoc"
+meta name="pandoc"
+
+###################################
+# Download and install
+###################################
+
+# Get latest version
+batch
+  echo $ProgressPreference = 'SilentlyContinue' > getTag.ps1
+  echo $tag = (Invoke-WebRequest -Uri https://api.github.com/repos/jgm/pandoc/releases ^| ConvertFrom-Json)[0].tag_name >> getTag.ps1
+  echo $tag >> getTag.ps1
+
+cmd powershell -executionpolicy remotesigned -File getTag.ps1
+var tag = last
+meta tag = tag
+
+# Download latest version 
+using wget
+  cmd wget --no-check-certificate --no-verbose -O pandoc.zip https://github.com/jgm/pandoc/releases/download/%tag%/pandoc-%tag%-windows-x86_64.zip
+
+# Batch script for making sure files are not empty
+cmd echo @echo off > checkZeroBytes.bat
+cmd echo if %~z1 lss 1 echo ERROR: %~n1 is 0 bytes >> checkZeroBytes.bat
+
+cmd checkZeroBytes.bat pandoc.zip
+
+# Extract the files
+cmd mkdir "C:\pandoc"
+cmd "tar -xf pandoc.zip -C C:\pandoc --strip-components=1"
+
+###################################
+# Clean up
+###################################
+
+batch 
+  del getTag.ps1
+  del checkZeroBytes.bat
+  del pandoc.zip
+  rmdir C:\wget /s /q
+
+###################################
+# Startup File
+###################################
+
+startup file ("C:\pandoc\pandoc.exe")
