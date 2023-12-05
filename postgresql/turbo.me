@@ -3,42 +3,29 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 # Setup meta
-meta title="postgresql"
-meta namespace="postgresql" 
-meta name="postgresql"
+meta title = "PostgreSQL"
+meta namespace = "postgresql" 
+meta name ="postgresql"
 
 #Basic dependencies and tools
-layer microsoft/vcredist:2008
-using wget,python:3.4.1,7-zip
+layer microsoft/vcredist
+using wget
 
-#Prepare pythone for version grabbing
-cmd pip install requests --quiet
-
-cmd mkdir c:\Workspace
-workdir c:\Workspace
+cmd mkdir C:\Workspace
+workdir C:\Workspace
 
 # Fetch version
-batch
- echo import sys > getRelease.py
- echo import requests >> getRelease.py
- echo import re >> getRelease.py
- echo host = "http://www.enterprisedb.com/products-services-training/pgbindownload" >> getRelease.py
- echo headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0'} >> getRelease.py
- echo r = requests.get(host , headers=headers, timeout=10) >> getRelease.py
- echo print(re.findall('Binaries from installer version (9\.\d*\.\d*)', r.text )[0]) >> getRelease.py
-
-cmd python getRelease.py
-
+# Get the first match of "version xxx"
+cmd powershell "(Invoke-WebRequest -Uri 'https://www.enterprisedb.com/download-postgresql-binaries').Content | Select-String -Pattern 'version (\d+(\.\d+)*)' -AllMatches | ForEach-Object { $_.Matches[0].Groups[1].Value }"
 var tag = last
-meta tag=tag
-
-
-var url = "http://get.enterprisedb.com/postgresql/postgresql-" + tag + "-1-windows-binaries.zip"
-
+meta tag = tag
 
 # Download and prepare PostgreSQL
+# Get the first match of the URL
+cmd powershell "if (((Invoke-WebRequest -Uri 'https://www.enterprisedb.com/download-postgresql-binaries').Content) -match 'https://sbp.enterprisedb.com/getfile.jsp\?fileid=\d+') { $matches[0] }"
+var url = last
 cmd "wget -O postgree.zip --no-check-certificate %url%"
-cmd 7z x postgree.zip -oC:\
+cmd powershell "Expand-Archive -Path 'c:\Workspace\postgree.zip' -DestinationPath 'C:\' -Force"
 
 copy "run-postgre-sql.bat" "C:\pgsql\run-postgre-sql.bat"
 
@@ -52,6 +39,5 @@ setworkdir "C:\pgsql\"
 
 cmd rmdir c:\Workspace /s /q
 cmd rmdir c:\wget /s /q
-cmd rmdir c:\Python34 /s /q
 
 startup file ("C:\pgsql\run-postgre-sql.bat")
