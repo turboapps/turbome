@@ -9,6 +9,8 @@ Ensure that the [run-postgre-sql.bat](https://github.com/turboapps/turbome/blob/
 Just type `turbo run postgresql`, and PostgreSQL will start at the default port
 
     turbo run postgresql/postgresql
+
+The PostgreSQL server must be started under an unprivileged user. Please ensure that when using `turbo run` command.
 	
 # Defaults
 PostgreSQL uses default port: 5432
