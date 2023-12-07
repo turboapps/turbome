@@ -1,0 +1,63 @@
+# Apache Tika turbo.me file
+#
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
+###################################
+# Meta tags
+###################################
+
+meta title="tika"
+meta namespace="apache"
+meta name="tika"
+
+###################################
+# Pull dependency images
+###################################
+
+layer jre:8
+
+###################################
+# Download and install
+###################################
+
+# Get latest version
+batch
+  echo $content = Invoke-WebRequest -Uri https://tika.apache.org/download.html >> getTag.ps1
+  echo $latest = ($content.Links ^| Where-Object href -like '*tika-app*.jar').href >> getTag.ps1
+  echo $regex = '\d+\.\d+\.\d+' >> getTag.ps1
+  echo $latest -match $regex ^| Out-Null >> getTag.ps1
+  echo $matches[0] >> getTag.ps1
+
+cmd powershell -File getTag.ps1
+var tag = last
+meta tag = tag
+
+cmd mkdir C:\Tika\
+
+# Download latest jar from mirror
+using wget
+  cmd wget --no-check-certificate --no-verbose -O C:\Tika\tika-app.jar https://dlcdn.apache.org/tika/%tag%/tika-app-%tag%.jar
+
+# Batch script for making sure files are not empty
+cmd echo @echo off > checkZeroBytes.bat
+cmd echo if %~z1 lss 1 echo ERROR: %~n1 is 0 bytes >> checkZeroBytes.bat
+
+cmd checkZeroBytes.bat C:\Tika\tika-app.jar
+
+# Batch script to run app
+cmd echo java -jar C:\Tika\tika-app.jar %* > C:\Tika\run-tika.bat
+
+###################################
+# Clean up
+###################################
+
+cmd del getTag.ps1
+cmd del checkZeroBytes.bat
+cmd rmdir C:\wget /s /q
+
+###################################
+# Startup File
+###################################
+
+startup file ("C:\Tika\run-tika.bat")
